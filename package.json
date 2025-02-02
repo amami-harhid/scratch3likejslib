@@ -1,0 +1,28 @@
+{
+  "name": "scratch3likejstrial",
+  "version": "0.0.2",
+  "description": "Support using Scratch3 Libraries",
+  "main": "scratch3.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "amami-harhid",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.0.3",
+    "babel-loader": "7.1.2",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "copy-webpack-plugin": "^4.2.3",
+    "js-beautify": "^1.14.11",
+    "scratch-audio": "^0.1.0-prerelease.20231221012053",
+    "scratch-render": "0.1.0-prerelease.20231220210403",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "interactjs": "^1.10.26",
+    "moment": "^2.30.1",
+    "twgl.js": "4.4.0"
+  }
+}
