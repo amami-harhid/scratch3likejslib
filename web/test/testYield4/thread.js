@@ -1,7 +1,9 @@
-import {GenericPool} from './genericPool.js'
+import {GeneratorPool} from './generatorPool.js'
 export class Thread {
     static BREAK = "Error: break";
     static CONTINUE = "Error: continue";
+    static ACTIVE = "active";
+    static DEAD = "dead";
     static break() {
         throw new Error('break');
     }
@@ -9,12 +11,17 @@ export class Thread {
         throw new Error('continue');
     }
     constructor(){
-        this.gPool = new GenericPool();
+        this.gPool = new GeneratorPool();
+        this.status = Thread.DEAD;
+    }
+    waitRelease(){
+        this.gPool.waitRelease();
     }
     async stop() {
         this.gPool.stop();
     }
     async while( condition, f ) {
+        this.status = Thread.ACTIVE;
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
         const _g = async function* () {
             while(_condition()){
@@ -31,7 +38,7 @@ export class Thread {
                 }
             }
         }
-        await this.gPool.exec(_g);
+        await this.gPool.executor(_g);
     }
 
 

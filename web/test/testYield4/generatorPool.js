@@ -1,8 +1,25 @@
 import {sleep} from './sleep.js'
-class GenericPool {
+export class GeneratorPool {
     constructor() {
         this._g_pool = [];
         this._pool = [];
+        this._waitRelease = false;
+        this.stopper = false;
+    }
+    waitRelease(){
+        this._waitRelease = true;
+    }
+    async wait() {
+        return new Promise( async (resolve)=>{
+            for(;;){
+                if(this._waitRelease || this.stopper) {
+                    this._waitRelease = false;
+                    break;
+                }
+                await sleep(33);
+            }
+            resolve();
+        });
     }
     stop(){
         this.stopper = true;
@@ -12,7 +29,7 @@ class GenericPool {
         this._pool.push({ready:true, done:false, f:g(), g:g});
         //console.log(this._pool);
     }
-    async exec(g) {
+    async executor(g) {
         this.register(g);
         if(this._pool.length>0){
             // 最後に追加された要素を取得
@@ -25,11 +42,9 @@ class GenericPool {
                     this._pool = this._pool.splice(0, this._pool.length-1);
                     break;
                 }
-                await sleep(1000/30);
+                await this.wait();
             }
         }
 
     }
 }
-//const clock = await Clock.getInstance();
-export  {GenericPool};

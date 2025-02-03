@@ -10,17 +10,25 @@ export class ThreadsAll {
     
     constructor(){
         this.pool = [];
+        this.stopper = false;
     }
-
+    stopAll(){
+        this.stopper = true;
+    }
     regist( thread ){
         this.pool.push(thread);
     }
 
-    async start() {
+    async startAll() {
         for(;;){
             for(const thread of this.pool){
-
+                if(this.stopper){
+                    thread.stop();
+                }else{
+                    thread.waitRelease();
+                }
             }
+            if(this.stopper) break;
             await sleep(1000/30);
         }
     }
