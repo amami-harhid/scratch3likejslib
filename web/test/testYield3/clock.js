@@ -6,7 +6,7 @@ class Clock {
             const _clock = new Clock();
             Clock.instance = _clock;
             _clock.stopper = false;
-            _clock.start();
+            //_clock.start();
         }
         return Clock.instance;
     }
@@ -17,67 +17,32 @@ class Clock {
     stop(){
         this.stopper = true;
     }
-    async start(){
-        for(;;) {
-            await this.kick();
-            await sleep(1000/30);
-            if(this.stopper){
-                break;
-            }
-        }
-    }
-    register( g ) {
+    async register( g ) {
+        const _args = arguments;
+        const _position = _args[_args.length-1];
+        const _KICK_TIMES = window.KICK_TIMES;
+        //console.log(`register START in clock [${_position}],  KICK_TIMES=${_KICK_TIMES}`)
         this._g_pool.push(g);
         this._pool.push({ready:true, done:false, f:g(), g:g});
         //console.log(this._pool);
     }
-    async registerAndWait( g ) {
+    async exec(g) {
         this.register(g);
-        return new Promise(async(resolve)=>{
+        if(this._pool.length>0){
+            // 最後に追加された要素を取得
+            const _p = this._pool[this._pool.length-1];
             for(;;){
-                let _p = null;
-                console.log(`Pool = ${this._pool.length}`)
-                for(const p of this._pool){
-                    if( p.g == g ){
-                        _p = p;
-                    }
-                }
-                if( _p == null || _p.done == true){
+                // await で実行！
+                const rslt = await _p.f.next();
+                if(rslt.done){
+                    // 最後の要素を除去
+                    this._pool = this._pool.splice(0, this._pool.length-1);
                     break;
                 }
                 await sleep(1000/30);
             }
-            resolve();
-        });
-    }
-    async kick() {
-        let allDone = true;
-        for(const _p of this._pool) {
-            if(_p.done === false){
-                let status;
-                if(/^async\s/.test(_p.g.toString())){
-                    status = await _p.f.next();
-                    //console.log('async await')
-                }else{
-                    status = _p.f.next();
-                }
-                //console.log(status);
-                _p.done = status.done;
-                _p.ready = !status.done;
-                allDone = allDone && status.done
-            }
         }
-        const pool = [...this._pool] 
-        this._pool.splice(0);
-        this._g_pool.splice(0);
-        for(const _p of pool) {
-            if( _p.done == false ){
-                this._g_pool.push(_p.g);
-                this._pool.push(_p);
-            }
-        }
-        //console.log(this._pool.length)
-        return allDone;
+
     }
 }
 const clock = await Clock.getInstance();
