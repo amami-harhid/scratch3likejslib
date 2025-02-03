@@ -1,15 +1,18 @@
-import {clock} from './clock.js'
-import {sleep} from './sleep.js'
-export class Exec {
-
-    async stop() {
-        clock.stop();
-    }
+import {GenericPool} from './genericPool.js'
+export class Thread {
+    static BREAK = "Error: break";
+    static CONTINUE = "Error: continue";
     static break() {
         throw new Error('break');
     }
     static continue() {
         throw new Error('continue');
+    }
+    constructor(){
+        this.gPool = new GenericPool();
+    }
+    async stop() {
+        this.gPool.stop();
     }
     async while( condition, f ) {
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
@@ -20,20 +23,15 @@ export class Exec {
                     await f();
                     yield;
                 }catch(e){
-                    //console.log(e);
-                    if(e.toString() == 'Error: break'){
-                        //console.log('----breaked----')
+                    if(e.toString() == Thread.BREAK){
                         break;
-                    }else if(e.toString() == 'Error: continue'){
-                        //console.log('----continued----')
+                    }else if(e.toString() == Thread.CONTINUE){
                         continue;
                     }
-                }finally{
                 }
-                //console.log('after f(), in exec.while')
             }
         }
-        await clock.exec(_g);
+        await this.gPool.exec(_g);
     }
 
 

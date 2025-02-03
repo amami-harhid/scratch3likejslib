@@ -1,15 +1,5 @@
 import {sleep} from './sleep.js'
-class Clock {
-    static instance;
-    static async getInstance(){
-        if(Clock.instance == undefined){
-            const _clock = new Clock();
-            Clock.instance = _clock;
-            _clock.stopper = false;
-            //_clock.start();
-        }
-        return Clock.instance;
-    }
+class GenericPool {
     constructor() {
         this._g_pool = [];
         this._pool = [];
@@ -18,10 +8,6 @@ class Clock {
         this.stopper = true;
     }
     async register( g ) {
-        const _args = arguments;
-        const _position = _args[_args.length-1];
-        const _KICK_TIMES = window.KICK_TIMES;
-        //console.log(`register START in clock [${_position}],  KICK_TIMES=${_KICK_TIMES}`)
         this._g_pool.push(g);
         this._pool.push({ready:true, done:false, f:g(), g:g});
         //console.log(this._pool);
@@ -45,5 +31,5 @@ class Clock {
 
     }
 }
-const clock = await Clock.getInstance();
-export  {clock};
+//const clock = await Clock.getInstance();
+export  {GenericPool};
