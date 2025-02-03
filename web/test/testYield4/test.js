@@ -7,6 +7,7 @@
 
    TODO  Event定義にて Treadを作り出す手順が面倒そう。省略できないのかな？
    Tread.while() を見直すことでできるかもしれない。
+   TODO  whileループのwait間隔は 1000/30 ms になっているかの計測必要。
 
 */
 import {ThreadsAll} from './threadsAll.js';
