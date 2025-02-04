@@ -12,6 +12,7 @@
 */
 import {ThreadsAll} from './threadsAll.js';
 import {Thread} from './thread.js';
+import {sleep} from './sleep.js';
 
 const threadsAll = ThreadsAll.getInstance();
 // スレッド実行開始
@@ -20,7 +21,8 @@ threadsAll.startAll();
 const button01 = document.getElementById('button01');
 const button02 = document.getElementById('button02');
 const button03 = document.getElementById('button03');
-button03.addEventListener('click',()=>{
+const buttonStop = document.getElementById('buttonStop');
+buttonStop.addEventListener('click',()=>{
     // スレッド実行を全停止
     threadsAll.stopAll();
 });
@@ -75,8 +77,21 @@ button02.addEventListener('click', async()=>{
 
     console.log('End of Button02 Test')
 });
-
-
+button03.addEventListener('click', async()=>{
+    console.log('button03 start');
+    const thread = new Thread();
+    threadsAll.regist(thread);
+    let x = 0;
+    const TIMES = 10;
+    const start = Date.now();
+    await thread.while( _=>x<TIMES, async _=>{
+        x+=1;
+    });
+    const end = Date.now();
+    console.log(`TIME=${(end-start)/TIMES}`);
+    console.log(thread.time());
+    console.log('button03 end');
+});
 
 
 

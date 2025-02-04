@@ -41,5 +41,10 @@ export class Thread {
         await this.gPool.executor(_g);
     }
 
+    time() {
+        return this.gPool.time;
+
+    }
+
 
 }

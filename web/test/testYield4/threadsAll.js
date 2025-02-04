@@ -20,6 +20,8 @@ export class ThreadsAll {
     }
 
     async startAll() {
+        return;
+        const _TIME = 1000/30;
         for(;;){
             for(const thread of this.pool){
                 if(this.stopper){
@@ -29,7 +31,7 @@ export class ThreadsAll {
                 }
             }
             if(this.stopper) break;
-            await sleep(1000/30);
+            await sleep(_TIME);
         }
     }
 }
