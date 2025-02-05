@@ -1,5 +1,5 @@
 /*
-   
+   Thread#while whileの実行が終わるまで待つようにしたい。
 */
 import {sleep} from './sleep.js';
 const Thread = class {
