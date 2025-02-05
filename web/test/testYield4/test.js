@@ -30,18 +30,21 @@ button01.addEventListener('click',async ()=>{
     // Event定義にて Treadを作り出す手順が面倒そう。省略できないのかな？
     const thread = new Thread();
     threadsAll.regist(thread);
-
+    const s = Date.now();
     //【2】 xx < 5 の間 ループする
     let xx = 0;
-    await thread.while( _=> xx<5 , async _=>{
+    const CountXX = 5
+    const CountXY = 10
+    await thread.while( _=> xx<CountXX , async _=>{
         console.log(`【1】while === xx=${xx}`);
         let xy = 0;
-        await thread.while(_=>xy<10  ,  async _=>{
+        await thread.while(_=>xy<CountXY  ,  async _=>{
             console.log(`【2】while ==== xx=${xx}, xy=${xy}`);
             xy += 1;
         });
         xx+=1;
     });
+    console.log(`End of Button01 Test time=${(Date.now()-s)/(CountXX*CountXY)}`);
     thread.stop();
     console.log('End of Button01 Test')
 });
