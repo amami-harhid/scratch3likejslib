@@ -57,6 +57,7 @@ export class GeneratorPool {
                 // 
                 const _waitTime = (performanceTime>TIME)? 5 : TIME - performanceTime + 5
                 performanceTimeArr.push(performanceTime);
+                _waitTime = 1000/30;
                 waitTimeArr.push(_waitTime)
                 //await sleep(_waitTime)
                 //console.log(_waitTime)

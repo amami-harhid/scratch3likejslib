@@ -4,6 +4,7 @@
    (1) 変数スコープがJavascriptの規則通り。
    (2) イベント起動に対応する（並列化）
    (3) while構文風に記述、FPSにあわせSLEEPを自動で入れる。 
+   (4) executor は 
 
    TODO  Event定義にて Treadを作り出す手順が面倒そう。省略できないのかな？
    Tread.while() を見直すことでできるかもしれない。
