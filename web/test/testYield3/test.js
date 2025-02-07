@@ -5,48 +5,45 @@ import {sleep} from './sleep.js'
 // ・ Threadインスタンスを生成する都度、
 //    ThreadAllインスタンス(シングルトン) 内の配列へpush()する
 //    ThreadAll側で配列を調べて、exec()する。みたいな形にしたい
+// ３重WHILEで、１回の繰り返し、平均で 33 ～ 55 ms 程度で変動する。
+// Scratch3でも同じなのでこれでよいと思う。
+// ビジュアル処理がないとき yieldをしない（その分、処理時間が短い）
 
 const thread = new Thread();
-let x=0;
-await sleep(1000);
-/*
-console.log(`【0】`);
-await thread.while( _=>x<5 , async _=>{
-    console.log(`【0】while ===== x=${x}`);
-    x += 1;
-    //xx += 1;
-},"--");
-*/
-await sleep(500);
 
 //【2】 xx < 5 の間 ループする
 let xx = 0;
-let count = 0;
+let counter = 0;
 const s = performance.now();
-await thread.while( _=> xx<1 , async _=>{
-    //console.log(`【1】while ===== xx=${xx}`);
-/*
+await thread.while( _=> xx<10 , async _=>{
+    console.log(`【1】while ===== xx=${xx}`);
     let xy = 0;
-    await thread.while(_=>xy<5  ,  async _=>{
+    await thread.while(_=>xy<2  ,  async _=>{
         console.log(`【2】while ===== xx=${xx}, xy=${xy}`);
         let xz = 0;
-        await thread.while(_=>xz<2, async _=>{
+        await thread.while(_=>xz<1, async _=>{
             console.log(`【3】while ===== xx=${xx}, xy=${xy}, xz=${xz}`);
+            await thread.move();
+            
             xz += 1;
-            count +=1;
+            counter +=1;
         },"03");
         xy += 1;
-        count +=1;
+        counter +=1;
+        await thread.move();
     },"02");
-*/
+
     xx+=1;
-    count +=1;
+    counter +=1;
+    await thread.move();
+
 },"01");
 const totalTime = performance.now()-s;
 thread.stop();
-console.log(`Total Time=${totalTime}, count=${count}`)
-console.log(`LoopUnit Time=${totalTime/count}`)
+console.log(`Total Time=${totalTime}, Loop Count=${counter}`)
+console.log(`LoopUnit Time=${totalTime/counter}`)
 console.log('End of Test')
+
 
 
 

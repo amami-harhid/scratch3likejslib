@@ -123,9 +123,13 @@ doc.listen('click',
     async function* (){
         const _count = ++count; // 関数内のローカル変数として固定化。
         for(let i=0;i<50;i++){
+            const s = performance.now();
             console.log(`listen(${_count}) i=${i}`);
-            await sleep(1000/30);
-            yield (`listen(${_count}) i=${i}`)
+//            await sleep(1000/30);
+            if(i>25){
+                yield (`listen(${_count}) i=${i}`)
+            }
+            console.log(`Time=${performance.now()-s}`);
         }
     }
 );
