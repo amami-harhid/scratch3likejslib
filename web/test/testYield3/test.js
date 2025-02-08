@@ -23,19 +23,19 @@ await thread.while( _=> xx<10 , async _=>{
         let xz = 0;
         await thread.while(_=>xz<1, async _=>{
             console.log(`【3】while ===== xx=${xx}, xy=${xy}, xz=${xz}`);
-            await thread.move();
+//            await thread.move();
             
             xz += 1;
             counter +=1;
         },"03");
         xy += 1;
         counter +=1;
-        await thread.move();
+//        await thread.move();
     },"02");
 
     xx+=1;
     counter +=1;
-    await thread.move();
+//    await thread.move();
 
 },"01");
 const totalTime = performance.now()-s;

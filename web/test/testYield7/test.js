@@ -1,105 +1,42 @@
-/*
-   ThreadsAll のなかで、POOLしたスレッドすべてを
-   YIELD していく方式
-   (1) 変数スコープがJavascriptの規則通り。
-   (2) イベント起動に対応する（並列化）
-   (3) while構文風に記述、FPSにあわせSLEEPを自動で入れる。 
-   (4) executor は 
+import {Hats} from './Hats.js';
+import {Loop} from './Controls.js';
+import {Motions} from './Motions.js';
+import {threads} from './threads.js';
+// Execのインスタンスは スレッド単位に作成する前提
+// 発展形：
+// ・ Threadインスタンスを生成する都度、
+//    ThreadAllインスタンス(シングルトン) 内の配列へpush()する
+//    ThreadAll側で配列を調べて、exec()する。みたいな形にしたい
+// ３重WHILEで、１回の繰り返し、平均で 33 ～ 55 ms 程度で変動する。
+// Scratch3でも同じなのでこれでよいと思う。
+// TODO: 2025/2/8 18:30 1ループ平均が 20ms になっている。速すぎるが原因を追及すること！
 
-   TODO  Event定義にて Treadを作り出す手順が面倒そう。省略できないのかな？
-   Tread.while() を見直すことでできるかもしれない。
-   TODO  whileループのwait間隔は 1000/30 ms になっているかの計測必要。
+window.onload = _=>{
+    console.log('onload')
+    threads.startAll();
+};
 
-*/
-import {ThreadsAll} from './threadsAll.js';
-import {Thread} from './thread.js';
-import {sleep} from './sleep.js';
-
-const threadsAll = ThreadsAll.getInstance();
-// スレッド実行開始
-threadsAll.startAll();
-
-const button01 = document.getElementById('button01');
-const button02 = document.getElementById('button02');
-const button03 = document.getElementById('button03');
-const buttonStop = document.getElementById('buttonStop');
-buttonStop.addEventListener('click',()=>{
-    // スレッド実行を全停止
-    threadsAll.stopAll();
-});
-button01.addEventListener('click',async ()=>{
-    // Event定義にて Treadを作り出す手順が面倒そう。省略できないのかな？
-    const thread = new Thread();
-    threadsAll.regist(thread);
-    const s = Date.now();
-    //【2】 xx < 5 の間 ループする
-    let xx = 0;
-    const CountXX = 5
-    const CountXY = 10
+// 最後のパラメータ("HAT","01","02")はデバッグ用なので後で消すこと
+Hats.whenFlag(async _=>{
+    const s = performance.now();
     let count = 0;
-    await thread.while( _=> xx<CountXX , async _=>{
-        console.log(`【1】while === xx=${xx}`);
-        let xy = 0;
-        await thread.while(_=>xy<CountXY  ,  async _=>{
-            console.log(`【2】while ==== xx=${xx}, xy=${xy}`);
-            xy += 1;
+    let x=0;
+    await Loop.while(_=>x<10, async _=>{
+        console.log("top while ======== "+x);
+        let y=0;
+        await Loop.while(_=>y<10, async _=>{
+            y+=1;
+            console.log('    subWhile '+y)
+            //Motions.move(10);
             count+=1;
-        });
-        xx+=1;
-        count+=1;
-    });
-    console.log(`End of Button01 Test all time=${Date.now()-s}, count=${count}`);
-    console.log(`End of Button01 Test unit time=${(Date.now()-s)/count}`);
-    thread.stop();
-    console.log('End of Button01 Test')
-});
-
-button02.addEventListener('click', async()=>{
-    const thread = new Thread();
-    threadsAll.regist(thread);
-    let xx = 0;
-    await thread.while( _=> xx<5 , async _=>{
-        console.log(`BUTTON02===【1】while ===== xx=${xx}`);
-        let xy = 0;
-        await thread.while(_=>xy<10  ,  async _=>{
-            console.log(`BUTTON02====【2】while ===== xx=${xx}, xy=${xy}`);
-            let xz = 0;
-            await thread.while(_=>xz<10, async _=>{
-                console.log(`BUTTON02=====【3】while ===== xx=${xx}, xy=${xy}, xz=${xz}`);
-                if( xx == 2 && xy == 2 && xz == 3) {
-                    console.log('BUTTON02=========break')
-                    Thread.break();
-                }
-                if( xx == 1 && xy == 2 && xz == 2) {
-                    xz = 5;
-                    console.log('BUTTON02=========continue')
-                    Thread.continue();
-                }
-                xz += 1;
-            });
-            xy += 1;
-        });
-        xx+=1;
-    });
-    thread.stop();
-
-    console.log('End of Button02 Test')
-});
-button03.addEventListener('click', async()=>{
-    console.log('button03 start');
-    const thread = new Thread();
-    threadsAll.regist(thread);
-    let x = 0;
-    const TIMES = 10;
-    const start = Date.now();
-    await thread.while( _=>x<TIMES, async _=>{
+            if(y > 5) Loop.continue();
+            console.log('    subWhile '+y+' NOT CONTINUE')
+        },"02");
         x+=1;
-    });
-    const end = Date.now();
-    console.log(`TIME=${(end-start)/TIMES}`);
-    console.log(thread.time());
-    console.log('button03 end');
-});
-
-
-
+        count+=1;
+        console.log('top while _____ last')
+    },"01");
+    console.log("---END---");
+    const time = performance.now()-s;
+    console.log(`time=${time}, loop=${time/count}`)
+},"HAT");

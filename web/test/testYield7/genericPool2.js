@@ -1,11 +1,11 @@
-import {sleep} from './sleep.js'
-const INTERVAL = 1000/33;
-class GenericPool {
+//import {sleep} from './sleep.js'
+export class GenericPool {
     constructor() {
         this.thread = null;
         this._g_pool = [];
         this._pool = [];
-        this._interval = INTERVAL;
+        //this._interval = 1000/30/2;
+        //this._intervalTuning = -5;
         this.stopper = false;
         //this.intervalId = setInterval(this.exec, this._interval, this);
         // setTimeout で実現させて intervalを調整したい。
@@ -14,31 +14,25 @@ class GenericPool {
         this._loopCounter = 0;
         this._s = performance.now();
         //setTimeout(this.interval, this._interval, this);
-        this._intervalId = setInterval(this.interval, this._interval, this);
+        //this._intervalId = setInterval(this.interval, this._interval, this);
     }
     // タスク実行までのタイムロス
     // ループ
     async interval(self){
+        self.thread.enableExecute = false;
         self._loopCounter+=1;
         const _now = performance.now()
-        if(self._loopCounter%2==0){
-            try{
-                await self.exec(self);
-            }catch(e){
-                console.log(e);
-                if(e.toString()=="TEST"){
-                    throw e;
-                }
-                console.log("Error in interval");
+        try{
+            await self.exec(self);
+            self.thread.enableExecute = true;
+        }catch(e){
+            console.log(e);
+            if(e.toString()=="TEST"){
                 throw e;
-            }    
+            }
+            console.log("Error in interval");
+            throw e;
         }
-//        if(!self.stopper){
-            // この計算は考え方が間違えている。再考すること。
-            //const _nowNext = performance.now();
-            //const interval = self._interval - (_nowNext - _now) -4
-            //setTimeout(self.interval, self._interval-4, self);
-//        }
     }
     stop(){
         this.stopper = true;
@@ -95,4 +89,3 @@ class GenericPool {
         });    
     }
 }
-export  {GenericPool};
