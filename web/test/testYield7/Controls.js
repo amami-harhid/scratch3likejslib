@@ -29,39 +29,32 @@ const Loop = class{
                     await f();
                 }catch(e){
                     if(e.toString() == Loop.BREAK){
+                        yield;
                         break;
                     }else if(e.toString() == Loop.CONTINUE){
                         continue;
                     }else{
                         throw e;
                     }
+                }finally{
+                    // Motions があってもなくてもyieldさせている
+                    // 今の仕組みでは yieldがないと TOP WHILE の2回目で停止してしまう。
+                    // Motions がないときでも1000/33で停止させるようにする（ここはScratch3と異なる）
+                    yield;
                 }
-                if(obj.visualFlag){
-                    // yield; // 描画に関係する処理があるとき yieldして停止する。
-                }
-                // Motions があってもなくてもyieldさせている
-                // 今の仕組みでは yieldがないと TOP WHILE の2回目で停止してしまう。
-                // Motions がないときでも1000/33で停止させるようにする（ここはScratch3と異なる）
-                yield;
             }
         }
-        try{
-            obj.f = _g();
-            threads.registThread( obj );
-            for(;;){
-                if(obj.done) {
-//                    currentObj.enableExecute = true;
-                    break;
-                }
-                await sleep(0.1);
+
+        obj.f = _g();
+        threads.registThread( obj );
+        // 終わるまで待つ。
+        for(;;){
+            if(obj.done) {
+                break;
             }
-        }catch(e){
-            if(e.toString() == "LOOP_EXIT"){
-                return;
-            }
-            throw new Error(e);
+            await sleep(0.1);
         }
-    
+
     }
 
 

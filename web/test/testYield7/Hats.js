@@ -9,17 +9,16 @@ import {threads} from './threads.js';
 export class Hats {
     static async whenFlag (func){
         // 仮にdocument click としておく
+        // 正式には flag オブジェクトを指すように！
         document.addEventListener('click', async _=>{
-            console.log('click')
             const obj = {f:null, done:false, enableExecute:true, parentObj: null};
-            obj.name = "HAT";
+//            obj.name = "HAT";
             const gen = async function*(){
                 obj.enableExecute = false;
                 await func();
                 obj.enableExecute = true;
             }
             obj.f = gen();
-            //thread.register(obj);
             threads.registThread( obj );
         });
 
