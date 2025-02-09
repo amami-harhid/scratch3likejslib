@@ -24,19 +24,20 @@ class Threads {
     }
     async interval(self) {
         for(const obj of self.threadArr){
-            // 実行抑止されていないとき
-            if(obj.enableExecute){
-                self.nowExecutingObj = obj;
-                // 投げっぱなしではない await にする                
-                const rslt = await obj.f.next();
-                if(rslt.done){
-                    if(obj.parentObj != null){
-                        // 終了したら親の実行停止を解除する。
-                        obj.parentObj.enableExecute = true;
-                    }
-                }
-                obj.done = rslt.done;
+
+            // obj.childObj が設定済のときは最終OBJを取り出す。
+            let _obj = obj.childObj;
+            for(;;){
+                if(_obj == null || _obj.childObj == null) break;
+                _obj = _obj.childObj;
             }
+            if(_obj==null){
+                _obj = obj;
+            }
+            self.nowExecutingObj = _obj;
+            // 投げっぱなしではない await にする                
+            const rslt = await _obj.f.next();
+            _obj.done = rslt.done;
         }
         // 終了したOBJは削除する
         const _arr = [];

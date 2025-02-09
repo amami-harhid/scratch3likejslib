@@ -14,12 +14,12 @@ const Loop = class{
 
     }
     static async while( condition, f ) {
-        const name = arguments[2];
         const currentObj = threads.nowExecutingObj;
-        currentObj.enableExecute = false;
+//        currentObj.enableExecute = false;
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
-        const obj = {f:null, done:false, enableExecute:true, visualFlag: true, parentObj: currentObj};
-        obj.name = name;
+//        const obj = {f:null, done:false, enableExecute:true, visualFlag: true, childObj: null};
+        const obj = {f:null, done:false, visualFlag: true, childObj: null};
+        currentObj.childObj = obj;
         const _g = async function* () {
             //const s = performance.now();
             obj.visualFlag = false;
@@ -46,10 +46,11 @@ const Loop = class{
         }
 
         obj.f = _g();
-        threads.registThread( obj );
+        //threads.registThread( obj );
         // 終わるまで待つ。
         for(;;){
             if(obj.done) {
+                currentObj.childObj = null;
                 break;
             }
             await sleep(0.1);

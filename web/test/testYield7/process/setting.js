@@ -1,0 +1,38 @@
+import {Hats} from '../Hats.js';
+import {Loop} from '../Controls.js';
+const setting = _=> {
+
+    // 最後のパラメータ("HAT","01","02")はデバッグ用なので後で消すこと
+    Hats.whenFlag(async _=>{
+        console.log('Flag CLICK!!');
+        const s = performance.now();
+        let count = 0;
+        let x=0;
+        await Loop.while(_=>x<10, async _=>{
+            let y=0;
+            await Loop.while(_=>y<10, async _=>{
+                console.log(`Flag click x=${x},y=${y}`);
+                y+=1;
+                count+=1;
+                if(y > 5) Loop.continue();
+            },"02");
+            x+=1;
+            count+=1;
+        },"01");
+        console.log("---END---");
+        const time = performance.now()-s;
+        console.log(`time=${time}, count=${count}, loop=${time/count}`)
+    },"HAT");
+
+    Hats.whenWindow(async _=>{
+        console.log('Document CLICK!!');
+        let x=0;
+        await Loop.while(_=>x<100, async _=>{
+            console.log(`Document click x=${x}`);
+            x+=1;
+        });
+
+    });
+}
+
+export {setting};

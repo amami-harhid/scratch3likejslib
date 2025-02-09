@@ -1,22 +1,31 @@
 import {threads} from './threads.js';
+import {sleep} from './sleep.js';
 /** 
- * Hats ごとに MainThread を作る
- * MainThreadの中で、繰り返し用のSubThreadを作りMainThreadに追加する
- * SubThreadは終われば消去する。
- * 繰り返しの中に繰り返しがあれば、対応するThreadを作り、SubThreadに追加する
- * 
+ * Hats ごとに generatorを格納するオブジェクト を作る
+ * オブジェクト要素(childObj)は、generator内で作られる 
+ * 子のgeneratorを格納するオブジェクトを格納する。
 */
 export class Hats {
-    static async whenFlag (func){
-        // 仮にdocument click としておく
-        // 正式には flag オブジェクトを指すように！
-        document.addEventListener('click', async _=>{
-            const obj = {f:null, done:false, enableExecute:true, parentObj: null};
-//            obj.name = "HAT";
+    static createObj(){
+        return {f:null, done:false, childObj: null};
+    }
+    static async whenWindow(func){
+        document.addEventListener('click', async (e)=>{
+            e.stopPropagation();
+            const obj = Hats.createObj();
             const gen = async function*(){
-                obj.enableExecute = false;
                 await func();
-                obj.enableExecute = true;
+            }
+            obj.f = gen();
+            threads.registThread( obj );
+        },false);
+    }
+    static async whenFlag (func){
+        P.flag.addEventListener('click', async (e)=>{
+            e.stopPropagation();
+            const obj = Hats.createObj();
+            const gen = async function*(){
+                await func();
             }
             obj.f = gen();
             threads.registThread( obj );
