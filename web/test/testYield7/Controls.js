@@ -29,7 +29,6 @@ const Loop = class{
                     await f();
                 }catch(e){
                     if(e.toString() == Loop.BREAK){
-                        yield;
                         break;
                     }else if(e.toString() == Loop.CONTINUE){
                         continue;
@@ -38,8 +37,9 @@ const Loop = class{
                     }
                 }finally{
                     // Motions があってもなくてもyieldさせている
-                    // 今の仕組みでは yieldがないと TOP WHILE の2回目で停止してしまう。
+                    // 今の仕組みでは二重ループのときに yieldがないと TOP WHILE の2回目で停止してしまう。
                     // Motions がないときでも1000/33で停止させるようにする（ここはScratch3と異なる）
+                    //if(obj.visualFlag)
                     yield;
                 }
             }

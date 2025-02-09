@@ -8,16 +8,23 @@ const setting = _=> {
         const s = performance.now();
         let count = 0;
         let x=0;
-        await Loop.while(_=>x<10, async _=>{
+        await Loop.while(_=>x<50, async _=>{
+//            console.log(`Flag click x=${x}`);
             let y=0;
             await Loop.while(_=>y<10, async _=>{
-                console.log(`Flag click x=${x},y=${y}`);
+//                console.log(`Flag click x=${x},y=${y}`);
                 y+=1;
                 count+=1;
-                if(y > 5) Loop.continue();
+                /**
+                 * break を入れると 1回あたりの時間が多少長くなる ( 33ms -> 35 ms 程度)
+                 * 許容範囲とする
+                 */
+                //if(y>5) Loop.continue();
+                //if(y>5) Loop.break();
             },"02");
             x+=1;
             count+=1;
+            //if(x>5) Loop.break();
         },"01");
         console.log("---END---");
         const time = performance.now()-s;
