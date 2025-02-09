@@ -7,6 +7,7 @@ Element.insertCss();
 
 window.P.init = _P._init;
 
-//window.onload = async function(){
-//    await _P._init();
-//};
+window.onload = async function(){
+    await _P._init();
+    P.threads.startAll();
+};

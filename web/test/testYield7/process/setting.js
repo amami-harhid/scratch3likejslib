@@ -8,7 +8,7 @@ const setting = _=> {
         const s = performance.now();
         let count = 0;
         let x=0;
-        await Loop.while(_=>x<50, async _=>{
+        await Loop.while(_=>x<5, async _=>{
 //            console.log(`Flag click x=${x}`);
             let y=0;
             await Loop.while(_=>y<10, async _=>{
@@ -29,6 +29,7 @@ const setting = _=> {
         console.log("---END---");
         const time = performance.now()-s;
         console.log(`time=${time}, count=${count}, loop=${time/count}`)
+        console.log('END OF whenFlag');
     },"HAT");
 
     Hats.whenWindow(async _=>{
@@ -38,7 +39,7 @@ const setting = _=> {
             console.log(`Document click x=${x}`);
             x+=1;
         });
-
+        console.log('END OF whenWindow');
     });
 }
 

@@ -18,7 +18,8 @@
     "js-beautify": "^1.14.11",
     "scratch-audio": "^0.1.0-prerelease.20231221012053",
     "scratch-render": "0.1.0-prerelease.20231220210403",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-async-await": "^1.1.0"
   },
   "dependencies": {
     "interactjs": "^1.10.26",

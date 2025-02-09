@@ -1,6 +1,7 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+const options = { } ;
 
 const base = {
     devServer: {
@@ -28,7 +29,6 @@ const base = {
         })
     ] : []
 };
-
 module.exports = [
     Object.assign({}, base, {
         target: 'web',

@@ -13,8 +13,7 @@ P.prepare = async function() {
 P.setting = async function() {
     // いますぐに実行
     P.stage.whenRightNow(function() {
+        console.log('whenRightNow')
         this.addImage( P.images.Jurassic );
     });
 }
-
-P.init();
