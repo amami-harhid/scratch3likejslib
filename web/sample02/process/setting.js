@@ -6,8 +6,13 @@ export async function setting() {
     P.stage.whenFlag(async function(){
         console.log(y)
     });
-    P.stage.whenFlag(async function(){
-        this.addSound( P.sounds.BossaNova , { 'volume' : 25 } );
+    // 次のコードの場合、「BossaNova」のBGMが長いため
+    // １曲が終わるまで threadを占有してしまう。
+    // 現在の仕組みでは 他のスレッドが止まってしまいます。だめです。
+    P.stage.whenFlag(async function(){  
+        this.while(true, async _=>{
+            await this.startSoundUntilDone();
+        });
     });
 
     P.cat.whenFlag(async function(){
