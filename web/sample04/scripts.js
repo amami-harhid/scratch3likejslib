@@ -13,15 +13,15 @@ P.prepare = async function prepare() {
 }
 P.setting = async function setting() {
     // すぐに実行する。
-    P.stage.whenRightNow(async function(){
+    P.stage.whenRightNow( function(){
         // ここでの『this』は P.stage である。
         this.addSound( P.sounds.Chill, { 'volume' : 100 } );
     });
 
     // ステージをクリックしたときの動作
-    P.stage.whenClicked(async function () {
+    P.stage.whenClicked( async function() {
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        this.while(true, async _=>{
+        await this.while(true, async _=>{
             // 処理が終わるまで待つために await をつける
             await this.startSoundUntilDone();
         });

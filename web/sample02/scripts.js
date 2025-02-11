@@ -11,7 +11,7 @@ P.prepare = async function prepare() {
 }
 P.setting = async function setting() {
     // すぐに実行する。
-    P.stage.whenRightNow(async function(){
+    P.stage.whenRightNow(function(){
         // ここでの『this』は P.stage である。
         this.addImage( P.images.Jurassic );
     });

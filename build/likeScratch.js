@@ -12289,11 +12289,36 @@ const Loop = class{
 
     }
     static async while( condition, func , me) {
-        const parentObj = threads.nowExecutingObj; // 現在実行中のOBJを取り出す。
+        const entityId = me.id;
+        console.log("in Loop while, entityId="+entityId )
+        // 自身のid をもつスレッドOBJを取り出す。
+        const topObj = threads.getTopThreadObj(entityId);
+        if(topObj == null){
+            const err = "NOT FOUND OWN GROUP THREAD";
+            throw err;
+        }
+        console.log(me.name);
+        console.log("TOPOBJ=====")
+        console.log(topObj.entityId, topObj.childObj);
+        if(topObj.entityId != entityId) {
+            console.log('in Loop while, topObj=')
+            console.log(topObj)
+            throw "ERROR TOP OBJ"
+        }
+        const lastChildObj = threads.getLastChildObj(topObj);
+        if(lastChildObj.entityId != entityId) {
+            // topObj の child に stage のOBJが入っている
+            // どこで入ったのか？
+            console.log('in Loop while, topObj=')
+            console.log(topObj)
+            console.log('last child');
+            console.log(lastChildObj); // ？？？ StageのthreadObjがかえってきた。
+            throw "ERROR Child OBJ"
+        }
+        //const parentObj = threads.nowExecutingObj; // 現在実行中のOBJを取り出す。
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
         const obj = threads.createObj();//{f:null, done:false, visualFlag: true, childObj: null};
-        parentObj.childObj = obj;  // 子を設定
-        obj.parentObj = parentObj; // 親を設定
+        obj.entityId = entityId;
         const src = 
         `const _f = func; 
         return async function*(){ 
@@ -12323,16 +12348,18 @@ const Loop = class{
             }
         }
         `;
-        const f = new Function(['threads', 'obj', 'condition', 'entity', 'func'], src);
-        const gen = f(threads, obj,_condition, me, func.bind(me));
+        const f = new Function(['threads', 'obj', 'condition', 'entity', 'Loop', 'func'], src);
+        const gen = f(threads, obj, _condition, me, Loop, func.bind(me));
         obj.f = gen();
-        obj.entityId = me.id;
-        threads.registThread( obj );
+        //obj.entityId = me.id;
+        //threads.registThread( obj );
+        obj.parentObj = lastChildObj; // 親を設定
+        lastChildObj.childObj = obj;  // 子を設定
 
         // 終わるまで待つ。
         for(;;){
             if(obj.done) {
-                parentObj.childObj = null; // 親から子を削除
+                lastChildObj.childObj = null; // 親から子を削除
                 break;
             }
             await Utils.wait(0.1);
@@ -12382,6 +12409,14 @@ class Threads {
     get STOP(){
         return 'stop';
     }
+    getTopThreadObj(entityId){
+        for(const obj of this.threadArr){
+            if(obj.entityId == entityId) {
+                return obj;
+            }
+        }
+        return null;
+    }
     getTopParentObj(obj){
         let _obj = obj.parentObj;
         for(;;){
@@ -12407,7 +12442,7 @@ class Threads {
     constructor(){
         this.stopper = false;
         this.threadArr = [];
-        this.nowExecutingObj = null;
+        //this.nowExecutingObj = null;
     }
     createObj(){
         return {
@@ -12438,11 +12473,15 @@ class Threads {
     }
     async interval(me) {
         const _process = Process.default;
+        //console.log('Threads interval');
+        //console.log(me.threadArr);
         for(const obj of me.threadArr){
+            //console.log('Threads interval obj');
+            //console.log(obj);
             if(obj.status != me.STOP){
                 // obj.childObj が設定済のときは最終OBJを取り出す。
                 const _obj = me.getLastChildObj(obj);
-                me.nowExecutingObj = _obj;
+                //me.nowExecutingObj = _obj;
                 if(_obj.status == me.YIELD){
                     // 投げっぱなし, Promise終了時に done をObjへ設定する
                     _obj.f.next().then((rslt)=>{ //await はずす
@@ -12821,7 +12860,7 @@ const Entity = class extends EventEmitter{
     whenRightNow(func) {
         const me = this;
         setTimeout(_=>{
-            me.startThread(func, me);
+            me.startThread(func);
         },0);
     }
 
@@ -12831,7 +12870,7 @@ const Entity = class extends EventEmitter{
         const me = this;
         process.flag.addEventListener('click', async (e)=>{
             e.stopPropagation();
-            me.startThread(func, me);
+            me.startThread(func);
         });
     }
     whenMouseTouched (func) {
@@ -12887,15 +12926,16 @@ const Entity = class extends EventEmitter{
         // 同じオブジェクトで前回クリックされているとき
         // 前回のクリックで起動したものを止める。
         const process = Process.default;
+        const entityId = this.id;
         const me = this;
         Canvas.canvas.addEventListener('click', async (e)=>{
-            threads.removeObjById(me.id); // 前回のクリック分を止める。
+            threads.removeObjById(entityId); // 前回のクリック分を止める。
             const mouseX = e.offsetX;
             const mouseY = e.offsetY;
             const _touchDrawableId = me.render.renderer.pick(mouseX,mouseY, 3, 3, [me.drawableID]);
             if(me.drawableID == _touchDrawableId){
                 if( process.preloadDone === true ) {
-                    me.startThread(func, me);
+                    me.startThread(func);
                 }
             }
             e.stopPropagation();
@@ -13007,14 +13047,18 @@ const Entity = class extends EventEmitter{
     setRotationStyle () {
 
     }
-    startThread( func, me ) {
+    startThread( func ) {
         // async function*() を直接書くとWebPackでエラーが起こる。
         // しょうがないので テキストから生成する。
+        console.log('startThread')
+        console.log(this);
+        console.log(this.id);
+
         const obj = threads.createObj();
-        obj.entityId = me.id;
+        obj.entityId = this.id;
         const src = 'const _f = func; return async function*(){await _f();}';
         const f = new Function(['func'], src);
-        const gen = f( func.bind(me) );
+        const gen = f( func.bind(this) );
         obj.f = gen();
         threads.registThread( obj );
     }
@@ -13150,6 +13194,9 @@ const Entity = class extends EventEmitter{
     }
 
     async while(condition, func) {
+        console.log('this in while')
+        console.log(this);
+        console.log(this.id)
         await Loop.while(condition, func, this);
     }
 }
@@ -39000,7 +39047,7 @@ const StageLayering = __webpack_require__(4);
 const Utils = __webpack_require__(1);
 const Sprite = class extends Entity {
 
-    constructor(name, options = {}) {
+    constructor(name, options = {}) {        
         super(name, StageLayering.SPRITE_LAYER, options);
         const stage = Process.default.stage;
         this.stage = stage;
