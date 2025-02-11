@@ -12298,28 +12298,35 @@ const Loop = class{
         `const _f = func; 
         return async function*(){ 
             while(condition()){
+                // 停止する
+                if(obj.forceExit == true){
+                    // 音がなっているときは止める。
+                    entity.soundStopImmediately();
+                    break;
+                }
                 obj.status = threads.RUNNING;
                 try{
                     await _f(); //ここはかならずawait
+                    obj.status = threads.YIELD;
+                    yield;
                 }catch(e){
                     if(e.toString() == Loop.BREAK){
                         break;
                     }else if(e.toString() == Loop.CONTINUE){
                         continue;
+                        yield;
                     }else{
                         throw e;
                     }
                 }finally{                
-                    obj.status = threads.YIELD;
-                    yield;
                 }
             }
         }
         `;
-        const f = new Function(['threads', 'obj', 'condition', 'func'],src);
-        const gen = f(threads, obj,_condition,func.bind(me));
-
+        const f = new Function(['threads', 'obj', 'condition', 'entity', 'func'], src);
+        const gen = f(threads, obj,_condition, me, func.bind(me));
         obj.f = gen();
+        obj.entityId = me.id;
         threads.registThread( obj );
 
         // 終わるまで待つ。
@@ -12372,7 +12379,10 @@ class Threads {
     get YIELD(){
         return 'yield';
     }
-    static getTopParentObj(obj){
+    get STOP(){
+        return 'stop';
+    }
+    getTopParentObj(obj){
         let _obj = obj.parentObj;
         for(;;){
             if(_obj == null || _obj.parentObj==null) break;
@@ -12383,7 +12393,7 @@ class Threads {
         else
             return _obj;
     }
-    static getLastChildObj(obj){
+    getLastChildObj(obj){
         let _obj = obj.childObj;
         for(;;){
             if(_obj == null || _obj.childObj == null) break;
@@ -12400,10 +12410,18 @@ class Threads {
         this.nowExecutingObj = null;
     }
     createObj(){
-        return {f:null, done:false, status: this.YIELD, childObj: null, parentObj: null};
+        return {
+            f:null, 
+            done:false, 
+            status: this.YIELD,
+            forceExit: false,
+            entityId: null,
+            childObj: null, 
+            parentObj: null
+        };
     }
-    registThread( _thread ){
-        this.threadArr.push(_thread);
+    registThread( obj ){
+        this.threadArr.push( obj );
     }
     startAll() {
         this._intervalId = setInterval(this.interval, INTERVAL, this);
@@ -12411,27 +12429,33 @@ class Threads {
     stopAll(){
         this.stopper = true;
     }
+    removeObjById(id){
+        for(const obj of this.threadArr){
+            if(obj.entityId == id){
+                obj.forceExit = true;
+            }
+        }
+    }
     async interval(me) {
         const _process = Process.default;
         for(const obj of me.threadArr){
-            // obj.childObj が設定済のときは最終OBJを取り出す。
-            const _obj = Threads.getLastChildObj(obj);
-            me.nowExecutingObj = _obj;
-            if(_obj.status == me.YIELD){
-                //// 投げっぱなしではない await にする
-                //const rslt = await _obj.f.next();
-                //_obj.done = rslt.done;    
-                // 投げっぱなし
-                _obj.f.next().then((rslt)=>{ //await はずす
-                    _obj.done = rslt.done;    
-                }); 
+            if(obj.status != me.STOP){
+                // obj.childObj が設定済のときは最終OBJを取り出す。
+                const _obj = me.getLastChildObj(obj);
+                me.nowExecutingObj = _obj;
+                if(_obj.status == me.YIELD){
+                    // 投げっぱなし, Promise終了時に done をObjへ設定する
+                    _obj.f.next().then((rslt)=>{ //await はずす
+                        _obj.done = rslt.done;    
+                    }); 
+                }
             }
         }
         _process._draw();
         // 終了したOBJは削除する
         const _arr = [];
         for(const obj of me.threadArr){
-            if(!obj.done) {                
+            if(obj.forceExit || !obj.done) {                
                 _arr.push(obj);
             }
         }
@@ -12593,7 +12617,7 @@ const Entity = class extends EventEmitter{
         this.soundStop();    
         this.sounds.nextSound();
     }
-     soundPlay(sound) {
+    soundPlay(sound) {
         if ( this.sounds == undefined ) return;
         if( sound ) {
             this.soundSwitch(sound);
@@ -12618,7 +12642,7 @@ const Entity = class extends EventEmitter{
     }
     soundStopImmediately() {
         if ( this.sounds == undefined ) return;
-        this.sounds.soundStopImmediately();
+        this.sounds.stopImmediately();
     }
     async startSoundUntilDone() {
         if ( this.sounds ) await this.sounds.startSoundUntilDone();
@@ -12860,24 +12884,22 @@ const Entity = class extends EventEmitter{
      * @param {function} func 
      */
     whenClicked (func) {
+        // 同じオブジェクトで前回クリックされているとき
+        // 前回のクリックで起動したものを止める。
         const process = Process.default;
-        const runtime = process.runtime;
         const me = this;
-        //const _func = func.bind(this);
-        Canvas.canvas.addEventListener('click', async(e) => {
+        Canvas.canvas.addEventListener('click', async (e)=>{
+            threads.removeObjById(me.id); // 前回のクリック分を止める。
             const mouseX = e.offsetX;
             const mouseY = e.offsetY;
             const _touchDrawableId = me.render.renderer.pick(mouseX,mouseY, 3, 3, [me.drawableID]);
             if(me.drawableID == _touchDrawableId){
                 if( process.preloadDone === true ) {
-                    const EmitId = 'WhenClickedStopper';
-                    this.emit( EmitId );
-                    runtime.emit( Entity.EmitIdMovePromise );
-                    this._execWithEmit( func, EmitId );
+                    me.startThread(func, me);
                 }
             }
-            e.stopPropagation()
-        }, {});
+            e.stopPropagation();
+        });
     }
     whenTouchingTarget(targets, func) {
         const me = this;
@@ -12989,9 +13011,10 @@ const Entity = class extends EventEmitter{
         // async function*() を直接書くとWebPackでエラーが起こる。
         // しょうがないので テキストから生成する。
         const obj = threads.createObj();
+        obj.entityId = me.id;
         const src = 'const _f = func; return async function*(){await _f();}';
-        const f = new Function(['func'],src);
-        const gen = f(func.bind(me));
+        const f = new Function(['func'], src);
+        const gen = f( func.bind(me) );
         obj.f = gen();
         threads.registThread( obj );
     }
@@ -19808,6 +19831,7 @@ const Element = class {
             ${CSS.documentCss}\n\n
             ${CSS.flagCss}\n\n
             ${CSS.canvasCss}\n\n
+            ${CSS.textCanvasCss}\n\n
             ${CSS.mainTmpCss}\n\n
         `;
         document.getElementsByTagName('head')[0].appendChild(style);
@@ -22794,6 +22818,11 @@ html, body{
         border: 5px solid #444444;
         border-radius: 20px;
   }  
+`,
+    textCanvasCss : `
+.likeScratch-text-canvas {
+        pointer-events: none;
+  }
 `,
     mainTmpCss : `
 .nowLoading {
