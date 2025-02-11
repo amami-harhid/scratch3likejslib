@@ -19,13 +19,20 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
 
     P.stage.whenFlag(async function(){
-        this.addSound( P.sounds.Chill, { 'volume' : 100 } );
+        console.log('stage whenFlag')
+        console.log(this);
+        await this.addSound( P.sounds.Chill, { 'volume' : 100 } );
+        console.log('after addSound in stage whenFlag');
+
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
     P.cat.whenFlag( async function(){
-        this.addSound( P.sounds.Mya, { 'volume' : 50 } );
+        console.log('cat whenFlag')
+        console.log(this);
+        await this.addSound( P.sounds.Mya, { 'volume' : 50 } );
+        console.log('after addSound in cat whenFlag');
         // 「左右」に動く。端に触れたら跳ね返る。
         this.while( true, async _=> {
             this.moveSteps(catStep);
@@ -45,7 +52,10 @@ P.setting = async function setting() {
  *     whileスレッドを登録してしまう。そうすると 子Aが動かなくなる。
  * Hatsの定義ごとに スレッドIDを付与して他のスレッドに影響を与えないようにしたい。
  * ==> Obj.threadId として Hatを受けたときに UUIDを振る。
- * ==> それでどうするのか？？よく考えてみよう。2025/2/11 18:40 考え中。
+ * ==> Proxy で Entityを包みこみ、methodは Proxy経由で Entityインスタンスへ流す
+ * ==> Proxyインスタンスが Hatsの中での 『this』にあたるようにする
+ * ==> 2025/2/11 22:00 対応済。
+ * ==> 一応、動作する。クローンされたときのHatでは対応漏れている。
  * 
  * また、this.while() に await をつけなくてもよい気がするが
  * 実際には await をつけないときは 動かない（すぐに動きが終わる）。

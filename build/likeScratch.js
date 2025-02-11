@@ -12289,7 +12289,7 @@ const Loop = class{
 
     }
     static async while( condition, func , me) {
-        const entityId = me.id;
+        const entityId = me.threadId(); //me.id;
         console.log("in Loop while, entityId="+entityId )
         // 自身のid をもつスレッドOBJを取り出す。
         const topObj = threads.getTopThreadObj(entityId);
@@ -12550,6 +12550,7 @@ const Entity = class extends EventEmitter{
         this.scale = {x:100,y:100}; // 意味なし
         this.direction = 90; // 意味なし
         this._visible = true;
+        this.sounds = null;
         this.sound = null;
         this.importAllDone = [];
         this.importIdx = -1;
@@ -12631,57 +12632,57 @@ const Entity = class extends EventEmitter{
         this.importAllDone[_importIdx] = true;
     }
     async importSound( sound ) {
-        if ( this.sounds == undefined ) this.sounds = new Sounds();
+        if ( this.sounds == null ) this.sounds = new Sounds();
         const soundData = await this.sounds.importSound( sound );
         return soundData;
     }
     async _addSound(name, soundData, options={}) {
-        if ( this.sounds == undefined ) this.sounds = new Sounds();
+        if ( this.sounds == null ) this.sounds = new Sounds();
         await this.sounds.setSound(name, soundData, options);
     }
     async _loadSound(name, soundUrl, options={}) {
         this.importIdx += 1;
         const _importIdx = this.importIdx;
         this.importAllDone.push(false);
-        if ( this.sounds == undefined ) this.sounds = new Sounds();
+        if ( this.sounds == null ) this.sounds = new Sounds();
         await this.sounds.loadSound(name,soundUrl, options);
         this.importAllDone[_importIdx] = true;
     }
     soundSwitch(sound){
         const name = sound.name;
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.switch(name);
     }
     nextSound() {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.soundStop();    
         this.sounds.nextSound();
     }
     soundPlay(sound) {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         if( sound ) {
             this.soundSwitch(sound);
         }
         this.sounds.play();
     }
     setSoundVolume(volume) {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.volume = volume;
     }
     setSoundVolumeByName(name, volume) {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.volume = volume;
     }
     setSoundPitch(pitch) {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.pitch = pitch;
     }
     soundStop() {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.stop();
     }
     soundStopImmediately() {
-        if ( this.sounds == undefined ) return;
+        if ( this.sounds == null ) return;
         this.sounds.stopImmediately();
     }
     async startSoundUntilDone() {
@@ -12868,10 +12869,23 @@ const Entity = class extends EventEmitter{
     // async としないほうがよいかも。
     async whenFlag (func) {
         const process = Process.default;
+        const threadId = this._generateUUID();
+        const proxy = new Proxy(this, {
+            get(target, name) {
+                if (name in target) {
+                    return target[name];
+                } else {
+                    if(name == 'threadId'){
+                        return _=>threadId;
+                    }
+                    throw `Method[${name}] does not exist.`
+                }
+            },
+        });
         const me = this;
         process.flag.addEventListener('click', async (e)=>{
             e.stopPropagation();
-            me.startThread(func);
+            me.startThread(func, proxy);
         });
     }
     whenMouseTouched (func) {
@@ -13048,18 +13062,18 @@ const Entity = class extends EventEmitter{
     setRotationStyle () {
 
     }
-    startThread( func ) {
+    startThread( func, entity ) {
         // async function*() を直接書くとWebPackでエラーが起こる。
         // しょうがないので テキストから生成する。
         console.log('startThread')
         console.log(this);
-        console.log(this.id);
-
+        const threadId = entity.threadId();
+        console.log("threadId="+threadId);
         const obj = threads.createObj();
-        obj.entityId = this.id;
+        obj.entityId = threadId; //this.id;
         const src = 'const _f = func; return async function*(){await _f();}';
         const f = new Function(['func'], src);
-        const gen = f( func.bind(this) );
+        const gen = f( func.bind(entity) );
         obj.f = gen();
         threads.registThread( obj );
     }
@@ -13198,6 +13212,7 @@ const Entity = class extends EventEmitter{
         console.log('this in while')
         console.log(this);
         console.log(this.id)
+        console.log(this.threadId())
         await Loop.while(condition, func, this);
     }
 }
