@@ -20,7 +20,7 @@ P.setting = async function setting() {
 
     P.stage.whenFlag(async function(){
         this.addSound( P.sounds.Chill, { 'volume' : 100 } );
-        await this.while(true, async _=>{
+        this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
@@ -41,13 +41,17 @@ P.setting = async function setting() {
 /**
  * 複数の P.cat.whenFlag があり、ひとつの whenFlag()の中に、
  * this.while() があるとき、ひとつしか動かない。
- * Hatsの定義ごとに スレッドIDを付与して
- * 他のスレッドに影響を与えないようにしたい。
+ * ==> EntityのID をもつスレッドが２個以上あるとき、最初にみつけたスレッドの子Aの子Bとして
+ *     whileスレッドを登録してしまう。そうすると 子Aが動かなくなる。
+ * Hatsの定義ごとに スレッドIDを付与して他のスレッドに影響を与えないようにしたい。
+ * ==> Obj.threadId として Hatを受けたときに UUIDを振る。
+ * ==> それでどうするのか？？よく考えてみよう。2025/2/11 18:40 考え中。
+ * 
  * また、this.while() に await をつけなくてもよい気がするが
  * 実際には await をつけないときは 動かない（すぐに動きが終わる）。
  * これはHatスレッドが終わると 子スレッドも終わる制御になっているから。
  * 親スレッドは done のときでも 子がdoneでないと終わってはいけなそう。
- * 
+ * ==> 2025/2/11 18:40 対応済。
  */
 
 /*
