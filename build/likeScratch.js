@@ -12297,7 +12297,8 @@ const Loop = class{
         const src = 
         `const _f = func; 
         return async function*(){ 
-            while(_condition()){
+            while(condition()){
+                obj.status = threads.RUNNING;
                 try{
                     await _f(); //ここはかならずawait
                 }catch(e){
@@ -12309,13 +12310,14 @@ const Loop = class{
                         throw e;
                     }
                 }finally{                
+                    obj.status = threads.YIELD;
                     yield;
                 }
             }
         }
         `;
-        const f = new Function(['_condition, func'],src);
-        const gen = f(_condition,func.bind(me));
+        const f = new Function(['threads', 'obj', 'condition', 'func'],src);
+        const gen = f(threads, obj,_condition,func.bind(me));
 
         obj.f = gen();
         threads.registThread( obj );
@@ -12364,6 +12366,12 @@ class Threads {
         }
         return Threads.instance;
     }
+    get RUNNING(){
+        return 'running';
+    }
+    get YIELD(){
+        return 'yield';
+    }
     static getTopParentObj(obj){
         let _obj = obj.parentObj;
         for(;;){
@@ -12392,7 +12400,7 @@ class Threads {
         this.nowExecutingObj = null;
     }
     createObj(){
-        return {f:null, done:false, childObj: null, parentObj: null};
+        return {f:null, done:false, status: this.YIELD, childObj: null, parentObj: null};
     }
     registThread( _thread ){
         this.threadArr.push(_thread);
@@ -12403,35 +12411,31 @@ class Threads {
     stopAll(){
         this.stopper = true;
     }
-    async interval(self) {
+    async interval(me) {
         const _process = Process.default;
-        for(const obj of self.threadArr){
+        for(const obj of me.threadArr){
             // obj.childObj が設定済のときは最終OBJを取り出す。
             const _obj = Threads.getLastChildObj(obj);
-/*
-            let _obj = obj.childObj;
-            for(;;){
-                if(_obj == null || _obj.childObj == null) break;
-                _obj = _obj.childObj;
+            me.nowExecutingObj = _obj;
+            if(_obj.status == me.YIELD){
+                //// 投げっぱなしではない await にする
+                //const rslt = await _obj.f.next();
+                //_obj.done = rslt.done;    
+                // 投げっぱなし
+                _obj.f.next().then((rslt)=>{ //await はずす
+                    _obj.done = rslt.done;    
+                }); 
             }
-            if(_obj==null){
-                _obj = obj;
-            }
- */
-            self.nowExecutingObj = _obj;
-            // 投げっぱなしではない await にする                
-            const rslt = await _obj.f.next();
-            _obj.done = rslt.done;
         }
         _process._draw();
         // 終了したOBJは削除する
         const _arr = [];
-        for(const obj of self.threadArr){
+        for(const obj of me.threadArr){
             if(!obj.done) {                
                 _arr.push(obj);
             }
         }
-        self.threadArr = [..._arr];
+        me.threadArr = [..._arr];
     }
 }
 const threads = Threads.getInstance();

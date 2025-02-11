@@ -1,7 +1,6 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const options = { } ;
 
 const base = {
     devServer: {
@@ -36,7 +35,7 @@ module.exports = [
             'likeScratch': './src/likeScratch.js'
         },
         output: {
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'build'),
             filename: '[name].js'
         },
         devtool: 'source-map',
