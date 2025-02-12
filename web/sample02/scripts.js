@@ -12,7 +12,7 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
     // すぐに実行する。
     P.stage.whenRightNow(function(){
-        // ここでの『this』は P.stage である。
+        // ここでの『this』は P.stageのProxy である。
         this.addImage( P.images.Jurassic );
     });
 }

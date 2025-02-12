@@ -13,7 +13,7 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
     // すぐに実行する。
     P.stage.whenRightNow( function() { // ここは function(){} とする
-        // ここでの『this』は P.stage である。
+        // ここでの『this』は P.stage のProxyである。
         this.addSound( P.sounds.Chill, { 'volume' : 100 } );
     });
     P.stage.whenFlag( function(){ // ここは function(){} とする

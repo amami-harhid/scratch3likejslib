@@ -21,6 +21,7 @@ P.setting = async function setting() {
     P.stage.whenFlag(async function(){
         await this.addSound( P.sounds.Chill, { 'volume' : 100 } );
         await this.while(true, async _=>{
+            // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await this.startSoundUntilDone();
         })
     });
@@ -28,10 +29,11 @@ P.setting = async function setting() {
     const catStep = 10;
 
     P.cat.whenFlag( async function(){
-        await this.addSound( P.sounds.Mya, { 'volume' : 50 } );
+        this.addSound( P.sounds.Mya, { 'volume' : 50 } );
     });
 
     P.cat.whenFlag( async function(){
+        // ずっと「左右」に動く。端に触れたら跳ね返る。
         this.while( true, _=> {
             this.moveSteps(catStep);
             this.ifOnEdgeBounds();
@@ -39,11 +41,12 @@ P.setting = async function setting() {
     });
 
     P.cat.whenFlag( async function(){
-        // 「左右」に動く。端に触れたら跳ね返る。
+        // 端に触れたらニャーと鳴く。
         await this.while( true, _=> {
-            this.isTouchingEdge(_=>{
+            if(this.isTouchingEdge()){
                 this.soundPlay()
-            })            
+            }
         });
     });
+
 }
