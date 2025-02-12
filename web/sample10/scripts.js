@@ -1,6 +1,7 @@
 /**
  * Sample10
- * スプライトを 動かす( 端に触れたら ミャーと鳴く)
+ * スプライトのクローンを作る（スプライトに触ったらクローンを作る）
+ * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
 
 P.preload = async function preload() {
@@ -10,40 +11,67 @@ P.preload = async function preload() {
     this.loadSound('../assets/Cat.wav','Mya');
 }
 P.prepare = async function prepare() {
-    P.stage = new P.Stage();
+    P.stage = new P.Stage("stage");
     P.stage.addImage( P.images.Jurassic );
-    
     P.cat = new P.Sprite("Cat");
+    P.cat.position.x = 200;
+    P.cat.position.y = 150;
     P.cat.addImage( P.images.Cat );
 }
 P.setting = async function setting() {
 
-    P.stage.whenFlag(function(){
-        this.addSound( P.sounds.Chill, { 'volume' : 100 } );
+    P.stage.whenFlag(async function() {
+        this.addSound( P.sounds.Chill, { 'volume' : 50 } );
+    });
+    P.stage.whenFlag(async function() {
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
-    P.cat.whenFlag(function(){
-        this.addSound( P.sounds.Mya, { 'volume' : 50 } );
+
+    P.cat.whenFlag( async function() {
+        // 音を登録する
+        this.addSound( P.sounds.Mya, { 'volume' : 1 } );
     });
 
-    const catStep = 5;
-    // フラグクリック
-    P.cat.whenFlag( function() {
-        // 「左右」に動く。端に触れたら跳ね返る。
-        this.while( true, async _=> {
-            this.moveSteps(catStep);
-            this.ifOnEdgeBounds();
+    const _changeDirection = 1;
+    P.cat.whenFlag( async function() {
+        // ずっと繰り返して回転する
+        this.while(true, _=>{
+            this.direction += _changeDirection; // 外の Scope 参照可能
         });
     });
-    // フラグクリック
-    P.cat.whenFlag( function() {
-        // 端に触れたらニャーと鳴く。
-        this.while( true, async _=> {
-            this.isTouchingEdge(_=>{
-                this.soundPlay()
-            });
+    P.cat.whenFlag( async function() {
+        // 次をずっと繰り返す
+        // マウスカーソルでタッチしたら、クローンを作る
+        this.while(true, async _=>{
+            if( this.isMouseTouching() ) {
+                this.clone();
+            }
+            // マウスタッチしないまで待つ
+            await P.Utils.waitUntil( this.isNotMouseTouching, P.Env.pace,  this ); 
+        });
+    });
+
+    const steps = 10;
+    P.cat.whenCloned(async function(){
+        const clone = this; // 'this' is cloned instance;
+        clone.position.x = 100;
+        clone.position.y = -100;
+        clone.scale.x = 50;
+        clone.scale.y = 50;
+        clone.effect.color = 50;
+        clone.life = 1000;
+        clone.setVisible(true)
+        // ずっと繰り返す
+        clone.while(true, _=>{
+            clone.moveSteps( steps );
+            clone.ifOnEdgeBounds();
+            // 端に触れたら
+            if(clone.isTouchingEdge() ){
+                // ミャーと鳴く。
+                clone.soundPlay()
+            }
         });
     });
 }

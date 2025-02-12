@@ -367,7 +367,7 @@ const Process = class {
 
     async _preload () {
         if( P.preload ) {
-            P.preload();
+            P.preload( this );
         }
     }
 
@@ -538,7 +538,6 @@ const Utils = class {
     static wait (milliSecond = 0) {
         return new Promise(resolve => setTimeout(resolve, milliSecond));
     }
-/*
     static waitUntil ( _condition, _pace, _bind ) {
         return new Promise( async (resolve) => {
             let condition;
@@ -557,6 +556,7 @@ const Utils = class {
             resolve();
         });
     }
+/*
 
     static get WAIT_TIME () {
         //return 5;
@@ -12289,24 +12289,26 @@ const Loop = class{
 
     }
     static async while( condition, func , me) {
-        const entityId = me.threadId; // me はproxyインスタンス
+        const threadId = me.threadId; // me はproxyインスタンス
         // 自身のid をもつスレッドOBJを取り出す。
-        const topObj = threads.getTopThreadObj(entityId);
+        const topObj = threads.getTopThreadObj(threadId);
         if(topObj == null){
             const err = "NOT FOUND OWN GROUP THREAD";
             throw err;
         }
-        if(topObj.entityId != entityId) {
+        if(topObj.threadId != threadId) {
             throw "ERROR TOP OBJ"
         }
         const lastChildObj = threads.getLastChildObj(topObj);
-        if(lastChildObj.entityId != entityId) {
+        if(lastChildObj.threadId != threadId) {
             throw "ERROR Child OBJ"
         }
         //const parentObj = threads.nowExecutingObj; // 現在実行中のOBJを取り出す。
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
         const obj = threads.createObj();//{f:null, done:false, visualFlag: true, childObj: null};
-        obj.entityId = entityId;
+        obj.hat = false; // Hat objectではない。
+        obj.threadId = threadId;
+        obj.entityId = me.id;
         const src = 
         `const _f = func; 
         return async function*(){ 
@@ -12397,9 +12399,9 @@ class Threads {
     get STOP(){
         return 'stop';
     }
-    getTopThreadObj(entityId){
+    getTopThreadObj(threadId){
         for(const obj of this.threadArr){
-            if(obj.entityId == entityId) {
+            if(obj.threadId == threadId) {
                 return obj;
             }
         }
@@ -12438,9 +12440,13 @@ class Threads {
             done:false, 
             status: this.YIELD,
             forceExit: false,
+            threadId: null,
             entityId: null,
             childObj: null, 
-            parentObj: null
+            parentObj: null,
+            hat:true,
+            entity: null,
+            doubleRunable: true
         };
     }
     registThread( obj ){
@@ -12454,7 +12460,7 @@ class Threads {
     }
     removeObjById(id){
         for(const obj of this.threadArr){
-            if(obj.entityId == id){
+            if(obj.doubleRunable === false && obj.entityId == id){
                 obj.forceExit = true;
             }
         }
@@ -12472,7 +12478,9 @@ class Threads {
                 //me.nowExecutingObj = _obj;
                 if(_obj.status == me.YIELD){
                     // 投げっぱなし, Promise終了時に done をObjへ設定する
-                    _obj.f.next().then((rslt)=>{ //await はずす
+                    //await はつけずにPromise.then で解決する。
+                    // 長いBGM演奏などのとき他スレッドが止まるため awaitで止めない。
+                    _obj.f.next().then((rslt)=>{
                         _obj.done = rslt.done;    
                     }); 
                 }
@@ -12482,7 +12490,7 @@ class Threads {
         const _arr = [];
         for(const obj of me.threadArr){
             const lastChildObj = me.getLastChildObj(obj);
-            if(obj.forceExit || !obj.done || !lastChildObj.done) {                
+            if(!obj.forceExit && ( !obj.done || !lastChildObj.done) ) {                
                 _arr.push(obj);
             }
         }
@@ -12947,7 +12955,7 @@ const Entity = class extends EventEmitter{
                 const proxy = me.getProxyForHat();
                 proxy.threadId = threadId;
                 if( process.preloadDone === true ) {
-                    me.startThread(func, proxy);
+                    me.startThread(func, proxy, false); //二重起動禁止
                 }
             }
             e.stopPropagation();
@@ -13063,16 +13071,24 @@ const Entity = class extends EventEmitter{
     setRotationStyle () {
 
     }
-    startThread( func, entity ) {
+    startThread( func, entity , doubleRunable=true) {
         // async function*() を直接書くとWebPackでエラーが起こる。
         // しょうがないので テキストから生成する。
         const _entity = entity;
         const threadId = _entity.threadId;
         const obj = threads.createObj();
-        obj.entityId = threadId; //this.id;
-        const src = 'const _f = func; return async function*(){await _f();}';
-        const f = new Function(['func'], src);
-        const gen = f( func.bind(_entity) );
+        obj.hat = true;
+        obj.entityId = _entity.id;
+        obj.threadId = threadId; //this.id;
+        obj.entity = _entity;
+        obj.doubleRunable = doubleRunable;
+        // func がアロー式である場合、
+        // (1) funcの中の『this』は funcを定義した場所の上位階層のthisである。
+        // (2) funcの中の『this』を変更することはできないことに留意してほしい。
+        // (3) funcの引数として entityを渡すようにして アロー式 entity=>{ } の形にはできる
+        const src = 'return async function*(){await func(entity);}';
+        const f = new Function(['func', 'entity'], src);
+        const gen = f( func.bind(_entity),  _entity );
         obj.f = gen();
         threads.registThread( obj );
     }
@@ -39211,10 +39227,13 @@ const Sprite = class extends Entity {
         }
     }
     _costumeProperties(target) {
-        target.costumes.setPosition(target.position.x, target.position.y);
-        target.costumes.setScale(target.scale.x, target.scale.y);
-        target.costumes.setDirection(target.direction);
-        target.costumes.update(target.drawableID, this._effect);
+        // スプライトを消すとき costumes はnullになるので 例外回避する
+        if(target.costumes) {
+            target.costumes.setPosition(target.position.x, target.position.y);
+            target.costumes.setScale(target.scale.x, target.scale.y);
+            target.costumes.setDirection(target.direction);
+            target.costumes.update(target.drawableID, this._effect);    
+        }
 
     }
     goBackwardLayers (nLayers) {
@@ -39225,10 +39244,13 @@ const Sprite = class extends Entity {
     update() {
         super.update();
         this._costumeProperties(this);
-        if(Env.bubbleScaleLinkedToSprite === true) {
-            this.bubble.updateScale(this.scale.x, this.scale.y);
+        // スプライトを消すとき bubbleを参照できない
+        if(this.bubble){
+            if(Env.bubbleScaleLinkedToSprite === true) {
+                this.bubble.updateScale(this.scale.x, this.scale.y);
+            }
+            this.bubble.moveWithSprite();    
         }
-        this.bubble.moveWithSprite();
     }
     moveSteps(steps) {
         const radians = MathUtils.degToRad(90 - this.direction);

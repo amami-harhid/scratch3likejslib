@@ -15,21 +15,27 @@ P.prepare = async function prepare() {
     P.cat = new P.Sprite("Cat");
     P.cat.addImage( P.images.Cat );
 }
+
+const direction01 = 1;
 P.setting = async function setting() {
 
     P.stage.whenFlag(function(){
+        // function(){} と書くとき、『this』は Proxy(stage)である
         this.addSound( P.sounds.Chill, { 'volume' : 100 } );
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
     P.cat.whenFlag(function(){
+        // function(){} と書くとき、『this』は Proxy(cat)である
         this.addSound( P.sounds.Mya, { 'volume' : 100 } );
     });
-    const direction = 1;
+
+    // { }の外側のスコープを参照できる
+    const direction02 = 1;
     P.cat.whenFlag( async function() {
         this.while(true, _=>{
-            this.direction += direction;
+            this.direction += direction01+direction02;
         });
     });
     P.cat.whenClicked(async function () {

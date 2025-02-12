@@ -1,6 +1,6 @@
 /**
- * Sample11
- * スプライト（CAT)を １秒で「どこかの」場所へ移動する
+ * Sample12
+ * スプライト（CAT)を クリックした場所へ移動する
  */
 
 P.preload = async function preload() {
@@ -28,13 +28,9 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         });
     });
-    P.cat.whenFlag(async function() {
-        this.while(true, async _=>{
-            // 繰り返すごとに 1秒待つ
-            await P.wait(1000);
-            // １秒でどこかへ行く
-            const randomPoint = P.randomPoint;
-            await this.glideToPosition(1,  randomPoint.x, randomPoint.y);
-        })
+    P.stage.whenClicked(async function() {
+        const x = P.mousePosition.x;
+        const y = P.mousePosition.y;
+        P.cat.moveTo(x,y)
     });
 }

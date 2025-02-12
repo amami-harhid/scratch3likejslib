@@ -16,7 +16,7 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
     
     // フラグをクリックしたときの動作
-    P.stage.whenFlag( async function() {
+    P.stage.whenFlag( _=> {
         // スプライトを作り、コスチュームを１個登録する
         P.cat = new P.Sprite("Cat");
         P.cat.addImage( P.images.Cat );

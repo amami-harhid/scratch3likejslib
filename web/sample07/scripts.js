@@ -18,22 +18,20 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
 
     // フラグクリック
-    P.stage.whenFlag( async function() {
+    P.stage.whenFlag( async stage=> {
         // 「終わるまで音を鳴らす」をずっと繰り返す、スレッドを起動する
-        console.log("stage")
-        await this.while( true, async _=> {
-            await this.startSoundUntilDone();
+        await stage.while( true, async _=> {
+            await stage.startSoundUntilDone();
         });
     });
 
     const catStep = 5;
     // フラグクリック
-    P.cat.whenFlag( async function() {
-        console.log("cat")
+    P.cat.whenFlag( async cat=> {
         // 「左右」に動く。端に触れたら跳ね返る。
-        await this.while( true, async _=> {
-            this.moveSteps(catStep);
-            this.ifOnEdgeBounds();
+        await cat.while( true, async _=> {
+            cat.moveSteps(catStep);
+            cat.ifOnEdgeBounds();
         });
     });
 

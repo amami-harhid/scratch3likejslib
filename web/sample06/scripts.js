@@ -21,16 +21,16 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
 
     // フラグをクリックしたときの動作
-    P.stage.whenFlag( async function() {
+    P.stage.whenFlag( _=> {
         P.cat.visible = true; // 表示
     });
 
     // スプライト（ネコ）をクリックしたときの動作
-    P.cat.whenClicked( function() {
+    P.cat.whenClicked( async cat=> {
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        this.while(true, async _=>{
+        cat.while(true, async _=>{
             // 処理が終わるまで待つために await をつける
-            await this.startSoundUntilDone();
+            await cat.startSoundUntilDone();
         });
     });
 }
