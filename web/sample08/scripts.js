@@ -59,41 +59,4 @@ P.setting = async function setting() {
             });
         });
     });
-
-
-/**
- * 複数の P.cat.whenFlag があり、ひとつの whenFlag()の中に、
- * this.while() があるとき、ひとつしか動かない。
- * ==> EntityのID をもつスレッドが２個以上あるとき、最初にみつけたスレッドの子Aの子Bとして
- *     whileスレッドを登録してしまう。そうすると 子Aが動かなくなる。
- * Hatsの定義ごとに スレッドIDを付与して他のスレッドに影響を与えないようにしたい。
- * ==> Obj.threadId として Hatを受けたときに UUIDを振る。
- * ==> Proxy で Entityを包みこみ、methodは Proxy経由で Entityインスタンスへ流す
- * ==> Proxyインスタンスが Hatsの中での 『this』にあたるようにする
- * ==> 2025/2/11 22:00 対応済。
- * ==> 一応、動作する。クローンされたときのHatでは対応漏れている。
- * 
- * また、this.while() に await をつけなくてもよい気がするが
- * 実際には await をつけないときは 動かない（すぐに動きが終わる）。
- * これはHatスレッドが終わると 子スレッドも終わる制御になっているから。
- * 親スレッドは done のときでも 子がdoneでないと終わってはいけなそう。
- * ==> 2025/2/11 18:40 対応済。
- */
-
-/*
-    // フラグクリック
-    P.cat.whenFlag( async function() {
-    });
- 
-    // フラグクリック
-    P.cat.whenFlag( async function() {
-        // 端に触れたらニャーと鳴く。
-        await this.while( true, async _=> {
-            this.isTouchingEdge(_=>{
-                this.soundPlay()
-            });
-        });
-    });
- */
-
 }
