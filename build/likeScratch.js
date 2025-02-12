@@ -12289,7 +12289,7 @@ const Loop = class{
 
     }
     static async while( condition, func , me) {
-        const entityId = me.threadId; //me.id;
+        const entityId = me.threadId; // me はproxyインスタンス
         // 自身のid をもつスレッドOBJを取り出す。
         const topObj = threads.getTopThreadObj(entityId);
         if(topObj == null){
@@ -12478,7 +12478,6 @@ class Threads {
                 }
             }
         }
-        _process._draw();
         // 終了したOBJは削除する
         const _arr = [];
         for(const obj of me.threadArr){
@@ -12488,6 +12487,7 @@ class Threads {
             }
         }
         me.threadArr = [..._arr];
+        _process._draw();
     }
 }
 const threads = Threads.getInstance();
@@ -12499,14 +12499,15 @@ module.exports = threads;
 
 /* WEBPACK VAR INJECTION */(function(process) {const Canvas = __webpack_require__(6);
 const Loop = __webpack_require__(14).Loop
+const EntityProxyExt = __webpack_require__(50)
 const Env = __webpack_require__(5);
 const EventEmitter = __webpack_require__(7).EventEmitter;
 const Looks = __webpack_require__(17);
 const MathUtils = __webpack_require__(18);
-const ProxyExt = __webpack_require__(50)
 const Process = __webpack_require__(0);
 const Rewrite = __webpack_require__(32);
 const Sounds = __webpack_require__(21);
+
 const Speech = __webpack_require__(77);
 const threads = __webpack_require__(15);
 const Utils = __webpack_require__(1);
@@ -12858,20 +12859,20 @@ const Entity = class extends EventEmitter{
         },0);
     }
     getProxyForHat(){
-        const proxy = ProxyExt.getProxy(this,(_)=>{
+        const proxy = EntityProxyExt.getProxy(this, _=>{
             throw 'NOT FOUND PROPERTY in TARGET';
         });
         return proxy;
     }
     async whenFlag (func) {
         const process = Process.default;
-        const threadId = this._generateUUID();
-        const proxy = this.getProxyForHat();
-        proxy.threadId = threadId;
         const me = this;
         process.flag.addEventListener('click', async (e)=>{
+            const threadId = me._generateUUID();
+            const proxy = me.getProxyForHat();
+            proxy.threadId = threadId;
+            me.startThread(func, proxy);
             e.stopPropagation();
-            proxy.startThread(func, proxy);
         });
     }
     whenMouseTouched (func) {
@@ -13065,12 +13066,13 @@ const Entity = class extends EventEmitter{
     startThread( func, entity ) {
         // async function*() を直接書くとWebPackでエラーが起こる。
         // しょうがないので テキストから生成する。
-        const threadId = entity.threadId;
+        const _entity = entity;
+        const threadId = _entity.threadId;
         const obj = threads.createObj();
         obj.entityId = threadId; //this.id;
         const src = 'const _f = func; return async function*(){await _f();}';
         const f = new Function(['func'], src);
-        const gen = f( func.bind(entity) );
+        const gen = f( func.bind(_entity) );
         obj.f = gen();
         threads.registThread( obj );
     }
@@ -23089,21 +23091,25 @@ process.umask = function() { return 0; };
 /* 50 */
 /***/ (function(module, exports) {
 
-module.exports = class ProxyExt{
-    
+const THREAD_ID = "threadId"
+module.exports = class EntityProxyExt { 
     static getProxy(obj, callback) {
         const proxy = new Proxy(obj, {
-            get(target, name) {
-                if (name in target) {
-                    return target[name];
-                }else{
-                    if(name in this) {
-                        return this[name];
-                    }
-                    callback(target, name);
+            get(target, name, receiver) {
+                if (name == THREAD_ID) {
+                    return this.threadId;
                 }        
+                return Reflect.get(...arguments);
+            },
+            set(target, name, value) {
+                if(name == THREAD_ID){
+                    this.threadId = value;
+                    return true;
+                }
+                return Reflect.set(...arguments);
             }
         });
+        
         return proxy;
     }
 }
@@ -39408,19 +39414,24 @@ const Sprite = class extends Entity {
         const judge = this.onEdgeBounds();
         if(judge  == null )  {
             if( this.touchingEdge === true) this.touchingEdge = false;
+            //console.log('isTouchingEdge 01')
             return false;
         }
         const nearestEdge = judge.nearestEdge;
         if(nearestEdge == '') {
             if( this.touchingEdge === true) this.touchingEdge = false;
+            //console.log('isTouchingEdge 02')
             return false;
         }
-        if(this.touchingEdge === true) return false; 
-
+        if(this.touchingEdge === true) {
+            //console.log('isTouchingEdge 03')
+            return false; 
+        }
         if(_callback) {
             const callback = _callback.bind(this);
             setTimeout(callback, 0);
         }
+        //console.log('isTouchingEdge 04')
 
         return true;
     }

@@ -19,44 +19,31 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
 
     P.stage.whenFlag(async function(){
-        console.log('stage whenFlag')
-        console.log(this);
         await this.addSound( P.sounds.Chill, { 'volume' : 100 } );
-        console.log('after addSound in stage whenFlag');
-
-        this.while(true, async _=>{
+        await this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
 
-    const catStep = 5;
+    const catStep = 10;
+
     P.cat.whenFlag( async function(){
-        console.log('cat whenFlag')
-        console.log(this);
         await this.addSound( P.sounds.Mya, { 'volume' : 50 } );
-        console.log('after addSound in cat whenFlag');
-        // 「左右」に動く。端に触れたら跳ね返る。
-        this.while( true, async _=> {
+    });
+
+    P.cat.whenFlag( async function(){
+        this.while( true, _=> {
             this.moveSteps(catStep);
             this.ifOnEdgeBounds();
         });
     });
-    P.cat.whenFlag( async function(){
-        await this.addSound( P.sounds.Mya, { 'volume' : 50 } );
-    });
+
     P.cat.whenFlag( async function(){
         // 「左右」に動く。端に触れたら跳ね返る。
-        this.while( true, async _=> {
-            this.moveSteps(catStep);
-            this.ifOnEdgeBounds();
-        });
-    });
-    P.cat.whenFlag( async function(){
-        // 「左右」に動く。端に触れたら跳ね返る。
-        this.while( true, async _=> {
+        await this.while( true, _=> {
             this.isTouchingEdge(_=>{
                 this.soundPlay()
-            });
+            })            
         });
     });
 }
