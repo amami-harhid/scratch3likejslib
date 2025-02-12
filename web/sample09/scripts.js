@@ -3,7 +3,12 @@
  * スプライトのクローンを作る（スプライトをクリックしたらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-
+/**
+ * クローンが本体の上に表示される。Scratch3 と異なる。
+ * クローンは本体の下に来るようにする
+ * クローンされた順番でクローンは下から上へ、全て本体の下。
+ * 他のスプライト（最背面）よりクローンは上に来ること。
+ */
 P.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
@@ -30,7 +35,6 @@ P.setting = async function setting() {
     const direction = 1;
     P.cat.whenFlag( async function() {
         this.while(true, _=>{
-            console.log(this.id);
             this.direction += direction;
         });
     });
@@ -38,10 +42,8 @@ P.setting = async function setting() {
         P.cat.clone();
     });
 
-    const catStep = 5;
+    const catStep = 2;
     P.cat.whenCloned( async function() {
-        console.log("Cloned")
-        console.log(this);  
         this.visible = true;
         this.while(true, _=>{
             this.moveSteps(catStep);

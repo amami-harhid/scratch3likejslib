@@ -13,9 +13,9 @@ P.prepare = async function prepare() {
 }
 P.setting = async function setting() {
     // すぐに実行する。
-    P.stage.whenRightNow( function(){
+    P.stage.whenRightNow( async function(){
         // ここでの『this』は P.stage である。
-        this.addSound( P.sounds.Chill, { 'volume' : 100 } );
+        await this.addSound( P.sounds.Chill, { 'volume' : 100 } );
     });
 
     // ステージをクリックしたときの動作

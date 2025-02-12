@@ -28,6 +28,8 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         })
     });
+
+    const catStep = 5;
     P.cat.whenFlag( async function(){
         console.log('cat whenFlag')
         console.log(this);
@@ -37,13 +39,27 @@ P.setting = async function setting() {
         this.while( true, async _=> {
             this.moveSteps(catStep);
             this.ifOnEdgeBounds();
+        });
+    });
+    P.cat.whenFlag( async function(){
+        await this.addSound( P.sounds.Mya, { 'volume' : 50 } );
+    });
+    P.cat.whenFlag( async function(){
+        // 「左右」に動く。端に触れたら跳ね返る。
+        this.while( true, async _=> {
+            this.moveSteps(catStep);
+            this.ifOnEdgeBounds();
+        });
+    });
+    P.cat.whenFlag( async function(){
+        // 「左右」に動く。端に触れたら跳ね返る。
+        this.while( true, async _=> {
             this.isTouchingEdge(_=>{
                 this.soundPlay()
             });
         });
     });
 
-    const catStep = 5;
 
 /**
  * 複数の P.cat.whenFlag があり、ひとつの whenFlag()の中に、
