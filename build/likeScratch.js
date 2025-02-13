@@ -12285,7 +12285,73 @@ const Loop = class{
     static continue(){
         throw Loop.CONTINUE;
     }
-    static async repeat( count, f ){
+    static _threadIdCheck(threadId){
+        // 自身のid をもつスレッドOBJを取り出す。
+        const topObj = threads.getTopThreadObj(threadId);
+        if(topObj == null){
+            console.log(threadId)
+            const err = "NOT FOUND OWN GROUP THREAD";
+            throw err;
+        }
+        if(topObj.threadId != threadId) {
+            throw "ERROR TOP OBJ"
+        }
+        const lastChildObj = threads.getLastChildObj(topObj);
+        if(lastChildObj.threadId != threadId) {
+            throw "ERROR Child OBJ"
+        }
+        return lastChildObj;
+    }
+    static async repeat( count, func, me ){
+        const threadId = me.threadId; // me はproxyインスタンス
+        const lastChildObj = Loop._threadIdCheck(threadId);
+        const obj = threads.createObj();//{f:null, done:false, visualFlag: true, childObj: null};
+        obj.threadId = threadId;
+        obj.entityId = me.id;
+        const src = 
+        `const _f = func; 
+        return async function*(){ 
+            for(let i=0; i<count; i++){
+                // 停止する
+                if(obj.forceExit == true){
+                    // 音がなっているときは止める。
+                    entity.soundStopImmediately();
+                    break;
+                }
+                obj.status = threads.RUNNING;
+                try{
+                    await _f(); //ここはかならずawait
+                    obj.status = threads.YIELD;
+                    yield;
+                }catch(e){
+                    if(e.toString() == Loop.BREAK){
+                        break;
+                    }else if(e.toString() == Loop.CONTINUE){
+                        continue;
+                        yield;
+                    }else{
+                        throw e;
+                    }
+                }finally{                
+                }
+            }
+        }
+        `;
+        const f = new Function(['threads', 'obj', 'count', 'entity', 'Loop', 'func'], src);
+        const gen = f(threads, obj, count, me, Loop, func.bind(me));
+        obj.f = gen();
+        //obj.entityId = me.id;
+        //threads.registThread( obj );
+        obj.parentObj = lastChildObj; // 親を設定
+        lastChildObj.childObj = obj;  // 子を設定
+        // 終わるまで待つ。
+        for(;;){
+            if(obj.done) {
+                lastChildObj.childObj = null; // 親から子を削除
+                break;
+            }
+            await Utils.wait(0.1);
+        }
 
     }
     static async while( condition, func , me) {
@@ -12564,6 +12630,7 @@ const Entity = class extends EventEmitter{
         this.life = Infinity;
         //console.log(Rewrite.default);
         this.modules = new Map();
+        Entity.broadcastReceivedFuncArr = Entity.broadcastReceivedFuncArr || [];
     }
     delete () {
         this.modules = null;
@@ -12826,38 +12893,94 @@ const Entity = class extends EventEmitter{
             }
         }
     }
-    whenBroadcastReceived(messageId, func){
-        const _rewriter = Rewrite.default;
-        const _func = _rewriter._rewrite(func); 
-        // ↑ _rewrite とは別を用意したい。
-        const _funcBinded = _func.bind(this);
 
+    /**
+     * messageId を使い EventEmitter.on を宣言する
+     * （他方からemitされたとき受け付け func を実行するため）
+     * なお、本メソッドが呼び出される都度、funcを配列に蓄積し、
+     * emitされたときは 蓄積したfuncをPromiseとして実行する。
+     * @param {*} messageId 
+     * @param {*} func 
+     */
+    whenBroadcastReceived(messageId, func){
+
+        //console.log("whenBroadcastReceived~"+messageId);
+        const me = this;
+        const threadId = me._generateUUID();
         const runtime = Process.default.runtime;
         const eventId = `message_${messageId}`;
-        const me = this;
-        runtime.on(eventId, function( modules, toTarget, ...args){
-            let isTarget = false;
-            if(toTarget.length == 0){
-                // 全てで受信
-                isTarget = true;
-            }else{
-                for(let i=0; i<toTarget.length;i++){
-                    const t = toTarget[i];
-                    if(this.id == t.id ) {
-                        isTarget = true;
-                        break;
+        // func をためる。
+        const funcArr = Entity.broadcastReceivedFuncArr;
+        let _foundElement = null;
+        for(const elem of funcArr){
+            if(elem.eventId == eventId){
+                _foundElement = elem;
+                break;
+            }
+        }
+        if(_foundElement){
+            _foundElement.funcArr.push( {"func":func, "threadId":threadId, "target":me} );
+        }else{
+            // 見つからなかったとき
+            _foundElement = {"eventId":eventId, "funcArr":[{"func":func, "threadId":threadId, "target":me}]};
+            funcArr.push(_foundElement);
+            /**
+             * 最初に受け付けたときの on 定義
+             * modules: 実行した処理のpromiseを入れる
+             * toTarget: ここに指定していない先は無視する
+             */
+            runtime.on(eventId, function( modules, toTarget, ...args){
+                //console.log(`recieved ==== ${eventId}`)
+                const funcArr = _foundElement.funcArr;
+                //console.log(funcArr);
+                for( const funcElement of funcArr){
+                    const _me = funcElement.target;
+                    let targetOn = false;
+                    if(toTarget.length == 0){
+                        targetOn = true;
+                    }else{
+                        const targetIdArr = [];
+                        for(const t of toTarget){
+                            targetIdArr.push(t.id);
+                        }                    
+                        if(targetIdArr.includes(_me.id)){
+                            targetOn = true;
+                        }
+                    }
+                    if(targetOn){
+                        _me._whenBroadcastReceivedStartThread(
+                            eventId, 
+                            modules,
+                            funcElement,
+                            ...args
+                        );
                     }
                 }
-            }
-            if(isTarget === true) {
-                const promise = _funcBinded( ...args );
-                const arr = modules.get(eventId);
-                arr.push(promise);
-                promise.catch(e=>{console.error('script=', func.toString()); throw new Error(e)});
-            }
-        })
+            });
+        }
     };
-
+    _whenBroadcastReceivedStartThread(eventId, modules, funcElement,...args){
+        const arr = modules.get(eventId);
+        const func = funcElement.func;
+        const threadId = funcElement.threadId;
+        const me = funcElement.target;
+        const proxy = me.getProxyForHat();
+        //console.log('threadId'+threadId);
+        proxy.threadId = threadId;
+        const obj = me.startThreadMessageRecieved(func, proxy, false, ...args);                    
+        //console.log(obj);
+        //console.log(proxy)
+        const promise = new Promise(async resolve=>{
+            for(;;){
+                if(obj.done){
+                     resolve();
+                     break;
+                }
+                await Utils.wait(0.1);
+            }
+        });
+        arr.push(promise);
+    }
     // すぐに実行する
     whenRightNow(func) {
         const me = this;
@@ -13092,6 +13215,28 @@ const Entity = class extends EventEmitter{
         const gen = f( func.bind(_entity),  _entity );
         obj.f = gen();
         threads.registThread( obj );
+        return obj;
+    }
+    startThreadMessageRecieved( func, entity , doubleRunable=true, ...args) {
+        // async function*() を直接書くとWebPackでエラーが起こる。
+        // しょうがないので テキストから生成する。
+        const _entity = entity;
+        const threadId = _entity.threadId;
+        const obj = threads.createObj();
+        obj.entityId = _entity.id;
+        obj.threadId = threadId; //this.id;
+        obj.entity = _entity;
+        obj.doubleRunable = doubleRunable;
+        // func がアロー式である場合、
+        // (1) funcの中の『this』は funcを定義した場所の上位階層のthisである。
+        // (2) funcの中の『this』を変更することはできないことに留意してほしい。
+        // (3) funcの引数として entityを渡すようにして アロー式 entity=>{ } の形にはできる
+        const src = 'return async function*(){await func(...args);}';
+        const f = new Function(['func', 'args'], src);
+        const gen = f( func.bind(_entity),  args );
+        obj.f = gen();
+        threads.registThread( obj );
+        return obj;
     }
     
     // これは使わない
@@ -13226,6 +13371,9 @@ const Entity = class extends EventEmitter{
 
     async while(condition, func) {
         await Loop.while(condition, func, this);
+    }
+    async repeat(count, func) {
+        await Loop.repeat(count, func, this);
     }
 }
 
