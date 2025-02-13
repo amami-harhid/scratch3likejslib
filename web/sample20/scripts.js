@@ -1,7 +1,10 @@
 /**
  * Sample20
- * 
- * 吹き出し(SAY, THINK)
+ * メッセージを送信受信し、フキダシ(SAY,THINK)を制御する
+ * メッセージはEventEmitterを使い実装している。
+ * EventEmitterは同一IDの受信(on)の定義は10個までの制限があるが、
+ * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
+ * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
 import {
     bubbleTextArr, 
