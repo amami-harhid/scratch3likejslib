@@ -1,6 +1,6 @@
 /**
- * Sample12
- * スプライト（CAT)を クリックした場所へ移動する
+ * Sample13
+ * スプライト（CAT) クリックした位置へ１秒で動く
  */
 
 P.preload = async function preload() {
@@ -19,9 +19,6 @@ P.prepare = async function prepare() {
 
 P.setting = async function setting() {
 
-    // ここはfunction式の中なので 【this】= P である
-    // ここをアロー式にすると 【this】= window となる
-
     P.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
         this.addSound( P.sounds.Chill, { 'volume' : 50 } );
@@ -33,10 +30,9 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         });
     });
-    P.stage.whenClicked(async _=> {
-        // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const x = P.mousePosition.x;
-        const y = P.mousePosition.y;
-        this.cat.moveTo(x,y)
+    P.stage.whenClicked(async function(){
+        // function() の中なので、【this】はProxy(stage)である。
+        const mousePosition = P.mousePosition;
+        await P.cat.glideToPosition( 1, mousePosition.x, mousePosition.y );
     });
 }

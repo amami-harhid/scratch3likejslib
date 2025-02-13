@@ -12289,10 +12289,14 @@ const Loop = class{
 
     }
     static async while( condition, func , me) {
+        if(me.isProxyTest == undefined){
+            throw "OBJECT IS NOT PROXY"
+        }
         const threadId = me.threadId; // me はproxyインスタンス
         // 自身のid をもつスレッドOBJを取り出す。
         const topObj = threads.getTopThreadObj(threadId);
         if(topObj == null){
+            console.log(threadId)
             const err = "NOT FOUND OWN GROUP THREAD";
             throw err;
         }
@@ -12306,7 +12310,6 @@ const Loop = class{
         //const parentObj = threads.nowExecutingObj; // 現在実行中のOBJを取り出す。
         const _condition = (typeof condition == 'function')? condition: ()=>condition;
         const obj = threads.createObj();//{f:null, done:false, visualFlag: true, childObj: null};
-        obj.hat = false; // Hat objectではない。
         obj.threadId = threadId;
         obj.entityId = me.id;
         const src = 
@@ -12444,7 +12447,6 @@ class Threads {
             entityId: null,
             childObj: null, 
             parentObj: null,
-            hat:true,
             entity: null,
             doubleRunable: true
         };
@@ -13077,7 +13079,6 @@ const Entity = class extends EventEmitter{
         const _entity = entity;
         const threadId = _entity.threadId;
         const obj = threads.createObj();
-        obj.hat = true;
         obj.entityId = _entity.id;
         obj.threadId = threadId; //this.id;
         obj.entity = _entity;
@@ -23108,6 +23109,7 @@ process.umask = function() { return 0; };
 /***/ (function(module, exports) {
 
 const THREAD_ID = "threadId"
+const IS_PROXY_TEST = "isProxyTest"
 module.exports = class EntityProxyExt { 
     static getProxy(obj, callback) {
         const proxy = new Proxy(obj, {
@@ -23115,6 +23117,9 @@ module.exports = class EntityProxyExt {
                 if (name == THREAD_ID) {
                     return this.threadId;
                 }        
+                if(name == IS_PROXY_TEST){
+                    return (_=>true);
+                }
                 return Reflect.get(...arguments);
             },
             set(target, name, value) {
@@ -39539,9 +39544,11 @@ const Sprite = class extends Entity {
         const f = function(){
             _stopper = true;
         }
-        const process = Process.default;
-        const runtime = process.runtime;
-        runtime.once(Sprite.EmitIdMovePromise, f);
+//        const process = Process.default;
+//        const runtime = process.runtime;
+//        runtime.once(Sprite.EmitIdMovePromise, f);
+// ( Sprite.EmitIdMovePromise ) は利用されていないです。
+
         return new Promise( async (resolve) => {
             const framesPerSecond = 1000 / Env.pace;
             const stepX = (x - this.position.x) / (sec * framesPerSecond);
@@ -39557,7 +39564,7 @@ const Sprite = class extends Entity {
                 me.setXY( me.position.x + stepX, me.position.y + stepY  );
                 if (i / framesPerSecond >= sec) {
                     me.setXY( x, y );
-                    runtime.removeListener(Sprite.EmitIdMovePromise, f);
+//                    runtime.removeListener(Sprite.EmitIdMovePromise, f);
                     clearInterval(interval);
                     resolve();
                 }

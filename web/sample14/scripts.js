@@ -1,6 +1,7 @@
 /**
- * Sample12
- * スプライト（CAT)を クリックした場所へ移動する
+ * Sample14
+ * スプライト（CAT) がマウスポインターを追いかける
+ * ステージの外に出てもマウスを追いかける（ウィンドウの外は監視できない）
  */
 
 P.preload = async function preload() {
@@ -19,9 +20,6 @@ P.prepare = async function prepare() {
 
 P.setting = async function setting() {
 
-    // ここはfunction式の中なので 【this】= P である
-    // ここをアロー式にすると 【this】= window となる
-
     P.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
         this.addSound( P.sounds.Chill, { 'volume' : 50 } );
@@ -33,10 +31,15 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         });
     });
-    P.stage.whenClicked(async _=> {
-        // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const x = P.mousePosition.x;
-        const y = P.mousePosition.y;
-        this.cat.moveTo(x,y)
+    P.cat.whenFlag(async function(){
+        // 1秒待ってからマウスカーソルを追跡する
+        await P.Utils.wait(1000);
+        this.while(true, async _=>{
+            // 枠内にあった最後の場所
+            const mousePosition = P.mousePosition;
+            // マウスカーソルの場所へ1秒かけて移動する
+            await P.cat.glideToPosition( 1, mousePosition.x, mousePosition.y );
+    
+        });
     });
 }

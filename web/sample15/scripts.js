@@ -1,6 +1,6 @@
 /**
- * Sample12
- * スプライト（CAT)を クリックした場所へ移動する
+ * Sample15
+ * スプライト（CAT) は端を越えて進めない。
  */
 
 P.preload = async function preload() {
@@ -19,9 +19,6 @@ P.prepare = async function prepare() {
 
 P.setting = async function setting() {
 
-    // ここはfunction式の中なので 【this】= P である
-    // ここをアロー式にすると 【this】= window となる
-
     P.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
         this.addSound( P.sounds.Chill, { 'volume' : 50 } );
@@ -33,10 +30,13 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         });
     });
-    P.stage.whenClicked(async _=> {
-        // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const x = P.mousePosition.x;
-        const y = P.mousePosition.y;
-        this.cat.moveTo(x,y)
+
+    const CAT_WALK_STEP = 5;
+    P.cat.whenFlag(async function(){
+        this.while(true, async _=>{
+            const mousePosition = P.mousePosition;
+            // マウスカーソルの場所へ1秒かけて移動する
+            this.moveSteps(CAT_WALK_STEP);
+        });
     });
 }
