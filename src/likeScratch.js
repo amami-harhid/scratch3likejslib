@@ -12,6 +12,6 @@ window.onload = async function(){
     P.threads.startAll();
 };
 const P = _P;
-export {P}
 
+export default TableCsv
 

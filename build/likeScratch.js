@@ -23007,7 +23007,8 @@ window.onload = async function () {
     P.threads.startAll();
 };
 var P = _P;
-exports.P = P;
+
+exports.default = TableCsv;
 
 /***/ }),
 /* 48 */
