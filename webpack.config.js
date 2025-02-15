@@ -7,7 +7,14 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, '/build'),
-        filename: '[name].js'
+        filename: '[name].js',
+        clean: true,
+        library: "likeScratchLib",
+        libraryTarget: "global", // global
+        iife: true, // --> when "umd", iife is true
+    },
+    experiments: {
+        outputModule: true,
     },
     module:{
         rules:[
@@ -15,6 +22,13 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel-loader"
+            },
+            {
+                test: /\/src\/*\.js$/,
+                loader: "exports-loader",
+                options: {
+                    exports: 'Process',
+                }
             }
         ]
     },
