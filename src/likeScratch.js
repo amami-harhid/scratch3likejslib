@@ -13,5 +13,5 @@ window.onload = async function(){
 };
 const P = _P;
 
-export {P};
+export default P;
 
