@@ -22990,6 +22990,9 @@ module.exports = UnicodeTrie;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var Process = __webpack_require__(0);
 var _P = Process.default;
 window.P = _P;
@@ -23003,6 +23006,8 @@ window.onload = async function () {
     await _P._init();
     P.threads.startAll();
 };
+var P = _P;
+exports.P = P;
 
 /***/ }),
 /* 48 */

@@ -11,3 +11,7 @@ window.onload = async function(){
     await _P._init();
     P.threads.startAll();
 };
+const P = _P;
+export {P}
+
+
