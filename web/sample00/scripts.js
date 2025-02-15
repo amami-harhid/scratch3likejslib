@@ -1,12 +1,18 @@
 /**
  * 何もしない場合のサンプル
  */
-P.preload = async _=> {
-    // Do nothing.
-};
-P.prepare = async _=> {
-    // Do nothing.
-};
-P.setting = async _=> {
-    // Do nothing.
-};
+import '../../build/likeScratchLib.js'
+(function(M, S){
+
+    M.preload = function() {
+        // Do nothing.
+    }
+    M.prepare = function() {
+        // Do nothing.
+    }
+    M.setting = function() {
+        // Do nothing.
+    };
+
+})(likeScratchLib.Main, likeScratchLib.Space);
+

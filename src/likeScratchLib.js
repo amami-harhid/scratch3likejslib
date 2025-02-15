@@ -4,15 +4,23 @@ import { Buffer } from 'buffer'
 window.Buffer = window.Buffer || Buffer
 
 const Process = require('../lib/process');
-const process = Process.default;
-const Element = process.Element;
+const Main = Process.default;
+const Element = Main.Element;
 
 Element.insertCss();
 
 window.onload = async function(){
-    await process._init();
-    process.threads.startAll();
+    await init();
 };
 
-export {process};
+const Space = {
+};
+
+const init = async function() {
+    await Main._init();
+    Main.threads.startAll();
+
+};
+
+export {Main, Space};
 
