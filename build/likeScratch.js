@@ -23008,7 +23008,7 @@ window.onload = async function () {
 };
 var P = _P;
 
-exports.P = P;
+exports.default = P;
 
 /***/ }),
 /* 48 */
