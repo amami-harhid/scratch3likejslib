@@ -3,7 +3,12 @@
  * 
  * Stage, Sprite クラスを継承した サブクラスを作る
  * 
- * 未完成
+ * 未完成  
+ * クローンを作るときは『クローンされたとき』の処理は
+ * 必ず HAT(『クローンされたとき』)で記述するべき。
+ * Sprite#cloneThen() の書き方は混乱の元なので禁止するべき。
+ * 
+ * Sprite#clone() は promise とはしないこと。
  */
 import {MyStage} from './stage.js'
 import {MyCat} from './cat.js'
@@ -39,6 +44,19 @@ P.setting = async function setting() {
             await this.startSoundUntilDone();
         })
     })
+    P.stage.whenFlag(async function(){
+        await P.Utils.wait(500);
+        let pitch = 1;
+        let picthPower = 0.01;
+        this.while(true, async function(){
+            pitch += picthPower;
+            if ( pitch > 3 || pitch < 0.5 ) picthPower *= -1;
+            P.spriteB.setSoundPitch( pitch );
+            P.spriteC.setSoundPitch( pitch );
+            P.spriteB.setSoundPitch( pitch);
+            P.spriteC.setSoundPitch( pitch);
+        });
+    });
     P.stage.whenClicked( async function() {
         // 横向きに反転させる
         const scale = this.scale;
@@ -46,67 +64,57 @@ P.setting = async function setting() {
         this.nextSound();
     });
     P.spriteA.whenFlag(async function(){
-        this.addSound( P.sounds.Boing , { 'volume' : 25 } ); 
-        this.addSound( P.sounds.Cat , { 'volume' : 25 } ); 
-        const MoveStepsA = 10;
-        const s = P.spriteA;
+        this.addSound( P.sounds.Boing , { 'volume' : 100 } ); 
+        this.addSound( P.sounds.Cat , { 'volume' : 100 } ); 
+    });
+    P.spriteA.whenFlag(async function(){
         this.while(true, _=>{
-            s.isTouchingEdge(function(){
-                s.soundPlay();
+            if(this.isTouchingEdge()){
+                this.soundSwitch(P.sounds.Cat)
+                this.soundPlay();
+            }
+        });
+    });
+    P.spriteA.whenFlag(async function(){
+        const MoveStepsA = 10;
+        const s = this;
+        this.while(true, _=>{
+            if(s.isTouchingEdge()){
                 const optionsX = {
                     'position':{
                         x: (Math.random() - 0.5) * 300, 
                         y: (Math.random() - 0.5) * 200
                     }, 
                     'scale':{x:100, y:100}, 
-                    effect:{'color' : 50}
+                    effect:{'color' : 20}
                 };
-                s.clone(optionsX).then(async (v)=>{
-                    P.stage.update();
-                    P.stage.draw();
+                s.clone(optionsX).then(async v => {
+                    v.visible = true;
+//                    console.log(v);
+//                    P.stage.update();
+//                    P.stage.draw();
                     //console.log('SpriteA クローンを作った')
                     const x = v;
-                    x.life = 1000; // およそ １秒間
+                    x.life = 2*1000; // およそ １０秒間
                     const cloneSteps = 10;
-                    setTimeout(async function(){
-                        for(;;) {
-                            x.moveSteps(cloneSteps);
-                            x.ifOnEdgeBounds();
-                            x.nextCostume();
-                            x.scale.x -= 0.5;
-                            x.scale.y -= 0.5;    
-                            await P.Utils.wait(P.wait_time);
-                        }                        
-                    })
+                    while(x.isAlive()){
+                        x.moveSteps(cloneSteps);
+                        x.ifOnEdgeBounds();
+                        x.nextCostume();
+                        x.scale.x -= 0.5;
+                        x.scale.y -= 0.5;
+                        await P.wait(33);    
+                    }
+                    x.soundSwitch(P.sounds.Boing)
+                    x.soundPlay();
                 }); 
-            });
+            }
             s.moveSteps(MoveStepsA);
             s.ifOnEdgeBounds();
             s.nextCostume();
         });
     });
     const optionsB = {'position': { x: P.spriteA.position.x+50, y: P.spriteA.position.y }}    
-    P.spriteA.whenFlag(async function(){
-        this.clone(optionsB);
-    });
-    P.spriteA.whenCloned(async function(){
-        const v = this;
-        v.clearEffect();
-        v.scale = { x:100, y:100 };
-        v.direction = Math.random() * 360;
-        v.whenClicked( async function() {
-            const scale = v.scale;
-            v.setScale( scale.x * -1, scale.y );
-        });
-        const s = v;
-        const _moveSteps = 10;
-        s.while(true, async _=>{
-            s.moveSteps(_moveSteps);
-            s.ifOnEdgeBounds();
-            s.nextCostume();
-            await P.Utils.wait(P.wait_time);
-        });
-    });
 
     P.spriteA.whenClicked( async function() {
         if( P.MoveStepsA == 3 ) {
@@ -114,5 +122,56 @@ P.setting = async function setting() {
         }else{
             P.MoveStepsA = 3;
         }
+    });
+
+    P.stage.whenRightNow(async function(){
+        
+        P.spriteA.clone(optionsB).then(async v=>{ //<--- アロー関数は不可です
+            console.log(this);
+            v.visible = true;
+            P.spriteB = v;
+            //v.addSound( P.sounds.Boing , { 'volume' : 25 } ); 
+            //v.addSound( P.sounds.Cat , { 'volume' : 25 } ); 
+            v.clearEffect();
+            v.scale = { x:100, y:100 };
+            v.direction = Math.random() * 360;
+            v.whenClicked( async function() {
+                const scale = v.scale;
+                v.setScale( scale.x * -1, scale.y );
+            });
+            const _moveSteps = 2;
+            while(v.isAlive()){
+                v.moveSteps(_moveSteps);
+                v.ifOnEdgeBounds();
+                v.nextCostume();
+                await P.wait(33);
+            }
+        });
+        P.spriteA.clone().then(async v=>{  //<--- アロー関数
+            P.spriteC = v;
+            v.visible = true;
+            //v.addSound( P.sounds.Boing , { 'volume' : 25 } ); 
+            //v.addSound( P.sounds.Cat , { 'volume' : 25 } ); 
+        
+            v.position = {x: P.spriteA.position.x-200, y: P.spriteA.position.y+20 };
+            v.scale = {x:50, y:50};
+            v.direction = Math.random() * 360;
+            v.clearEffect();
+            v.whenClicked( async function() {
+                const scale = v.scale;
+                v.setScale( scale.x * -1, scale.y );
+            });
+            P.stage.update();
+            P.stage.draw();
+            const MoveSteps = 1;
+            while(v.isAlive()){
+                v.moveSteps(MoveSteps);
+                v.ifOnEdgeBounds();
+                v.nextCostume();
+                await P.wait(33);
+            }
+        });
+            
+        
     });
 }

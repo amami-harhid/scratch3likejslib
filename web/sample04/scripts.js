@@ -3,27 +3,30 @@
  * ステージをクリック（タッチ）したときに音を鳴らす（ずっと繰り返し）
  */
 
-P.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
+// アロー関数として引数に Pインスタンスを受け取ることもできる。
+P.preload = $p => { 
+    $p.loadImage('../assets/Jurassic.svg','Jurassic');
+    $p.loadSound('../assets/Chill.wav','Chill');
 }
-P.prepare = async function prepare() {
-    P.stage = new P.Stage();
-    P.stage.addImage( P.images.Jurassic );
+P.prepare = $p => {
+    $p.stage = new P.Stage();
+    $p.stage.addImage( P.images.Jurassic );
 }
-P.setting = async function setting() {
+P.setting =  $p => {
+
     // すぐに実行する。
-    P.stage.whenRightNow( async $this=>{
-        // ここでの『this』は P.stage である。
-        await $this.addSound( P.sounds.Chill, { 'volume' : 100 } );
+    // アロー関数として インスタンス(this)を受け取る書き方もできる
+    $p.stage.whenRightNow( async $s=>{ 
+        // ここでの『$s』は P.stageの『this』 である。
+        await $s.addSound( P.sounds.Chill, { 'volume' : 100 } );
     });
 
     // ステージをクリックしたときの動作
-    P.stage.whenClicked( async $this=> {
+    $p.stage.whenClicked( async $s=> {
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        await $this.while(true, async _=>{
+        await $s.while(true, async _=>{
             // 処理が終わるまで待つために await をつける
-            await $this.startSoundUntilDone();
+            await $s.startSoundUntilDone();
         });
     });
 }

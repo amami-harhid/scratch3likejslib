@@ -380,7 +380,7 @@ const Process = class {
         main.classList.remove(Element.DISPLAY_NONE);
         // prepareメソッドの実行を開始する
         if( P.prepare ) {
-            await P.prepare();
+            await P.prepare(this);
             await P.Utils.wait(Env.pace);
             if( this._stage ) {
                 this._stage.update();
@@ -390,7 +390,7 @@ const Process = class {
     }
     async _setting () {
         if( P.setting ) {
-            await P.setting ();
+            await P.setting (this);
         }
     }
     // Element.init() 内から呼び出される。
@@ -12362,7 +12362,7 @@ const Loop = class{
         // 自身のid をもつスレッドOBJを取り出す。
         const topObj = threads.getTopThreadObj(threadId);
         if(topObj == null){
-            console.log(threadId)
+            //console.log(threadId)
             const err = "NOT FOUND OWN GROUP THREAD";
             throw err;
         }
@@ -12381,13 +12381,7 @@ const Loop = class{
         const src = 
         `const _f = func; 
         return async function*(){ 
-            while(condition()){
-                // 停止する
-                if(obj.forceExit == true){
-                    // 音がなっているときは止める。
-                    entity.soundStopImmediately();
-                    break;
-                }
+            while(condition() && !obj.forceExit){
                 obj.status = threads.RUNNING;
                 try{
                     await _f(); //ここはかならずawait
@@ -12404,6 +12398,10 @@ const Loop = class{
                     }
                 }finally{                
                 }
+            }
+            if(obj.forceExit){
+                // 音がなっているときは止める。
+                entity.soundStopImmediately();
             }
         }
         `;
@@ -12540,6 +12538,9 @@ class Threads {
         for(const obj of me.threadArr){
             //console.log('Threads interval obj');
             //console.log(obj);
+            if(!obj.entity.isAlive()){ // Entity生きていないとき
+                obj.forceExit = true; // 強制終了とする
+            }
             if(obj.status != me.STOP){
                 // obj.childObj が設定済のときは最終OBJを取り出す。
                 const _obj = me.getLastChildObj(obj);
@@ -12631,6 +12632,11 @@ const Entity = class extends EventEmitter{
         //console.log(Rewrite.default);
         this.modules = new Map();
         Entity.broadcastReceivedFuncArr = Entity.broadcastReceivedFuncArr || [];
+        this._isAlive = true;
+    }
+    isAlive(){
+        // スプライトの場合はオーバーライドしている
+        return true;
     }
     delete () {
         this.modules = null;
@@ -13001,12 +13007,22 @@ const Entity = class extends EventEmitter{
         const process = Process.default;
         const me = this;
         process.flag.addEventListener('click', async (e)=>{
-            const threadId = me._generateUUID();
-            const proxy = me.getProxyForHat();
-            proxy.threadId = threadId;
-            me.startThread(func, proxy);
+            me.hatProc(func);
+//            const threadId = me._generateUUID();
+//            const proxy = me.getProxyForHat();
+//            proxy.threadId = threadId;
+//            me.startThread(func, proxy);
             e.stopPropagation();
         });
+    }
+    hatProc(func){
+        const me = this;
+        const threadId = me._generateUUID();
+        const proxy = me.getProxyForHat();
+        proxy.threadId = threadId;
+        me.startThread(func, proxy);
+        return proxy;
+
     }
     whenMouseTouched (func) {
         const process = Process.default;
@@ -39315,7 +39331,21 @@ const Sprite = class extends Entity {
     isAlive() {
         return this._isAlive ==  true;
     }
+    /**
+     * クローンして 処理を実行する
+     * @param {*} options 
+     * @param {*} func 
+     */
+    /*
+    cloneThen(options, func){
+        
+        this.clone(options).then(async v=>{
 
+            v.hatProc(func);
+
+        });
+    }
+    */
     async clone(options = {}) {
         if(this.isClone == undefined){
             const newName = `${this.name}_${this.clones.length+1}`;
@@ -39471,6 +39501,7 @@ const Sprite = class extends Entity {
         return judge;
     }
     ifOnEdgeBounds() {
+        if(!this.isAlive()) return;
         const drawable = this.render.renderer._allDrawables[this.drawableID];
         if( drawable == null || drawable.skin == null) return;
         const bounds = this.render.renderer.getBounds(this.drawableID);
@@ -39533,6 +39564,7 @@ const Sprite = class extends Entity {
 
     }
     keepInFence(x, y) {
+        if(!this.isAlive()) return;
         const fencedPosition = this._keepInFence(x, y);
         if(fencedPosition){
             //console.log(fencedPosition);
@@ -39586,6 +39618,8 @@ const Sprite = class extends Entity {
         return [newX + dx, newY + dy];
     }
     isTouchingEdge (_callback){
+        if(!this.isAlive()) false;
+
         const judge = this.onEdgeBounds();
         if(judge  == null )  {
             if( this.touchingEdge === true) this.touchingEdge = false;
@@ -39611,6 +39645,8 @@ const Sprite = class extends Entity {
         return true;
     }
     isTouchingVirticalEdge (){
+        if(!this.isAlive()) return false;
+
         const touch = this.isTouchingEdge();
         if( touch === false) {
             return false;
@@ -39624,6 +39660,8 @@ const Sprite = class extends Entity {
     }
 
     isTouchingHorizontalEdge (){
+        if(!this.isAlive()) return false;
+
         const touch = this.isTouchingEdge();
         if( touch === false) {
             return false;
@@ -39665,6 +39703,8 @@ const Sprite = class extends Entity {
 */
 
     gotoRandomPosition() {
+        if(!this.isAlive()) return;
+
         const process = Process.default;
         const _x = (Math.random() - 0.5 ) * process.stageWidth;
         const _y = (Math.random() - 0.5 ) * process.stageHeight;
@@ -39680,6 +39720,7 @@ const Sprite = class extends Entity {
 
     }
     gotoSprite(sprite) {
+        if(!this.isAlive()) return;
         if( sprite instanceof Sprite ) {
             const _x = sprite.position.x;
             const _y = sprite.position.y;
@@ -39688,6 +39729,7 @@ const Sprite = class extends Entity {
     }
 
     glideToPosition(sec, x, y) {
+        if(!this.isAlive()) return;
         let _stopper = false;
         const f = function(){
             _stopper = true;
@@ -39723,6 +39765,7 @@ const Sprite = class extends Entity {
         return 'global'
     }
     pointToMouse ( _global = null ) {
+        if(!this.isAlive()) return;
         if( _global === Sprite.Global ){
             this.pointTowardsMouseCursolGlobal();
         }else{
@@ -39731,6 +39774,7 @@ const Sprite = class extends Entity {
     }
 
     pointToTarget( target ) {
+        if(!this.isAlive()) return;
 
         let dx = target.position.x - this.position.x;
         let dy = target.position.y - this.position.y;
@@ -39743,6 +39787,7 @@ const Sprite = class extends Entity {
     }
 
     pointInDerection( _d ) {
+        if(!this.isAlive()) return;
 
         if(_d < 0) {
             let _direction = _d % 360;
@@ -39760,14 +39805,17 @@ const Sprite = class extends Entity {
         }
     }
     setRotationStyle( _style ) {
+        if(!this.isAlive()) return;
         this.costumes.setRotationStyle( _style );
     }
 
     nextCostume() {
+        if(!this.isAlive()) return;
         this.costumes.nextCostume();
         this.ifOnEdgeBounds();
     }
     switchCostume( val ) {
+        if(!this.isAlive()) return;
         if( val ){
             if( typeof val === 'string') {
                 const _name = val;
@@ -39780,6 +39828,7 @@ const Sprite = class extends Entity {
         }
     }
     setVisible( _visible ) {
+        if(!this.isAlive()) return;
         this.updateVisible(_visible);
     }
 
@@ -39805,6 +39854,7 @@ const Sprite = class extends Entity {
     }
 
     say( text, secs, properties = {} ) {
+        if(!this.isAlive()) return;
         if( text && (typeof text) == 'string') {
             this.bubble.say( text , properties );
             return;
@@ -39813,6 +39863,7 @@ const Sprite = class extends Entity {
         this.bubble.destroyBubble();
     }
     sayForSecs( text, secs, properties={}) {
+        if(!this.isAlive()) return;
         this.say(text, properties);
         const me = this;
         return new Promise(resolve => {
@@ -39826,6 +39877,7 @@ const Sprite = class extends Entity {
     }
 
     think( text, properties = {} ) {
+        if(!this.isAlive()) return;
         if( text && (typeof text) == 'string') {
             this.bubble.think( text , properties );
             return;
@@ -39834,6 +39886,7 @@ const Sprite = class extends Entity {
         this.bubble.destroyBubble();
     }
     thinkForSecs( text, secs, properties={}) {
+        if(!this.isAlive()) return;
         this.think(text, properties);
         return new Promise(resolve => {
             this._bubbleTimeout = setTimeout(() => {

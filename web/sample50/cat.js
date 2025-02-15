@@ -5,11 +5,4 @@ export class MyCat extends P.Sprite {
     
     }
 
-    update() {
-        super.update();
-        if( this.life < 0 ) {
-            this.soundSwitch(P.sounds.Cat)
-            this.soundPlay();
-        }    
-    }
 }

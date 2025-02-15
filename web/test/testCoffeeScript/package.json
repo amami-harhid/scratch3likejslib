@@ -1,0 +1,15 @@
+{
+  "name": "scratch3likejstrial",
+  "version": "0.0.2",
+  "description": "Support using Scratch3 Libraries",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "amami-harhid",
+  "license": "ISC",
+  "devDependencies": {
+  },
+  "dependencies": {
+  }
+}

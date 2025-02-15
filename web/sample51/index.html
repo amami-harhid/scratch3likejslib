@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="utf-8">
+
+<script async type="module">
+    import {transpile, ScriptTarget} from "https://esm.sh/typescript@5.6.3?target=esnext";
+    import {minify} from "https://esm.sh/terser@5.36.0?target=esnext";
+
+    // esnext-polyfill
+    Uint8Array.prototype.toBase64 ??= function() {
+        return btoa(Array.from(this, (v) => String.fromCharCode(v)).join(""));
+    }
+
+    for(const {type, textContent} of document.getElementsByTagName("script")) {
+        if(type !== "text/typescript" || !textContent) {
+            continue;
+        }
+
+        const js = transpile(textContent, {
+            target: ScriptTarget.ESNext
+        });
+
+        const {code} = await minify(js, {
+            module: true
+        });
+
+        await import(`data:text/javascript;base64,${new TextEncoder().encode(code).toBase64()}`);
+    }
+</script>
+<script type="text/typescript" src="./scripts.ts"></script>
+
+<title>TypeScript on Web</title>
+</head>
+<body>
+  <h1>TypeScript on Web</h1>
+  <p>TypeScript realtime transpile and execution demo.</p>
+  <p>[Status] <span id="status">Processing...</span></p>
+</body>
+</html>

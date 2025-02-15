@@ -19,7 +19,9 @@ P.prepare = async function prepare() {
 P.setting = async function setting() {
 
     P.stage.whenFlag(async stage=>{
-        await stage.addSound( P.sounds.Chill, { 'volume' : 100 } );
+        // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
+        // stageのインスタンスは 『stage』の変数で受け取っている。
+        await stage.addSound( this.sounds.Chill, { 'volume' : 100 } );
         await stage.while(true, async _=>{
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await stage.startSoundUntilDone();
@@ -28,23 +30,23 @@ P.setting = async function setting() {
 
     const catStep = 10;
 
-    P.cat.whenFlag( async cat=>{
-        cat.addSound( P.sounds.Mya, { 'volume' : 5 } );
+    P.cat.whenFlag( async _cat=>{
+        _cat.addSound( P.sounds.Mya, { 'volume' : 5 } );
     });
 
-    P.cat.whenFlag( async cat=>{
+    P.cat.whenFlag( async _cat=>{
         // ずっと「左右」に動く。端に触れたら跳ね返る。
-        cat.while( true, _=> {
-            cat.moveSteps(catStep);
-            cat.ifOnEdgeBounds();
+        _cat.while( true, _=> {
+            _cat.moveSteps(catStep);
+            _cat.ifOnEdgeBounds();
         });
     });
 
-    P.cat.whenFlag( async cat=>{
+    P.cat.whenFlag( async _cat=>{
         // 端に触れたらニャーと鳴く。
-        await cat.while( true, _=> {
-            if(cat.isTouchingEdge()){
-                cat.soundPlay()
+        await _cat.while( true, _=> {
+            if(_cat.isTouchingEdge()){
+                _cat.soundPlay()
             }
         });
     });

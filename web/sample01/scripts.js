@@ -1,14 +1,14 @@
 /**
  * 背景を表示する
  */
-P.preload = async function() {
+P.preload = function() {
     // this を Processインスタンスと認識させるために、function(){} の形式にする。
     this.loadImage('../assets/Jurassic.svg','Jurassic');
 };
-P.prepare = async function() {
-    P.stage = new P.Stage();
-    P.stage.addImage( P.images.Jurassic );
+P.prepare = function() {
+    this.stage = new P.Stage();
+    this.stage.addImage( P.images.Jurassic );
 };
-P.setting = async function() {
+P.setting = function() {
     // Do nothing.
 };

@@ -22,15 +22,18 @@ P.setting = async function setting() {
 
     // フラグをクリックしたときの動作
     P.stage.whenFlag( _=> {
-        P.cat.visible = true; // 表示
+        // アロー関数なので、ここでの『this』はPである
+        this.cat.visible = true; // 表示
     });
 
     // スプライト（ネコ）をクリックしたときの動作
-    P.cat.whenClicked( async cat=> {
+    P.cat.whenClicked( async (ネコ) => {
+        // アロー関数なので、ここでの『this』はPである
+        // catのインスタンスは 『ネコ』として受け取っている。
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        cat.while(true, async _=>{
+        ネコ.while(true, async _=>{
             // 処理が終わるまで待つために await をつける
-            await cat.startSoundUntilDone();
+            await ネコ.startSoundUntilDone();
         });
     });
 }
