@@ -2,12 +2,15 @@
   "name": "scratch3likejstrial",
   "version": "0.1.1",
   "description": "Support using Scratch3 Libraries",
-  "main": "scratch3.js",
+  "main": "./lib",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "amami-harhid",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://github.com/amami-harhid/scratch3LikeJsLib"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.0.3",
