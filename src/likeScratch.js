@@ -13,5 +13,5 @@ window.onload = async function(){
 };
 const P = _P;
 
-export default TableCsv
+export default P
 
