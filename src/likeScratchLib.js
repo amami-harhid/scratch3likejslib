@@ -5,7 +5,7 @@ window.Buffer = window.Buffer || Buffer
 
 const Process = require('../lib/process');
 const Scratch = Process.default;
-const Element = Main.Element;
+const Element = Scratch.Element;
 
 Element.insertCss();
 
