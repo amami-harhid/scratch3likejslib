@@ -4,7 +4,7 @@ import { Buffer } from 'buffer'
 window.Buffer = window.Buffer || Buffer
 
 const Process = require('../lib/process');
-const Main = Process.default;
+const Scratch = Process.default;
 const Element = Main.Element;
 
 Element.insertCss();
@@ -17,10 +17,10 @@ const Space = {
 };
 
 const init = async function() {
-    await Main._init();
-    Main.threads.startAll();
+    await Scratch._init();
+    Scratch.threads.startAll();
 
 };
 
-export {Main, Space};
+export {Scratch, Space};
 
