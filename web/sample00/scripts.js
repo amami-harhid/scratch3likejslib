@@ -2,7 +2,7 @@
  * 何もしない場合のサンプル
  */
 import '../../build/likeScratchLib.js'
-(function(M, S){
+(function(L, M, S){
 
     M.preload = function() {
         // Do nothing.
@@ -14,5 +14,5 @@ import '../../build/likeScratchLib.js'
         // Do nothing.
     };
 
-})(likeScratchLib.Main, likeScratchLib.Space);
+})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
 

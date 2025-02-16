@@ -4,29 +4,32 @@
  */
 
 // アロー関数として引数に Pインスタンスを受け取ることもできる。
-P.preload = $p => { 
-    $p.loadImage('../assets/Jurassic.svg','Jurassic');
-    $p.loadSound('../assets/Chill.wav','Chill');
-}
-P.prepare = $p => {
-    $p.stage = new P.Stage();
-    $p.stage.addImage( P.images.Jurassic );
-}
-P.setting =  $p => {
+(function(L, M, S){
 
-    // すぐに実行する。
-    // アロー関数として インスタンス(this)を受け取る書き方もできる
-    $p.stage.whenRightNow( async $s=>{ 
-        // ここでの『$s』は P.stageの『this』 である。
-        await $s.addSound( P.sounds.Chill, { 'volume' : 100 } );
-    });
-
-    // ステージをクリックしたときの動作
-    $p.stage.whenClicked( async $s=> {
-        // 「終わるまで音を鳴らす」をずっと繰り返す
-        await $s.while(true, async _=>{
-            // 処理が終わるまで待つために await をつける
-            await $s.startSoundUntilDone();
+    M.preload = function($p) {
+        $p.loadImage('../assets/Jurassic.svg','Jurassic');
+        $p.loadSound('../assets/Chill.wav','Chill');
+    }
+    M.prepare = function($p) {
+        S.stage = new L.Stage();
+        S.stage.addImage( M.images.Jurassic );
+    }
+    M.setting = function($p) {
+        // すぐに実行する。
+        // アロー関数として インスタンス(this)を受け取る書き方もできる
+        S.stage.whenRightNow( async $s=>{ 
+            // ここでの『$s』は S.stageの『this』 である。
+            await $s.addSound( M.sounds.Chill, { 'volume' : 100 } );
         });
-    });
-}
+
+        // ステージをクリックしたときの動作
+        S.stage.whenClicked( async $s=> {
+            // 「終わるまで音を鳴らす」をずっと繰り返す
+            await $s.while(true, async _=>{
+                // 処理が終わるまで待つために await をつける
+                await $s.startSoundUntilDone();
+            });
+        });
+    };
+
+})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);

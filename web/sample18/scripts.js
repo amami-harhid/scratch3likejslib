@@ -5,7 +5,7 @@
  * 左矢印、右矢印で、シップが左右に動く。
  * スペースキーで 弾を発射（発射する弾はクローン）
  */
-
+const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
 P.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
@@ -14,27 +14,27 @@ P.preload = async function preload() {
     this.loadSound('../assets/Pew.wav','Pew');
 }
 P.prepare = async function prepare() {
-    P.stage = new P.Stage("stage");
-    P.stage.addImage( P.images.Jurassic );
+    Pool.stage = new Libs.Stage("stage");
+    Pool.stage.addImage( P.images.Jurassic );
 
-    P.cross = new P.Sprite("Cross");
-    P.cross.position.y = -P.stageHeight/2 * 0.6 
-    P.cross.addImage( P.images.Cross01 );
-    P.cross.addImage( P.images.Cross02 );
-    P.cross.setScale(100,100);
+    Pool.cross = new Libs.Sprite("Cross");
+    Pool.cross.position.y = -P.stageHeight/2 * 0.6 
+    Pool.cross.addImage( P.images.Cross01 );
+    Pool.cross.addImage( P.images.Cross02 );
+    Pool.cross.setScale(100,100);
 }
 
 P.setting = async function setting() {
 
-    P.stage.whenFlag(async function() {
+    Pool.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
         this.addSound( P.sounds.Chill, { 'volume' : 20 } );
     });
-    P.cross.whenFlag(async function(){
+    Pool.cross.whenFlag(async function(){
         this.addSound( P.sounds.Pew, { 'volume' : 100 } );
     });
 
-    P.stage.whenFlag(async function() {
+    Pool.stage.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
         this.while(true, async _=>{
             await this.startSoundUntilDone();
@@ -42,7 +42,7 @@ P.setting = async function setting() {
     });
 
     const MoveSteps = 15;
-    P.cross.whenFlag(async function(){
+    Pool.cross.whenFlag(async function(){
         this.direction = 90;
         this.while(true, async _=>{
             if(P.getKeyIsDown('RightArrow')){
@@ -53,7 +53,7 @@ P.setting = async function setting() {
             }
         });
     });
-    P.cross.whenFlag(async function(){
+    Pool.cross.whenFlag(async function(){
         this.while(true, async _=>{
             // 矢印キーを押しながら、スペースキーを検知させたい
             if(P.getKeyIsDown('Space')){
@@ -67,7 +67,7 @@ P.setting = async function setting() {
             }
         });
     });
-    P.cross.whenCloned(async function(){
+    Pool.cross.whenCloned(async function(){
         const c = this; // <--- cross instance;
         const bounds = c.render.renderer.getBounds(c.drawableID);
         const height = Math.abs(bounds.top - bounds.bottom);
@@ -75,7 +75,7 @@ P.setting = async function setting() {
         c.nextCostume();
         c.setVisible(true);
     });
-    P.cross.whenCloned( async function() {
+    Pool.cross.whenCloned( async function() {
         const c = this; // <--- cross instance;
         // while の後に処理があるときは await 忘れないようにしましょう
         await c.while(true, async _=>{
@@ -83,21 +83,18 @@ P.setting = async function setting() {
             const y = this.position.y;
             c.setXY(x,y+10);
             if(c.isTouchingEdge()){
-                console.log('isTougingEdge')
-                P.Loop.break();
+                Libs.Loop.break();
             }
         });
         c.remove();
     });
     const TURN_RIGHT_DEGREE= 15;
-    P.cross.whenCloned( async function() {
+    Pool.cross.whenCloned( async function() {
         const c = this; // <--- cross instance;
         // while の後に処理があるときは await 忘れないようにしましょう
         await c.while(true, async _=>{
-            c.turnRight(TURN_RIGHT_DEGREE);
             if(c.isTouchingEdge()){
-                console.log('isTougingEdge')
-                P.Loop.break();
+                Libs.Loop.break();
             }
         });
         c.remove();

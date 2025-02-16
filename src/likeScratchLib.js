@@ -2,10 +2,11 @@ import 'regenerator-runtime'
 import 'core-js'
 import { Buffer } from 'buffer'
 window.Buffer = window.Buffer || Buffer
-
+const Libs = require('../lib/libs');
 const Process = require('../lib/process');
-const Main = Process.default;
-const Element = Main.Element;
+const process = Process.default;
+const libs = Libs.default;
+const Element = process.Element;
 
 Element.insertCss();
 
@@ -13,14 +14,15 @@ window.onload = async function(){
     await init();
 };
 
-const Pool = {
+/** アプリデータ格納用（なんでも入る） */
+const pool = {
 };
 
 const init = async function() {
-    await Main._init();
-    Main.threads.startAll();
+    await process._init();
+    process.threads.startAll();
 
 };
 
-export {Main, Pool};
+export {libs, process, pool};
 

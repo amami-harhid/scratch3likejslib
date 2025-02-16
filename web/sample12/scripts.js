@@ -2,19 +2,19 @@
  * Sample12
  * スプライト（CAT)を クリックした場所へ移動する
  */
-
+const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
 P.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
 P.prepare = async function prepare() {
-    P.stage = new P.Stage("stage");
-    P.stage.addImage( P.images.Jurassic );
-    P.cat = new P.Sprite("Cat");
-    P.cat.position.x = 0;
-    P.cat.position.y = 0;
-    P.cat.addImage( P.images.Cat );
+    Pool.stage = new Libs.Stage("stage");
+    Pool.stage.addImage( P.images.Jurassic );
+    Pool.cat = new Libs.Sprite("Cat");
+    Pool.cat.position.x = 0;
+    Pool.cat.position.y = 0;
+    Pool.cat.addImage( P.images.Cat );
 }
 
 P.setting = async function setting() {
@@ -22,21 +22,21 @@ P.setting = async function setting() {
     // ここはfunction式の中なので 【this】= P である
     // ここをアロー式にすると 【this】= window となる
 
-    P.stage.whenFlag(async function() {
+    Pool.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
         this.addSound( P.sounds.Chill, { 'volume' : 50 } );
     });
 
-    P.stage.whenFlag(async function() {
+    Pool.stage.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         });
     });
-    P.stage.whenClicked(async _=> {
+    Pool.stage.whenClicked(async _=> {
         // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const x = P.mousePosition.x;
-        const y = P.mousePosition.y;
-        this.cat.moveTo(x,y)
+        const x = Libs.mousePosition.x;
+        const y = Libs.mousePosition.y;
+        Pool.cat.moveTo(x,y)
     });
 }

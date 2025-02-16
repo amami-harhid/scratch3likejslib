@@ -3,14 +3,14 @@
  * ＢＧＭは『終わるまで音を鳴らす』をずっと繰り返す。
  */
 import '../../build/likeScratchLib.js'
-(function(M, S){
+(function(L, M, S){
 
     M.preload = function() {
         this.loadImage('../assets/Jurassic.svg','Jurassic');
         this.loadSound('../assets/Chill.wav','Chill');
     }
     M.prepare = function() {
-        S.stage = new M.Stage();
+        S.stage = new L.Stage();
         S.stage.addImage( M.images.Jurassic );
     }
     M.setting = function() {
@@ -28,4 +28,4 @@ import '../../build/likeScratchLib.js'
         });
     };
 
-})(likeScratchLib.Main, likeScratchLib.Space);
+})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);

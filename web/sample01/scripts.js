@@ -2,7 +2,7 @@
  * 背景を表示する
  */
 import '../../build/likeScratchLib.js'
-(function(M, S){
+(function(L, M, S){
 
     M.preload = function() {
         // this を Processインスタンスと認識させるために、function(){} の形式にする。
@@ -16,4 +16,4 @@ import '../../build/likeScratchLib.js'
         // Do nothing.
     };
 
-})(likeScratchLib.Main, likeScratchLib.Space);
+})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
