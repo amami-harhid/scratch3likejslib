@@ -61,7 +61,7 @@ P.setting = async function setting() {
                 const options = {scale:{x:20,y:20},direction:0}
                 this.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
-                //await P.waitUntil( P.keyboard.isKeyNotPressed.bind(P.keyboard) );
+                await P.waitUntil( P.getKeyIsDown('Space'),  );
                 //【課題】↑ 
                 // bind でエラーになる , Proxy に関係している様子
             }
