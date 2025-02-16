@@ -6,6 +6,7 @@
  * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
  * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
+const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
 import {
     bubbleTextArr, 
     bubbleTextArr2, 
@@ -21,29 +22,29 @@ P.preload = async function preload() {
     this.loadImage('../assets/cat2.svg','Cat2');
 }
 P.prepare = async function prepare() {
-    P.stage = new P.Stage("stage");
-    P.stage.addImage( P.images.BackDrop );
+    Pool.stage = new Libs.Stage("stage");
+    Pool.stage.addImage( P.images.BackDrop );
 
-    P.cat = new P.Sprite("Cat");
-    P.cat.setRotationStyle( P.RotationStyle.LEFT_RIGHT );
-    P.cat.addImage( P.images.Cat1 );
-    P.cat.addImage( P.images.Cat2 );
-    P.cat.position = {x: -150, y: 0}
-    P.cat.direction = 90;
-    P.cat2 = new P.Sprite("Cat2");
-    P.cat2.setRotationStyle( P.RotationStyle.LEFT_RIGHT );
-    P.cat2.addImage( P.images.Cat1 );
-    P.cat2.addImage( P.images.Cat2 );
-    P.cat2.direction = -90;
-    P.cat2.position = {x: 150, y: 0}
+    Pool.cat = new Libs.Sprite("Cat");
+    Pool.cat.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    Pool.cat.addImage( P.images.Cat1 );
+    Pool.cat.addImage( P.images.Cat2 );
+    Pool.cat.position = {x: -150, y: 0}
+    Pool.cat.direction = 90;
+    Pool.cat2 = new Libs.Sprite("Cat2");
+    Pool.cat2.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    Pool.cat2.addImage( P.images.Cat1 );
+    Pool.cat2.addImage( P.images.Cat2 );
+    Pool.cat2.direction = -90;
+    Pool.cat2.position = {x: 150, y: 0}
 }
 
 P.setting = async function setting() {
 
     const BubbleScale = {scale:{x:100,y:100}};
-    P.stage.whenFlag( async function() {
+    Pool.stage.whenFlag( async function() {
         // 1秒待つ
-        await P.wait(1000);
+        await Libs.wait(1000);
         
         // (↓)順番にメッセージを送って待つ
 
@@ -62,7 +63,7 @@ P.setting = async function setting() {
         this.broadcast(MessageTAIJYO);
 
     });
-    P.cat.whenBroadcastReceived(MessageCat1Say, async function() {
+    Pool.cat.whenBroadcastReceived(MessageCat1Say, async function() {
         const me = this;
         // 上下に揺らす。
         await me.repeat(10, _=>{
@@ -72,42 +73,42 @@ P.setting = async function setting() {
             me.setXY(me.position.x, me.position.y-2);
         });
     });
-    P.cat.whenBroadcastReceived(MessageCat1Say, async function(text,time) {
+    Pool.cat.whenBroadcastReceived(MessageCat1Say, async function(text,time) {
         // Cat の フキダシ を出す
-        console.log('CAT フキダシ time='+time + " text="+text);
+        //console.log('CAT フキダシ time='+time + " text="+text);
         if(time>0) {
             await this.sayForSecs(text, time, BubbleScale);
         }else{
             this.say(text);
         }
     });
-    P.cat.whenBroadcastReceived(MessageTAIJYO, async function() {
+    Pool.cat.whenBroadcastReceived(MessageTAIJYO, async function() {
         // Cat 退場
-        console.log('Cat 退場');
+        //console.log('Cat 退場');
         this.say('');
         this.direction *= -1;
         await this.while(true, _=>{
             this.moveSteps(5);
             if(this.isTouchingEdge()) {
-                P.Loop.break();
+                Libs.Loop.break();
             }
         });
         this.visible = false; 
     });
-    P.cat2.whenBroadcastReceived(MessageTAIJYO, async function() {
+    Pool.cat2.whenBroadcastReceived(MessageTAIJYO, async function() {
         // Cat2 退場
-        console.log('Cat2 退場');
+        //console.log('Cat2 退場');
         this.say('');
         this.direction *= -1;
         await this.while(true, _=>{
             this.moveSteps(5);
             if(this.isTouchingEdge()) {
-                P.Loop.break();
+                Libs.Loop.break();
             }
         });
         this.visible = false;         
     });
-    P.cat2.whenBroadcastReceived(MessageCat2Say, async function() {
+    Pool.cat2.whenBroadcastReceived(MessageCat2Say, async function() {
         const me = this;
         // 上下に揺らす。
         await me.repeat(10, _=>{
@@ -117,32 +118,32 @@ P.setting = async function setting() {
             me.setXY(me.position.x, me.position.y-2);
         });    
     });
-    P.cat2.whenBroadcastReceived(MessageCat2Say, async function(text="", time=-1) {
+    Pool.cat2.whenBroadcastReceived(MessageCat2Say, async function(text="", time=-1) {
         // Cat2 の フキダシ を出す
-        console.log('CAT2 フキダシ time='+time + " text="+text);
+        //console.log('CAT2 フキダシ time='+time + " text="+text);
         if(time>0) {
             await this.sayForSecs(text, time, BubbleScale);
         }else{
             this.say(text);
         }    
     });
-    P.cat2.whenBroadcastReceived(MessageCat2Think, async function(text="", time=-1) {
+    Pool.cat2.whenBroadcastReceived(MessageCat2Think, async function(text="", time=-1) {
         // Cat2 の フキダシ を出す
-        console.log('CAT2 フキダシ time='+time + " text="+text);
+        //console.log('CAT2 フキダシ time='+time + " text="+text);
         if(time>0) {
             await this.thinkForSecs(text, time);
         }else{
             this.think(text);
         }    
     });
-    P.cat.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
+    Pool.cat.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
         // それでは、という
-        console.log('CAT フキダシ time='+time + " text="+text);
+        //console.log('CAT フキダシ time='+time + " text="+text);
         await this.thinkForSecs(text, time);
     });
-    P.cat2.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
+    Pool.cat2.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
         // それでは、という
-        console.log('CAT2 フキダシ time='+time + " text="+text);
+        //console.log('CAT2 フキダシ time='+time + " text="+text);
         await this.sayForSecs(text, time);
     });
 

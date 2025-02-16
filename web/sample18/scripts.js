@@ -45,10 +45,10 @@ P.setting = async function setting() {
     Pool.cross.whenFlag(async function(){
         this.direction = 90;
         this.while(true, async _=>{
-            if(P.getKeyIsDown('RightArrow')){
+            if(P.keyIsDown('RightArrow')){
                 this.moveSteps(MoveSteps);
             }
-            if(P.getKeyIsDown('LeftArrow')){
+            if(P.keyIsDown('LeftArrow')){
                 this.moveSteps(-MoveSteps);
             }
         });
@@ -56,14 +56,12 @@ P.setting = async function setting() {
     Pool.cross.whenFlag(async function(){
         this.while(true, async _=>{
             // 矢印キーを押しながら、スペースキーを検知させたい
-            if(P.getKeyIsDown('Space')){
+            if(Libs.keyIsDown('Space')){
                 this.soundPlay();
                 const options = {scale:{x:20,y:20},direction:0}
                 this.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
-                await P.waitUntil( P.getKeyIsDown('Space'),  );
-                //【課題】↑ 
-                // bind でエラーになる , Proxy に関係している様子
+                //await Libs.waitWhile( ()=>Libs.keyIsDown('Space'));
             }
         });
     });

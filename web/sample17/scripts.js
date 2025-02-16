@@ -55,7 +55,7 @@ P.setting = async function setting() {
         this.while(true, async _=>{
             if ( this.isMouseTouching() ) {
                 this.nextCostume();
-                await Libs.waitUntil( this.isNotMouseTouching, this);
+                await Libs.waitWhile( ()=>this.isMouseTouching());
                 this.nextCostume();
             }
         });
