@@ -43,8 +43,8 @@ P.setting = async function setting() {
                 await this.broadcastAndWait('SPEECH', words, properties, 'male');
                 
                 // 「送って待つ」を使うことで スピーチが終わるまで次のループに進まないため、
-                // 以下の「マウスタッチしない迄待つ」のコードが不要である。
-                //await P.Utils.waitUntil( this.isNotMouseTouching, P.Env.pace,  this ); 
+                // 以下の「マウスタッチしている間、待つ」のコードが不要である。
+                await P.Utils.waitWhile( ()=>this.isMouseTouching()); 
             }else{
                 this.say(""); // フキダシを消す
             }
