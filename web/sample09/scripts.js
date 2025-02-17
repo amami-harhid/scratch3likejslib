@@ -22,14 +22,14 @@ Process.setting = async function setting() {
 
     Pool.stage.whenFlag(function(){
         // function(){} と書くとき、『this』は Proxy(stage)である
-        this.addSound( Process.sounds.Chill, { 'volume' : 100 } );
+        this.addSound( Process.sounds.Chill, { 'volume' : 50 } );
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         })
     });
     Pool.cat.whenFlag(function(){
         // function(){} と書くとき、『this』は Proxy(cat)である
-        this.addSound( Process.sounds.Mya, { 'volume' : 100 } );
+        this.addSound( Process.sounds.Mya, { 'volume' : 30 } );
     });
 
     // { }の外側のスコープを参照できる
@@ -40,7 +40,7 @@ Process.setting = async function setting() {
         });
     });
     Pool.cat.whenClicked(async function () {
-        this.soundPlay();
+        //this.soundPlay();
         this.clone();
     });
 
@@ -50,6 +50,10 @@ Process.setting = async function setting() {
         this.while(true, _=>{
             this.moveSteps(catStep);
             this.ifOnEdgeBounds();
+            if(this.isTouchingEdge() ){
+                // ミャーと鳴く。
+                this.soundPlay()
+            }        
         });
     });
 }

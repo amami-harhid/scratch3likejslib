@@ -4,6 +4,7 @@
   "description": "Support using Scratch3 Libraries",
   "main": "./lib",
   "scripts": {
+    "webpackD": "npx webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "amami-harhid",

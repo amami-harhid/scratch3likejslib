@@ -22,7 +22,7 @@ Process.setting = async function setting() {
     Pool.stage.whenFlag(async stage=>{
         // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
         // stageのインスタンスは 『stage』の変数で受け取っている。
-        await stage.addSound( this.sounds.Chill, { 'volume' : 100 } );
+        await stage.addSound( this.sounds.Chill, { 'volume' : 50 } );
         await stage.while(true, async _=>{
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await stage.startSoundUntilDone();
@@ -32,7 +32,7 @@ Process.setting = async function setting() {
     const catStep = 10;
 
     Pool.cat.whenFlag( async _cat=>{
-        _cat.addSound( Process.sounds.Mya, { 'volume' : 5 } );
+        _cat.addSound( Process.sounds.Mya, { 'volume' : 50 } );
     });
 
     Pool.cat.whenFlag( async _cat=>{
@@ -40,16 +40,11 @@ Process.setting = async function setting() {
         _cat.while( true, _=> {
             _cat.moveSteps(catStep);
             _cat.ifOnEdgeBounds();
-        });
-    });
-
-    Pool.cat.whenFlag( async _cat=>{
-        // 端に触れたらニャーと鳴く。
-        await _cat.while( true, _=> {
             if(_cat.isTouchingEdge()){
                 _cat.soundPlay()
             }
         });
     });
+
 
 }

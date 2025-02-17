@@ -11,18 +11,19 @@ const Element = process.Element;
 Element.insertCss();
 
 window.onload = async function(){
-    await init();
+    init();
 };
 
 /** アプリデータ格納用（なんでも入る） */
-const pool = {
-};
+const pool = process.dataPool;
 
 const init = async function() {
     await process._init();
-    process.threads.startAll();
+    //process.threads.startAll();
 
 };
+
+
 
 export {libs, process, pool};
 
