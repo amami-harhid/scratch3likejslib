@@ -6,8 +6,9 @@
  * broadcastAndWait にて音声スピーチが終わりを検知できるようにしました。
  * 
  * 【課題】
- * ネコを何度もクリックすると 音声スピーチが被って聞こえます。
- * 音声スピーチを途中でキャンセルしたいところだが、仕組み検討します。
+ * ネコを何度もクリックすると 音声スピーチが二重に被って聞こえてしまう。
+ * 二重にかぶるときは先のスピーチを途中でキャンセルしたいところだが、
+ * スピーチキャンセルの仕組みが難しそうなので、本スクリプト内でフラグを使い二重回避をしている。
  * 
  */
 import '../../build/likeScratchLib.js'
@@ -56,16 +57,20 @@ Pg.setting = async function setting() {
         });
     });
     // ネコをクリックしたらお話する
+    let catSpeeking = false;
     St.cat.whenClicked(async function(){
         const words = `そこそこ。そこがかゆいの。`;
         const properties = {'pitch': 1.7, 'volume': 500}
-        await this.broadcastAndWait('SPEECH', words, properties, 'female')
+        if(catSpeeking === false){
+            catSpeeking = true;
+            await this.broadcastAndWait('SPEECH', words, properties, 'female');
+            catSpeeking = false;
+        }
     });
     
     St.cat.whenBroadcastReceived('SPEECH', async function(words, properties, gender='male', locale='ja-JP') {
         // speechAndWait に await をつけて、音声スピーチが終わるまで待つ。
         await this.speechAndWait(words, properties, gender, locale);
-
     });
 
 }
