@@ -16,30 +16,35 @@
  * https://synthesis-service.scratch.mit.edu/synth?locale=ja-JP&gender=male&text=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
  * 
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample21】スピーチ機能：ネコに触る、タッチするとお話しをする"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
-    Pool.cat = new Libs.Sprite("Cat");
-    Pool.cat.addImage( P.images.Cat );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.addImage( Images.Cat );
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async function(){
-        await this.addSound( P.sounds.Chill, { 'volume' : 20 } );
+    St.stage.whenFlag(async function(){
+        await this.addSound( Sounds.Chill, { 'volume' : 20 } );
         await this.while(true, async _=>{
             await this.startSoundUntilDone();
         });
     })
     
     // ネコにさわったらお話する
-    Pool.cat.whenFlag( async function(){
+    St.cat.whenFlag( async function(){
         this.__waitTouching = false;
         const words = `おっと`;
         const properties = {'pitch': 2, 'volume': 100}
@@ -54,13 +59,13 @@ P.setting = async function setting() {
         });
     });
     // ネコをクリックしたらお話する
-    Pool.cat.whenClicked(function(){
+    St.cat.whenClicked(function(){
         const words = `そこそこ`;
         const properties = {'pitch': 1.7, 'volume': 500}
         this.broadcast('SPEAK', words, properties, 'female')
     });
     
-    Pool.cat.whenBroadcastReceived('SPEAK', async function(words, properties, gender='male', locale='ja-JP') {
+    St.cat.whenBroadcastReceived('SPEAK', async function(words, properties, gender='male', locale='ja-JP') {
 
         this.speech(words, properties, gender, locale);
 

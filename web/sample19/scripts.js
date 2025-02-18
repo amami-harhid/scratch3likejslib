@@ -3,45 +3,56 @@
  * 
  * 吹き出し(SAY, THINK)
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-import {bubble, bubbleTextArr, bubble2, bubbleTextArr2} from './bubble.js';
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
 
-P.preload = async function preload() {
+Pg.title = "【Sample19】いろんな文字列でフキダシ(言う, 思う)。20秒間。"
+
+import {bubble, bubbleTextArr, bubble2, bubbleTextArr2} from './bubble.js'
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadImage('../assets/cat.svg','Cat1');
     this.loadImage('../assets/cat2.svg','Cat2');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
 
-    Pool.cat = new Libs.Sprite("Cat");
-    Pool.cat.addImage( P.images.Cat1 );
-    Pool.cat.addImage( P.images.Cat2 );
-    Pool.cat.direction = 75;
-    Pool.cat2 = new Libs.Sprite("Cat2");
-    Pool.cat2.addImage( P.images.Cat1 );
-    Pool.cat2.addImage( P.images.Cat2 );
-    Pool.cat2.direction = 115;
-    Pool.cat2.position = {x: -20, y: -120}
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.addImage( Images.Cat1 );
+    St.cat.addImage( Images.Cat2 );
+    St.cat.direction = 75;
+    St.cat2 = new Libs.Sprite("Cat2");
+    St.cat2.addImage( Images.Cat1 );
+    St.cat2.addImage( Images.Cat2 );
+    St.cat2.direction = 115;
+    St.cat2.position = {x: -20, y: -120}
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
     const WALK_STEP = 1;
-    Pool.cat.whenFlag( async function() {
+    St.cat.whenFlag( async function() {
         this.while(true, async _=>{
             this.ifOnEdgeBounds();
             this.moveSteps(WALK_STEP);
+            if( bubble.exit === true) {
+                Libs.Loop.break();
+            }
         });
     });
-    Pool.cat.whenFlag( async function() {
+    St.cat.whenFlag( async function() {
         await Libs.wait(100)
         this.while(true, async _=>{
             this.nextCostume();
             await Libs.wait(100)
+            if( bubble.exit === true) {
+                Libs.Loop.break();
+            }
         });
     });
-    Pool.cat.whenFlag( async function() {
+    St.cat.whenFlag( async function() {
         await Libs.wait(100)
         const MOVE_STEP = 2;
         const SCALE = {MIN:50, MAX:150};
@@ -54,9 +65,12 @@ P.setting = async function setting() {
                 this.setScale(this.scale.x + MOVE_STEP, this.scale.y + MOVE_STEP);
                 if(this.scale.x > SCALE.MAX) Libs.Loop.break();
             });
+            if( bubble.exit === true) {
+                Libs.Loop.break();
+            }
         });
     });
-    Pool.cat.whenFlag( async function() {
+    St.cat.whenFlag( async function() {
         let counter = 0;
         this.while(true, async _=>{
             const text = bubbleTextArr[ Math.ceil(Math.random() * bubbleTextArr.length) - 1 ];
@@ -78,13 +92,16 @@ P.setting = async function setting() {
             await Libs.wait(500)
         });
     });
-    Pool.cat2.whenFlag( async function() {
+    St.cat2.whenFlag( async function() {
         this.while(true, async _=>{
             this.ifOnEdgeBounds();
             this.moveSteps(WALK_STEP);
+            if( bubble.exit === true) {
+                Libs.Loop.break();
+            }
         });
     });
-    Pool.cat2.whenFlag( async function() {
+    St.cat2.whenFlag( async function() {
         let scale = {x: 60, y:60};
         this.while(true, async _=>{
             const text = bubbleTextArr2[ Math.ceil(Math.random() * bubbleTextArr2.length) - 1 ]
@@ -97,7 +114,7 @@ P.setting = async function setting() {
         });
     });
 
-    Pool.stage.whenFlag( async function() {
+    St.stage.whenFlag( async function() {
         await Libs.wait(20*1000); // 20秒たったらバブルループを終わらせる。
         bubble.exit = true;
         bubble2.exit = true;

@@ -7,8 +7,13 @@
  * クローンを削除するメソッドを用意したい。
  * クローン削除されるとき、そのクローンで動いているスレッドも消すこと
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample17】十字にマウスポインターが触れたら 蝶のクローンを作る"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cross1.svg','Cross01');
@@ -16,29 +21,29 @@ P.preload = async function preload() {
     this.loadImage('../assets/butterfly1.svg','Butterfly01');
     this.loadImage('../assets/butterfly2.svg','Butterfly02');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
 
-    Pool.cross = new Libs.Sprite("Cross");
-    Pool.cross.addImage( P.images.Cross01 );
-    Pool.cross.addImage( P.images.Cross02 );
-    Pool.cross.setScale(300,300);
+    St.cross = new Libs.Sprite("Cross");
+    St.cross.addImage( Images.Cross01 );
+    St.cross.addImage( Images.Cross02 );
+    St.cross.setScale(300,300);
 
-    Pool.butterfly = new Libs.Sprite("Butterfly");
-    Pool.butterfly.addImage( P.images.Butterfly01 );
-    Pool.butterfly.addImage( P.images.Butterfly02 );
-    Pool.butterfly.setVisible(false);
+    St.butterfly = new Libs.Sprite("Butterfly");
+    St.butterfly.addImage( Images.Butterfly01 );
+    St.butterfly.addImage( Images.Butterfly02 );
+    St.butterfly.setVisible(false);
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        this.addSound( P.sounds.Chill, { 'volume' : 20 } );
+        this.addSound( Sounds.Chill, { 'volume' : 20 } );
     });
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
         this.while(true, async _=>{
             await this.startSoundUntilDone();
@@ -46,12 +51,12 @@ P.setting = async function setting() {
     });
 
     const ChangeDirection = 1;
-    Pool.cross.whenFlag(async function(){
+    St.cross.whenFlag(async function(){
         this.while(true, async _=>{
             this.turnRight(ChangeDirection);
         });
     });
-    Pool.cross.whenFlag(async function(){
+    St.cross.whenFlag(async function(){
         this.while(true, async _=>{
             if ( this.isMouseTouching() ) {
                 this.nextCostume();
@@ -60,10 +65,10 @@ P.setting = async function setting() {
             }
         });
     });
-    Pool.cross.whenFlag(async function(){
+    St.cross.whenFlag(async function(){
         this.while(true, async _=>{
-            if ( this.isNotMouseTouching() ) {
-                const butterfly = Pool.butterfly;
+            if ( this.isMouseTouching() ) {
+                const butterfly = St.butterfly;
                 const mousePosition = Libs.mousePosition;
                 butterfly.position.x = mousePosition.x;
                 butterfly.position.y = mousePosition.y;
@@ -71,15 +76,15 @@ P.setting = async function setting() {
                 butterfly.scale.x = scale.x;
                 butterfly.scale.y = scale.y;
                 butterfly.direction = Libs.randomDirection;
-                await Pool.butterfly.clone();
+                await St.butterfly.clone();
                 // 下をコメントアウトすると、十字にさわっている間は クローンを作り続ける
                 // 下を生かすと、十字に触ったときにクローンを作るが、次には進まない
-                await Libs.waitUntil( this.isNotMouseTouching, this); // 「マウスポインターが触らない」迄待つ。
-                //await P.Utils.wait(100); // 100ミリ秒待つ。 <== クローン発生する間隔
+                //await Libs.waitUntil( this.isNotMouseTouching, this); // 「マウスポインターが触らない」迄待つ。
+                await Libs.wait(100); // 100ミリ秒待つ。 <== クローン発生する間隔
             }
         });
     });
-    Pool.butterfly.whenCloned( function() {
+    St.butterfly.whenCloned( function() {
         const clone = this;
         clone.while(true, async _=>{
             if(clone.life > 0 ){
@@ -90,7 +95,7 @@ P.setting = async function setting() {
             }
         });
     });
-    Pool.butterfly.whenCloned( function() {
+    St.butterfly.whenCloned( function() {
         const clone = this;
         clone.setVisible(true);
         clone.life = 5000; // ミリ秒。クローンが生きている時間。（およその時間）

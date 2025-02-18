@@ -6,7 +6,12 @@
  * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
  * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample20】二匹のネコ、メッセージを送信受信して会話をさせる"
+
 import {
     bubbleTextArr, 
     bubbleTextArr2, 
@@ -16,33 +21,33 @@ import {
     MessageByeBye,
     MessageTAIJYO} from './bubble.js';
 
-P.preload = async function preload() {
+Pg.preload = async function preload() {
     this.loadImage('../assets/backdrop.png','BackDrop');
     this.loadImage('../assets/cat.svg','Cat1');
     this.loadImage('../assets/cat2.svg','Cat2');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.BackDrop );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.BackDrop );
 
-    Pool.cat = new Libs.Sprite("Cat");
-    Pool.cat.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
-    Pool.cat.addImage( P.images.Cat1 );
-    Pool.cat.addImage( P.images.Cat2 );
-    Pool.cat.position = {x: -150, y: 0}
-    Pool.cat.direction = 90;
-    Pool.cat2 = new Libs.Sprite("Cat2");
-    Pool.cat2.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
-    Pool.cat2.addImage( P.images.Cat1 );
-    Pool.cat2.addImage( P.images.Cat2 );
-    Pool.cat2.direction = -90;
-    Pool.cat2.position = {x: 150, y: 0}
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    St.cat.addImage( Images.Cat1 );
+    St.cat.addImage( Images.Cat2 );
+    St.cat.position = {x: -150, y: 0}
+    St.cat.direction = 90;
+    St.cat2 = new Libs.Sprite("Cat2");
+    St.cat2.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    St.cat2.addImage( Images.Cat1 );
+    St.cat2.addImage( Images.Cat2 );
+    St.cat2.direction = -90;
+    St.cat2.position = {x: 150, y: 0}
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
     const BubbleScale = {scale:{x:100,y:100}};
-    Pool.stage.whenFlag( async function() {
+    St.stage.whenFlag( async function() {
         // 1秒待つ
         await Libs.wait(1000);
         
@@ -63,7 +68,7 @@ P.setting = async function setting() {
         this.broadcast(MessageTAIJYO);
 
     });
-    Pool.cat.whenBroadcastReceived(MessageCat1Say, async function() {
+    St.cat.whenBroadcastReceived(MessageCat1Say, async function() {
         const me = this;
         // 上下に揺らす。
         await me.repeat(10, _=>{
@@ -73,7 +78,7 @@ P.setting = async function setting() {
             me.setXY(me.position.x, me.position.y-2);
         });
     });
-    Pool.cat.whenBroadcastReceived(MessageCat1Say, async function(text,time) {
+    St.cat.whenBroadcastReceived(MessageCat1Say, async function(text,time) {
         // Cat の フキダシ を出す
         //console.log('CAT フキダシ time='+time + " text="+text);
         if(time>0) {
@@ -82,7 +87,7 @@ P.setting = async function setting() {
             this.say(text);
         }
     });
-    Pool.cat.whenBroadcastReceived(MessageTAIJYO, async function() {
+    St.cat.whenBroadcastReceived(MessageTAIJYO, async function() {
         // Cat 退場
         //console.log('Cat 退場');
         this.say('');
@@ -95,7 +100,7 @@ P.setting = async function setting() {
         });
         this.visible = false; 
     });
-    Pool.cat2.whenBroadcastReceived(MessageTAIJYO, async function() {
+    St.cat2.whenBroadcastReceived(MessageTAIJYO, async function() {
         // Cat2 退場
         //console.log('Cat2 退場');
         this.say('');
@@ -108,7 +113,7 @@ P.setting = async function setting() {
         });
         this.visible = false;         
     });
-    Pool.cat2.whenBroadcastReceived(MessageCat2Say, async function() {
+    St.cat2.whenBroadcastReceived(MessageCat2Say, async function() {
         const me = this;
         // 上下に揺らす。
         await me.repeat(10, _=>{
@@ -118,7 +123,7 @@ P.setting = async function setting() {
             me.setXY(me.position.x, me.position.y-2);
         });    
     });
-    Pool.cat2.whenBroadcastReceived(MessageCat2Say, async function(text="", time=-1) {
+    St.cat2.whenBroadcastReceived(MessageCat2Say, async function(text="", time=-1) {
         // Cat2 の フキダシ を出す
         //console.log('CAT2 フキダシ time='+time + " text="+text);
         if(time>0) {
@@ -127,7 +132,7 @@ P.setting = async function setting() {
             this.say(text);
         }    
     });
-    Pool.cat2.whenBroadcastReceived(MessageCat2Think, async function(text="", time=-1) {
+    St.cat2.whenBroadcastReceived(MessageCat2Think, async function(text="", time=-1) {
         // Cat2 の フキダシ を出す
         //console.log('CAT2 フキダシ time='+time + " text="+text);
         if(time>0) {
@@ -136,12 +141,12 @@ P.setting = async function setting() {
             this.think(text);
         }    
     });
-    Pool.cat.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
+    St.cat.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
         // それでは、という
         //console.log('CAT フキダシ time='+time + " text="+text);
         await this.thinkForSecs(text, time);
     });
-    Pool.cat2.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
+    St.cat2.whenBroadcastReceived(MessageByeBye, async function(text="", time=-1) {
         // それでは、という
         //console.log('CAT2 フキダシ time='+time + " text="+text);
         await this.sayForSecs(text, time);

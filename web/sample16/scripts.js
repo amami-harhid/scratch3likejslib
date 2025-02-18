@@ -7,71 +7,76 @@
  * 各スプライトはマウスポインターに向いて追いかける。
  * ５秒ごとに元の位置に戻る。
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample16】３匹のネコの回転方向を変える"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
-    Pool.cat1 = new Libs.Sprite("Cat1");
-    Pool.cat1.addImage( P.images.Cat );
-    Pool.cat1.setPosition( -P.stageWidth/4, +P.stageHeight/4 );
-    Pool.cat1.effect.color = 50;
-    Pool.cat1.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
+    St.cat1 = new Libs.Sprite("Cat1");
+    St.cat1.addImage( Images.Cat );
+    St.cat1.setPosition( -Pg.stageWidth/4, +Pg.stageHeight/4 );
+    St.cat1.effect.color = 50;
+    St.cat1.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
 
-    Pool.cat2 = new Libs.Sprite("Cat2");
-    Pool.cat2.addImage( P.images.Cat );
-    Pool.cat2.setPosition( 0, 0 );
+    St.cat2 = new Libs.Sprite("Cat2");
+    St.cat2.addImage( Images.Cat );
+    St.cat2.setPosition( 0, 0 );
 
-    Pool.cat3 = new Libs.Sprite("Cat3");
-    Pool.cat3.addImage( P.images.Cat );
-    Pool.cat3.setPosition( P.stageWidth /4, -P.stageHeight/4 );
-    Pool.cat3.effect.color = 100;
-    Pool.cat3.setRotationStyle( Libs.RotationStyle.DONT_ROTATE );
+    St.cat3 = new Libs.Sprite("Cat3");
+    St.cat3.addImage( Images.Cat );
+    St.cat3.setPosition( Pg.stageWidth /4, -Pg.stageHeight/4 );
+    St.cat3.effect.color = 100;
+    St.cat3.setRotationStyle( Libs.RotationStyle.DONT_ROTATE );
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        this.addSound( P.sounds.Chill, { 'volume' : 50 } );
+        this.addSound( Sounds.Chill, { 'volume' : 50 } );
     });
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
         this.while(true, async _=>{
             await this.startSoundUntilDone();
         });
     });
     const WAIT_TIME = 5000;//5秒
-    Pool.stage.whenFlag(async function(){
+    St.stage.whenFlag(async function(){
         this.while(true, async _=>{
             await Libs.wait(WAIT_TIME);
-            Pool.cat1.setPosition( -P.stageWidth/4, +P.stageHeight/4 );
-            Pool.cat2.setPosition( 0, 0 );
-            Pool.cat3.setPosition( P.stageWidth /4, -P.stageHeight/4 );
+            St.cat1.setPosition( -Pg.stageWidth/4, +Pg.stageHeight/4 );
+            St.cat2.setPosition( 0, 0 );
+            St.cat3.setPosition( Pg.stageWidth /4, -Pg.stageHeight/4 );
         });
     });
 
     const CAT_WALK_STEP = 2;
-    Pool.cat1.whenFlag(async function(){
+    St.cat1.whenFlag(async function(){
         this.while(true, async _=>{
             this.pointToMouse();
             this.moveSteps(CAT_WALK_STEP);
         });
     });
 
-    Pool.cat2.whenFlag(async function(){
+    St.cat2.whenFlag(async function(){
         this.while(true, async _=>{
             this.pointToMouse();
             this.moveSteps(CAT_WALK_STEP);
         });
     });
 
-    Pool.cat3.whenFlag(async function(){
+    St.cat3.whenFlag(async function(){
         this.while(true, async _=>{
             this.pointToMouse();
             this.moveSteps(CAT_WALK_STEP);

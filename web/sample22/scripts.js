@@ -10,30 +10,35 @@
  * 音声スピーチを途中でキャンセルしたいところだが、仕組み検討します。
  * 
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample22】スピーチ機能：「お話しを終わるまで待つ」を続ける"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
-    Pool.cat = new Libs.Sprite("Cat", {scale:{x:200,y:200}});//サイズを２倍にしています
-    Pool.cat.addImage( P.images.Cat );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
+    St.cat = new Libs.Sprite("Cat", {scale:{x:200,y:200}});//サイズを２倍にしています
+    St.cat.addImage( Images.Cat );
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async function(){
-        await this.addSound( P.sounds.Chill, { 'volume' : 20 } );
+    St.stage.whenFlag(async function(){
+        await this.addSound( Sounds.Chill, { 'volume' : 20 } );
         await this.while(true, async _=>{
             await this.startSoundUntilDone();
         });
     })
     
     // ネコにさわったらお話する
-    Pool.cat.whenFlag( async function(){
+    St.cat.whenFlag( async function(){
         this.__waitTouching = false;
         const words = `なになに？どうしたの？`;
         const properties = {'pitch': 2, 'volume': 100}
@@ -44,20 +49,20 @@ P.setting = async function setting() {
                 
                 // 「送って待つ」を使うことで スピーチが終わるまで次のループに進まないため、
                 // 以下の「マウスタッチしている間、待つ」のコードが不要である。
-                await P.Utils.waitWhile( ()=>this.isMouseTouching()); 
+                //await Libs.waitWhile( ()=>this.isMouseTouching()); 
             }else{
                 this.say(""); // フキダシを消す
             }
         });
     });
     // ネコをクリックしたらお話する
-    Pool.cat.whenClicked(async function(){
+    St.cat.whenClicked(async function(){
         const words = `そこそこ。そこがかゆいの。`;
         const properties = {'pitch': 1.7, 'volume': 500}
         await this.broadcastAndWait('SPEECH', words, properties, 'female')
     });
     
-    Pool.cat.whenBroadcastReceived('SPEECH', async function(words, properties, gender='male', locale='ja-JP') {
+    St.cat.whenBroadcastReceived('SPEECH', async function(words, properties, gender='male', locale='ja-JP') {
         // speechAndWait に await をつけて、音声スピーチが終わるまで待つ。
         await this.speechAndWait(words, properties, gender, locale);
 
