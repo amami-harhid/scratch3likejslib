@@ -2,27 +2,31 @@
  * Sample08
  * スプライトを 動かす( 端に触れたら ミャーと鳴く)
  */
-const [Libs,Process,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
 
-Process.preload = async function preload() {
+Pg.title = "【Sample08】スプライトが動き、端に触れたらミャーと鳴く"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
     this.loadSound('../assets/Cat.wav','Mya');
 }
-Process.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage();
-    Pool.stage.addImage( Process.images.Jurassic );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage();
+    St.stage.addImage( Images.Jurassic );
     
-    Pool.cat = new Libs.Sprite("Cat");
-    Pool.cat.addImage( Process.images.Cat );
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.addImage( Images.Cat );
 }
-Process.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async stage=>{
+    St.stage.whenFlag(async stage=>{
         // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
         // stageのインスタンスは 『stage』の変数で受け取っている。
-        await stage.addSound( this.sounds.Chill, { 'volume' : 50 } );
+        await stage.addSound( Sounds.Chill, { 'volume' : 50 } );
         await stage.while(true, async _=>{
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await stage.startSoundUntilDone();
@@ -31,11 +35,11 @@ Process.setting = async function setting() {
 
     const catStep = 10;
 
-    Pool.cat.whenFlag( async _cat=>{
-        _cat.addSound( Process.sounds.Mya, { 'volume' : 50 } );
+    St.cat.whenFlag( async _cat=>{
+        _cat.addSound( Sounds.Mya, { 'volume' : 50 } );
     });
 
-    Pool.cat.whenFlag( async _cat=>{
+    St.cat.whenFlag( async _cat=>{
         // ずっと「左右」に動く。端に触れたら跳ね返る。
         _cat.while( true, _=> {
             _cat.moveSteps(catStep);

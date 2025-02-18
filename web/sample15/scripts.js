@@ -2,29 +2,34 @@
  * Sample15
  * スプライト（CAT) は端を越えて進めない。
  */
-const [Libs,P,Pool] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample15】端を越えては進めない。"
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
-P.prepare = async function prepare() {
-    Pool.stage = new Libs.Stage("stage");
-    Pool.stage.addImage( P.images.Jurassic );
-    Pool.cat = new Libs.Sprite("Cat");
-    Pool.cat.position.x = 0;
-    Pool.cat.position.y = 0;
-    Pool.cat.addImage( P.images.Cat );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage("stage");
+    St.stage.addImage( Images.Jurassic );
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.position.x = 0;
+    St.cat.position.y = 0;
+    St.cat.addImage( Images.Cat );
 }
 
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        this.addSound( P.sounds.Chill, { 'volume' : 50 } );
+        this.addSound( Sounds.Chill, { 'volume' : 50 } );
     });
 
-    Pool.stage.whenFlag(async function() {
+    St.stage.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
         this.while(true, async _=>{
             await this.startSoundUntilDone();
@@ -32,7 +37,7 @@ P.setting = async function setting() {
     });
 
     const CAT_WALK_STEP = 5;
-    Pool.cat.whenFlag(async function(){
+    St.cat.whenFlag(async function(){
         this.while(true, async _=>{
             this.moveSteps(CAT_WALK_STEP);
         });

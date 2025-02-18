@@ -2,17 +2,23 @@
  * 何もしない場合のサンプル
  */
 import '../../build/likeScratchLib.js'
-(function(L, M, S){
+(function(Pg, St, Libs, Image, Sounds){
+    
+    Pg.title = "【Sample00】何もしない場合のサンプル";
 
-    M.preload = function() {
+    Pg.preload = function() {
         // Do nothing.
     }
-    M.prepare = function() {
+    Pg.prepare = function() {
         // Do nothing.
     }
-    M.setting = function() {
+    Pg.setting = function() {
         // Do nothing.
     };
 
-})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
+})(likeScratchLib.PlayGround, 
+    likeScratchLib.Storage, 
+    likeScratchLib.Libs, 
+    likeScratchLib.Images, 
+    likeScratchLib.Sounds);
 

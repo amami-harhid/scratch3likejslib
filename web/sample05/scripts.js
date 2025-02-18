@@ -2,35 +2,40 @@
  * Sample05
  * スプライトを作る
  */
-(function(L, M, S){
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
 
-    M.preload = function() {
+(function(Pg, St, Libs, Images, Sounds){
+
+    Pg.title = "【Sample05】旗クリックでスプライトを表示する"
+
+    Pg.preload = function() {
         this.loadImage('../assets/Jurassic.svg','Jurassic');
         this.loadSound('../assets/Chill.wav','Chill');
         this.loadImage('../assets/cat.svg','Cat');
     }
-    M.prepare = function() {
-        S.stage = new L.Stage();
-        S.stage.addImage( M.images.Jurassic );
-        S.stage.addSound( M.sounds.Chill, { 'volume' : 100 } );
+    Pg.prepare = function() {
+        St.stage = new Libs.Stage();
+        St.stage.addImage( Images.Jurassic );
+        St.stage.addSound( Sounds.Chill, { 'volume' : 100 } );
     }
-    M.setting = function() {
+    Pg.setting = function() {
         // フラグをクリックしたときの動作
         // whenFlagのなかでStageの『this』を使わずに、
         // Pのthisとして使うのであれば、アロー式（引数省略）で書いて
         // this.cat として明示的に使うことでもよい。
         // ここでは、this.cat は P.catと同じ意味である。
-        S.stage.whenFlag( _=> {
+        St.stage.whenFlag( _=> {
             // 旗クリックしたタイミングでネコのスプライトを作り、
             // コスチュームを１個登録する
-            S.cat = new L.Sprite("Cat");
+            St.cat = new Libs.Sprite("Cat");
         });
-        S.stage.whenFlag( _=> {
+        St.stage.whenFlag( _=> {
             // コスチュームを１個登録する
             // whenFlagを定義した順番に実行されるので、
             // ここの『旗クリック』の処理ではネコのスプライトは作成済である。
-            S.cat.addImage( M.images.Cat );
+            St.cat.addImage( Images.Cat );
         });
     };
 
-})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
+})(SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds);

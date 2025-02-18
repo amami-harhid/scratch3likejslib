@@ -3,23 +3,26 @@
  * ＢＧＭ『終わるまで音を鳴らす』をずっと繰り返す。
  */
 import '../../build/likeScratchLib.js'
-(function(L, M, S){
+const SLIB = likeScratchLib;
+(async function(Pg, St, Libs, Images, Sounds){
 
-    M.preload = function() {
+    Pg.title = "【Sample03】旗クリックでずっと『終わるまで音を鳴らす』を繰り返す";
+
+    Pg.preload = function() {
         this.loadImage('../assets/Jurassic.svg','Jurassic');
         this.loadSound('../assets/Chill.wav','Chill');
     }
-    M.prepare = function() {
-        S.stage = new L.Stage();
-        S.stage.addImage( M.images.Jurassic );
+    Pg.prepare = function() {
+        St.stage = new Libs.Stage();
+        St.stage.addImage( Images.Jurassic );
     }
-    M.setting = function() {
+    Pg.setting = function() {
         // すぐに実行する。
-        S.stage.whenRightNow( function(){
+        St.stage.whenRightNow( function(){
             // ここでの『this』は Proxy(stage)である。
-            this.addSound( M.sounds.Chill, { 'volume' : 100 } );
+            this.addSound( Sounds.Chill, { 'volume' : 100 } );
         });
-        S.stage.whenFlag( function(){ 
+        St.stage.whenFlag( function(){ 
             // 「終わるまで音を鳴らす」をずっと繰り返す
             this.while(true, async _=>{
                 // 処理が終わるまで待つために await をつける
@@ -28,4 +31,4 @@ import '../../build/likeScratchLib.js'
         });
     };
 
-})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
+})(SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds);

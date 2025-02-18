@@ -3,21 +3,28 @@
  * preset()内で addImageする場合と比較してステージに表示するのが一瞬だけ遅延する。
  */
 import '../../build/likeScratchLib.js'
-(async function(L, M, S){
-    console.log(S)
-    M.preload = function() {
+(async function(Pg, St, Libs, Images, Sounds){
+
+    Pg.title = "【Sample02】旗クリックで背景を表示する";
+
+    Pg.preload = function() {
         // ここでの『this』は M(Mainインスタンス) である。
         this.loadImage('../assets/Jurassic.svg','Jurassic');
     }
-    M.prepare = function() {
-        S.stage = new L.Stage();
+    Pg.prepare = function() {
+        St.stage = new Libs.Stage();
     }
-    M.setting = async function() {
+    Pg.setting = async function() {
         // すぐに実行する。
-        S.stage.whenRightNow( function(){
+        St.stage.whenRightNow( function(){
             // ここでの『this』は Proxy(Stage)である。
-            this.addImage( M.images.Jurassic );
+            this.addImage( Images.Jurassic );
         });
     };
 
-})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
+
+})(likeScratchLib.PlayGround, 
+    likeScratchLib.Storage, 
+    likeScratchLib.Libs, 
+    likeScratchLib.Images, 
+    likeScratchLib.Sounds);

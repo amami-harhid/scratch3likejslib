@@ -2,18 +2,24 @@
  * 背景を表示する
  */
 import '../../build/likeScratchLib.js'
-(function(L, M, S){
+(function(Pg, St, Libs, Images, Sounds){
 
-    M.preload = function() {
+    Pg.title = "【Sample01】背景を表示する";
+
+    Pg.preload = function() {
         // this を Processインスタンスと認識させるために、function(){} の形式にする。
         this.loadImage('../assets/Jurassic.svg','Jurassic');
     }
-    M.prepare = function() {
-        S.stage = new M.Stage();
-        S.stage.addImage( M.images.Jurassic );
+    Pg.prepare = function() {
+        St.stage = new Libs.Stage();
+        St.stage.addImage( Images.Jurassic );
     }
-    M.setting = function() {
+    Pg.setting = function() {
         // Do nothing.
     };
 
-})(likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool);
+})(likeScratchLib.PlayGround, 
+    likeScratchLib.Storage, 
+    likeScratchLib.Libs, 
+    likeScratchLib.Images, 
+    likeScratchLib.Sounds);

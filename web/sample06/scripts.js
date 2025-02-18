@@ -3,31 +3,37 @@
  * フラグクリックでスプライトを表示する
  * スプライトにタッチするとBGMを繰返し鳴らす。
  */
-const [L,P,S] = [likeScratchLib.libs, likeScratchLib.process, likeScratchLib.pool];
-P.preload = async function preload() {
+
+import '../../build/likeScratchLib.js'
+const SLIB = likeScratchLib;
+const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+
+Pg.title = "【Sample06】スプライトをタッチしたらＢＧＭを繰返し鳴らす";
+
+Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
     this.loadSound('../assets/Chill.wav','Chill');
     this.loadImage('../assets/cat.svg','Cat');
 }
-P.prepare = async function prepare() {
-    S.stage = new L.Stage();
-    S.stage.addImage( P.images.Jurassic );
+Pg.prepare = async function prepare() {
+    St.stage = new Libs.Stage();
+    St.stage.addImage( Images.Jurassic );
     // スプライトを作り、コスチュームを１個登録する
-    S.cat = new L.Sprite("Cat");
-    S.cat.addImage( P.images.Cat );
-    S.cat.addSound( P.sounds.Chill, { 'volume' : 100 } );
-    S.cat.visible = false; // 非表示
+    St.cat = new Libs.Sprite("Cat");
+    St.cat.addImage( Images.Cat );
+    St.cat.addSound( Sounds.Chill, { 'volume' : 100 } );
+    St.cat.visible = false; // 非表示
 }
-P.setting = async function setting() {
+Pg.setting = async function setting() {
 
     // フラグをクリックしたときの動作
-    S.stage.whenFlag( _=> {
+    St.stage.whenFlag( _=> {
         // アロー関数なので、ここでの『this』はPである
-        S.cat.visible = true; // 表示
+        St.cat.visible = true; // 表示
     });
 
     // スプライト（ネコ）をクリックしたときの動作
-    S.cat.whenClicked( async (ネコ) => {
+    St.cat.whenClicked( async (ネコ) => {
         // アロー関数なので、ここでの『this』はPである
         // catのインスタンスは 『ネコ』として受け取っている。
         // 「終わるまで音を鳴らす」をずっと繰り返す
