@@ -38,6 +38,12 @@ Pg.setting = async function setting() {
     St.cat.whenFlag( async _cat=>{
         _cat.addSound( Sounds.Mya, { 'volume' : 50 } );
     });
+    
+    St.cat.whenFlag( async cat=> {
+        // 初期化
+        cat.position = {x:0, y:0};
+        cat.direction = 90;
+    });
 
     St.cat.whenFlag( async _cat=>{
         // ずっと「左右」に動く。端に触れたら跳ね返る。

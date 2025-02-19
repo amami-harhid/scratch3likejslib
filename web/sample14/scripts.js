@@ -8,7 +8,7 @@ import '../../build/likeScratchLib.js'
 const SLIB = likeScratchLib;
 const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
 
-Pg.title = "【Sample14】マウスポインターを追いかける（５秒経過前後で動きが変わります）"
+Pg.title = "【Sample14】マウスポインターを追いかける（５秒経過後『１秒間でマウスポインターの位置へ移動する』に変化する）"
 
 Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');
@@ -42,15 +42,16 @@ Pg.setting = async function setting() {
     let _5SecondsTimerOn = false;
     // ネコの速度
     const catStep = 5;
+    const ms5000 = 5000;
     St.cat.whenFlag(async function(){
         _5SecondsTimerOn = false;
-        await Libs.wait(5000);
+        await Libs.wait(ms1000+ms5000);
         _5SecondsTimerOn = true;
     });
-
+    const ms1000 = 1000;
     St.cat.whenFlag(async function(){
         // 1秒待ってからマウスカーソルを追跡する
-        await Libs.wait(1000);
+        await Libs.wait(ms1000);
         this.while(true, async _=>{
             // マウスの方向へ向く
             this.pointToMouse();

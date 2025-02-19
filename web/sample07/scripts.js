@@ -33,6 +33,11 @@ Pg.setting = async function setting() {
     const catStep = 5;
     // フラグクリック
     St.cat.whenFlag( async cat=> {
+        // 初期化
+        cat.position = {x:0, y:0};
+        cat.direction = 90;
+    });
+    St.cat.whenFlag( async cat=> {
         // 「左右」に動く。端に触れたら跳ね返る。
         await cat.while( true, async _=> {
             cat.moveSteps(catStep);

@@ -19,9 +19,10 @@ Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage("stage");
     St.stage.addImage( Images.Jurassic );
     St.cat = new Libs.Sprite("Cat");
+    St.cat.addImage( Images.Cat );
     St.cat.position.x = 200;
     St.cat.position.y = 150;
-    St.cat.addImage( Images.Cat );
+    St.cat.direction = 90;
 }
 Pg.setting = async function setting() {
 
@@ -37,6 +38,12 @@ Pg.setting = async function setting() {
     St.cat.whenFlag( async function() {
         // 音を登録する
         this.addSound( Sounds.Mya, { 'volume' : 20 } );
+    });
+    St.cat.whenFlag( async cat=> {
+        // 初期化
+        cat.position.x = 200;
+        cat.position.y = 150;
+        cat.direction = 90;
     });
 
     const _changeDirection = 1;

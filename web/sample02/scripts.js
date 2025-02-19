@@ -18,6 +18,7 @@ import '../../build/likeScratchLib.js'
         // すぐに実行する。
         St.stage.whenRightNow( function(){
             // ここでの『this』は Proxy(Stage)である。
+            console.log('whenRightNow')
             this.addImage( Images.Jurassic );
         });
     };

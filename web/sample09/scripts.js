@@ -36,6 +36,11 @@ Pg.setting = async function setting() {
         // function(){} と書くとき、『this』は Proxy(cat)である
         this.addSound( Sounds.Mya, { 'volume' : 20 } );
     });
+    St.cat.whenFlag( async cat=> {
+        // 初期化
+        cat.position = {x:0, y:0};
+        cat.direction = 90;
+    });
 
     // { }の外側のスコープを参照できる
     const direction02 = 1;
