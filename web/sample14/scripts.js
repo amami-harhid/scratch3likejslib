@@ -38,17 +38,18 @@ Pg.setting = async function setting() {
         });
     });
 
+    // ms の値
+    const ms1000 = 1000;
+    const ms5000 = 5000;
     // 5秒経過した？
     let _5SecondsTimerOn = false;
     // ネコの速度
     const catStep = 5;
-    const ms5000 = 5000;
     St.cat.whenFlag(async function(){
         _5SecondsTimerOn = false;
         await Libs.wait(ms1000+ms5000);
         _5SecondsTimerOn = true;
     });
-    const ms1000 = 1000;
     St.cat.whenFlag(async function(){
         // 1秒待ってからマウスカーソルを追跡する
         await Libs.wait(ms1000);
