@@ -5,9 +5,9 @@
  * 左矢印、右矢印で、シップが左右に動く。
  * スペースキーで 弾を発射（発射する弾はクローン）
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample18】３匹のネコの回転方向を変える"
 

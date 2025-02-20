@@ -2,9 +2,9 @@
  * Sample07
  * スプライトを左右に動かす。端に触れたら跳ね返る
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample07】スプライトが横向きに動き、端に触れたら跳ね返る"
 

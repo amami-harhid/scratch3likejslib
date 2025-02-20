@@ -7,9 +7,9 @@
  * クローンを削除するメソッドを用意したい。
  * クローン削除されるとき、そのクローンで動いているスレッドも消すこと
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample17】十字にマウスポインターが触れたら 蝶のクローンを作る"
 

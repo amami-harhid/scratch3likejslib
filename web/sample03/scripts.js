@@ -2,9 +2,7 @@
  * 背景を表示＆ＢＧＭを鳴らす
  * ＢＧＭ『終わるまで音を鳴らす』をずっと繰り返す。
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-(async function(Pg, St, Libs, Images, Sounds){
+const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.title = "【Sample03】旗クリックでずっと『終わるまで音を鳴らす』を繰り返す";
 
@@ -31,4 +29,8 @@ const SLIB = likeScratchLib;
         });
     };
 
-})(SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds);
+};
+
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+main(PlayGround, Libs, Storage, Images, Sounds);

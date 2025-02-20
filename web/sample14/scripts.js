@@ -4,9 +4,9 @@
  * マウスポインターがステージの外に出た最後の位置へ追いかける
  * 5秒経過したら 1秒かけて移動する！に切り替わる
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample14】マウスポインターを追いかける（５秒経過後『１秒間でマウスポインターの位置へ移動する』に変化する）"
 

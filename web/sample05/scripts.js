@@ -2,10 +2,8 @@
  * Sample05
  * スプライトを作る
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
 
-(function(Pg, St, Libs, Images, Sounds){
+const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.title = "【Sample05】旗クリックでスプライトを表示する"
 
@@ -38,4 +36,8 @@ const SLIB = likeScratchLib;
         });
     };
 
-})(SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds);
+};
+
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+main(PlayGround, Libs, Storage, Images, Sounds);

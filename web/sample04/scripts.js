@@ -3,10 +3,7 @@
  * ステージをクリック（タッチ）したときに音を鳴らす（ずっと繰り返し）
  */
 
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-
-(function(Pg, St, Libs, Images, Sounds){
+const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.title = "【Sample04】 旗をクリックした後、ステージをクリック（タッチ）したら音を鳴らす";
 
@@ -36,4 +33,8 @@ const SLIB = likeScratchLib;
         });
     };
 
-})(SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds);
+};
+
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+main(PlayGround, Libs, Storage, Images, Sounds);

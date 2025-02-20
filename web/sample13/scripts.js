@@ -2,9 +2,9 @@
  * Sample13
  * スプライト（CAT) クリックした位置へ１秒で動く
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample13】クリックした位置へ１秒で動く"
 

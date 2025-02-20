@@ -3,11 +3,11 @@
  * スプライトのクローンを作る（スプライトに触ったらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
 
-Pg.title = "【Sample10】スプライトに触ったらクローンを作る。"
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+
+Pg.title = "【Sample10】スプライトに触ったらクローンを作る(5秒で死ぬ)"
 
 Pg.preload = async function preload() {
     this.loadImage('../assets/Jurassic.svg','Jurassic');

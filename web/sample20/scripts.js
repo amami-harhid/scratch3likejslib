@@ -6,9 +6,9 @@
  * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
  * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample20】二匹のネコ、メッセージを送信受信して会話をさせる"
 

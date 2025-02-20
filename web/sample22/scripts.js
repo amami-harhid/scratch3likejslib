@@ -11,9 +11,9 @@
  * スピーチキャンセルの仕組みが難しそうなので、本スクリプト内でフラグを使い二重回避をしている。
  * 
  */
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample22】スピーチ機能：「お話しを終わるまで待つ」を続ける"
 

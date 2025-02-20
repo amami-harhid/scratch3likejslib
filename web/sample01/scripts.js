@@ -1,8 +1,8 @@
 /**
  * 背景を表示する
  */
-import '../../build/likeScratchLib.js'
-(function(Pg, St, Libs, Images, Sounds){
+
+const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.title = "【Sample01】背景を表示する";
 
@@ -13,13 +13,14 @@ import '../../build/likeScratchLib.js'
     Pg.prepare = function() {
         St.stage = new Libs.Stage();
         St.stage.addImage( Images.Jurassic );
+
     }
     Pg.setting = function() {
         // Do nothing.
     };
 
-})(likeScratchLib.PlayGround, 
-    likeScratchLib.Storage, 
-    likeScratchLib.Libs, 
-    likeScratchLib.Images, 
-    likeScratchLib.Sounds);
+}
+
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+main(PlayGround, Libs, Storage, Images, Sounds);

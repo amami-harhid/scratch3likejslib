@@ -2,8 +2,7 @@
  * 背景を表示する(settingで表示)
  * preset()内で addImageする場合と比較してステージに表示するのが一瞬だけ遅延する。
  */
-import '../../build/likeScratchLib.js'
-(async function(Pg, St, Libs, Images, Sounds){
+const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.title = "【Sample02】旗クリックで背景を表示する";
 
@@ -18,14 +17,11 @@ import '../../build/likeScratchLib.js'
         // すぐに実行する。
         St.stage.whenRightNow( function(){
             // ここでの『this』は Proxy(Stage)である。
-            console.log('whenRightNow')
             this.addImage( Images.Jurassic );
         });
     };
+};
 
-
-})(likeScratchLib.PlayGround, 
-    likeScratchLib.Storage, 
-    likeScratchLib.Libs, 
-    likeScratchLib.Images, 
-    likeScratchLib.Sounds);
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
+main(PlayGround, Libs, Storage, Images, Sounds);

@@ -3,10 +3,10 @@
  * フラグクリックでスプライトを表示する
  * スプライトにタッチするとBGMを繰返し鳴らす。
  */
+// ライブラリーをインポートして実行
+import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
 
-import '../../build/likeScratchLib.js'
-const SLIB = likeScratchLib;
-const [Pg, St, Libs, Images, Sounds] = [SLIB.PlayGround, SLIB.Storage, SLIB.Libs, SLIB.Images, SLIB.Sounds];
+const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 
 Pg.title = "【Sample06】スプライトをタッチしたらＢＧＭを繰返し鳴らす";
 
@@ -43,3 +43,4 @@ Pg.setting = async function setting() {
         });
     });
 }
+
