@@ -72,9 +72,7 @@ Pg.setting = async function setting() {
     });
     St.cross.C.whenCloned(async function(){
         const c = this; // <--- cross instance;
-        // スプライトの幅と高さを取得するメソッドを用意しておくこと。
-        const bounds = c.render.renderer.getBounds(c.drawableID);
-        const height = Math.abs(bounds.top - bounds.bottom);
+        const {_,height} = c.Looks.getSelfDimensions();
         c.Motion.changeY( height / 2);
         c.Looks.nextCostume();
         c.Looks.show();
@@ -83,10 +81,7 @@ Pg.setting = async function setting() {
         const c = this; // <--- cross instance;
         // while の後に処理があるときは await 忘れないようにしましょう
         await c.Control.forever( async _=>{
-            // スプライトの位置を取り出すメソッドを用意すること
-            const x = this.$_position.x;
-            const y = this.$_position.y;
-            c.Motion.setXY(x,y+10);
+            c.Motion.changeY(+10); // 10だけ上にする
             if(c.Sensing.isTouchingEdge()){
                 Libs.Loop.break();
             }

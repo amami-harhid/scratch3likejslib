@@ -58,12 +58,14 @@ Pg.setting = async function setting() {
         const SCALE = {MIN:50, MAX:150};
         this.C.forever( async _=>{
             await this.C.forever( async _=>{
-                this.Looks.setSize({x:this.$_scale.x - MOVE_STEP, y:this.$_scale.y - MOVE_STEP});
-                if(this.$_scale.x < SCALE.MIN) Libs.Loop.break();
+                this.Looks.changeSizeBy({x:-MOVE_STEP, y: -MOVE_STEP});
+                const scale = this.Looks.getSize();
+                if(scale.x < SCALE.MIN) Libs.Loop.break();
             });
             await this.C.forever( async _=>{
-                this.Looks.setSize({x:this.$_scale.x + MOVE_STEP, y:this.$_scale.y + MOVE_STEP});
-                if(this.$_scale.x > SCALE.MAX) Libs.Loop.break();
+                this.Looks.changeSizeBy({x: +MOVE_STEP, y: +MOVE_STEP});
+                const scale = this.Looks.getSize();
+                if(scale.x > SCALE.MAX) Libs.Loop.break();
             });
             if( bubble.exit === true) {
                 Libs.Loop.break();
