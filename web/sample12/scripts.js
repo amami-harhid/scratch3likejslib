@@ -10,17 +10,16 @@ const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 Pg.title = "【Sample12】クリックした場所へ移動する"
 
 Pg.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
-    this.loadImage('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg','Jurassic');
+    this.Sound.load('../assets/Chill.wav','Chill');
+    this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage("stage");
-    St.stage.addImage( Images.Jurassic );
+    St.stage.Image.add( Images.Jurassic );
     St.cat = new Libs.Sprite("Cat");
-    St.cat.position.x = 0;
-    St.cat.position.y = 0;
-    St.cat.addImage( Images.Cat );
+    St.cat.Motion.gotoXY({x:0, y:0});
+    St.cat.Image.add( Images.Cat );
 }
 
 Pg.setting = async function setting() {
@@ -28,21 +27,20 @@ Pg.setting = async function setting() {
     // ここはfunction式の中なので 【this】= P である
     // ここをアロー式にすると 【this】= window となる
 
-    St.stage.whenFlag(async function() {
+    St.stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        this.addSound( Sounds.Chill, { 'volume' : 50 } );
+        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
     });
 
-    St.stage.whenFlag(async function() {
+    St.stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
-        this.while(true, async _=>{
-            await this.startSoundUntilDone();
+        this.Control.while(true, async _=>{
+            await this.Sound.playUntilDone();
         });
     });
-    St.stage.whenClicked(async _=> {
+    St.stage.Event.whenClicked(async _=> {
         // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const x = Libs.mousePosition.x;
-        const y = Libs.mousePosition.y;
-        St.cat.moveTo(x,y)
+        const mousePosition = Libs.mousePosition;
+        St.cat.Motion.gotoXY(mousePosition)
     });
 }

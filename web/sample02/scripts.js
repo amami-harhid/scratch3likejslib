@@ -8,16 +8,16 @@ const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.preload = function() {
         // ここでの『this』は M(Mainインスタンス) である。
-        this.loadImage('../assets/Jurassic.svg','Jurassic');
+        this.Image.load('../assets/Jurassic.svg','Jurassic');
     }
     Pg.prepare = function() {
         St.stage = new Libs.Stage();
     }
     Pg.setting = async function() {
         // すぐに実行する。
-        St.stage.whenRightNow( function(){
+        St.stage.Event.whenRightNow( function(){
             // ここでの『this』は Proxy(Stage)である。
-            this.addImage( Images.Jurassic );
+            this.Image.add( Images.Jurassic );
         });
     };
 };

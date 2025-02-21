@@ -8,11 +8,11 @@ const main = function(Pg, Libs, St,  Images, Sounds){
 
     Pg.preload = function() {
         // this を Processインスタンスと認識させるために、function(){} の形式にする。
-        this.loadImage('../assets/Jurassic.svg','Jurassic');
+        this.Image.load('../assets/Jurassic.svg','Jurassic');
     }
     Pg.prepare = function() {
         St.stage = new Libs.Stage();
-        St.stage.addImage( Images.Jurassic );
+        St.stage.Image.add( Images.Jurassic );
 
     }
     Pg.setting = function() {

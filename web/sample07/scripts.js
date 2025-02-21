@@ -9,37 +9,37 @@ const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 Pg.title = "【Sample07】スプライトが横向きに動き、端に触れたら跳ね返る"
 
 Pg.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
-    this.loadImage('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg','Jurassic');
+    this.Sound.load('../assets/Chill.wav','Chill');
+    this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage();
     St.stage.addImage( Images.Jurassic );
     St.stage.addSound( Sounds.Chill, { 'volume' : 100 } );
     St.cat = new Libs.Sprite("Cat");
-    St.cat.addImage( Images.Cat );
+    St.cat.Image.add( Images.Cat );
 }
 Pg.setting = async function setting() {
 
     // フラグクリック
-    St.stage.whenFlag( async stage=> {
+    St.stage.Event.whenFlag( async stage=> {
         // 「終わるまで音を鳴らす」をずっと繰り返す、スレッドを起動する
         await stage.while( true, async _=> {
-            await stage.startSoundUntilDone();
+            await stage.Sound.playUntilDone();
         });
     });
 
     const catStep = 5;
     // フラグクリック
-    St.cat.whenFlag( async cat=> {
+    St.cat.Event.whenFlag( async cat=> {
         // 初期化
-        cat.position = {x:0, y:0};
-        cat.direction = 90;
+        cat.M.gotoXY({x:0, y:0});
+        cat.M.pointInDerection( 90 );
     });
-    St.cat.whenFlag( async cat=> {
+    St.cat.Event.whenFlag( async cat=> {
         // 「左右」に動く。端に触れたら跳ね返る。
-        await cat.while( true, async _=> {
+        await cat.C.forever( async _=> {
             cat.M.moveSteps(catStep);
             cat.M.ifOnEdgeBounds();
         });

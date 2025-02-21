@@ -18,9 +18,9 @@ const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 Pg.title = "【Sample22】スピーチ機能：「お話しを終わるまで待つ」を続ける"
 
 Pg.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
-    this.loadImage('../assets/cat.svg','Cat');
+    this.Loader.loadImage('../assets/Jurassic.svg','Jurassic');
+    this.Loader.loadSound('../assets/Chill.wav','Chill');
+    this.Loader.loadImage('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage("stage");

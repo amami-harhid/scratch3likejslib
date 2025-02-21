@@ -10,79 +10,76 @@ const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 Pg.title = "【Sample10】スプライトに触ったらクローンを作る(5秒で死ぬ)"
 
 Pg.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
-    this.loadImage('../assets/cat.svg','Cat');
-    this.loadSound('../assets/Cat.wav','Mya');
+    this.Image.load('../assets/Jurassic.svg','Jurassic');
+    this.Sound.load('../assets/Chill.wav','Chill');
+    this.Image.load('../assets/cat.svg','Cat');
+    this.Sound.load('../assets/Cat.wav','Mya');
 }
 Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage("stage");
-    St.stage.addImage( Images.Jurassic );
+    St.stage.Image.add( Images.Jurassic );
     St.cat = new Libs.Sprite("Cat");
-    St.cat.addImage( Images.Cat );
-    St.cat.position.x = 200;
-    St.cat.position.y = 150;
-    St.cat.direction = 90;
+    St.cat.Image.add( Images.Cat );
+    St.cat.Motion.gotoXY({x:200, y:150});
+//    St.cat.Motion.gotoXY(200, 150);
+    St.cat.Motion.pointInDirection( 90 );
 }
 Pg.setting = async function setting() {
 
-    St.stage.whenFlag(async function() {
-        this.addSound( Sounds.Chill, { 'volume' : 50 } );
+    St.stage.Event.whenFlag(async function() {
+        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
     });
-    St.stage.whenFlag(async function() {
-        this.while(true, async _=>{
-            await this.startSoundUntilDone();
+    St.stage.Event.whenFlag(async function() {
+        this.Control.forever(async _=>{
+            await this.Sound.playUntilDone();
         })
     });
 
-    St.cat.whenFlag( async function() {
+    St.cat.Event.whenFlag( async function() {
         // 音を登録する
-        this.addSound( Sounds.Mya, { 'volume' : 20 } );
+        this.Sound.add( Sounds.Mya, { 'volume' : 20 } );
     });
-    St.cat.whenFlag( async cat=> {
+    St.cat.Event.whenFlag( async cat=> {
         // 初期化
-        cat.position.x = 200;
-        cat.position.y = 150;
-        cat.direction = 90;
+        St.cat.Motion.gotoXY({x:200, y:150});
+        St.cat.Motion.pointInDirection( 90 );
     });
 
     const _changeDirection = 1;
-    St.cat.whenFlag( async function() {
+    St.cat.Event.whenFlag( async function() {
         // ずっと繰り返して回転する
-        this.while(true, _=>{
-            this.direction += _changeDirection; // 外の Scope 参照可能
+        this.Control.while(true, _=>{
+            this.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
         });
     });
-    St.cat.whenFlag( async function() {
+    St.cat.Event.whenFlag( async function() {
         // 次をずっと繰り返す
         // マウスカーソルでタッチしたら、クローンを作る
-        this.while(true, async _=>{
-            if( this.isMouseTouching() ) {
-                this.clone();
+        this.Control.forever(async _=>{
+            if( this.Sensing.isMouseTouching() ) {
+                this.Control.clone();
             }
             // マウスタッチしないまで待つ
-            await Libs.waitWhile( ()=>this.isMouseTouching() ); 
+            await Libs.waitWhile( ()=>this.Sensing.isMouseTouching() ); 
         });
     });
 
     const steps = 10;
-    St.cat.whenCloned(async function(){
+    St.cat.Control.whenCloned(async function(){
         const clone = this; // 'this' is cloned instance;
-        clone.position.x = 100;
-        clone.position.y = -100;
-        clone.scale.x = 50;
-        clone.scale.y = 50;
-        clone.effect.color = 50;
+        clone.Motion.gotoXY({x:100, y:-100});
+        clone.Looks.setSize({x:50, y:50});
+        clone.Looks.setEffect('color', 50);
         clone.life = 5000;
-        clone.setVisible(true)
+        clone.Looks.show();
         // ずっと繰り返す
-        clone.while(true, _=>{
-            clone.moveSteps( steps );
+        clone.Control.while(true, _=>{
+            clone.Motion.moveSteps( steps );
             // 端に触れたら
-            clone.ifOnEdgeBounds();
-            if(clone.isTouchingEdge() ){
+            clone.Motion.ifOnEdgeBounds();
+            if(clone.Sensing.isTouchingEdge() ){
                 // ミャーと鳴く。
-                clone.soundPlay()
+                clone.Sound.play()
             }
         });
     });

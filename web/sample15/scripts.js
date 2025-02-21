@@ -9,37 +9,36 @@ const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
 Pg.title = "【Sample15】端を越えては進めない。"
 
 Pg.preload = async function preload() {
-    this.loadImage('../assets/Jurassic.svg','Jurassic');
-    this.loadSound('../assets/Chill.wav','Chill');
-    this.loadImage('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg','Jurassic');
+    this.Sound.load('../assets/Chill.wav','Chill');
+    this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
     St.stage = new Libs.Stage("stage");
-    St.stage.addImage( Images.Jurassic );
+    St.stage.Image.add( Images.Jurassic );
     St.cat = new Libs.Sprite("Cat");
-    St.cat.position.x = 0;
-    St.cat.position.y = 0;
-    St.cat.addImage( Images.Cat );
+    St.cat.Motion.gotoXY({x:0, y:0});
+    St.cat.Image.add( Images.Cat );
 }
 
 Pg.setting = async function setting() {
 
-    St.stage.whenFlag(async function() {
+    St.stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        this.addSound( Sounds.Chill, { 'volume' : 50 } );
+        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
     });
 
-    St.stage.whenFlag(async function() {
+    St.stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はProxy(stage)である。
-        this.while(true, async _=>{
-            await this.startSoundUntilDone();
+        this.C.while(true, async _=>{
+            await this.Sound.playUntilDone();
         });
     });
 
     const CAT_WALK_STEP = 5;
-    St.cat.whenFlag(async function(){
-        this.while(true, async _=>{
-            this.moveSteps(CAT_WALK_STEP);
+    St.cat.Event.whenFlag(async function(){
+        this.C.while(true, async _=>{
+            this.Motion.moveSteps(CAT_WALK_STEP);
         });
     });
 }
