@@ -40,8 +40,8 @@ Pg.setting = async function setting() {
     St.cat.whenFlag( async cat=> {
         // 「左右」に動く。端に触れたら跳ね返る。
         await cat.while( true, async _=> {
-            cat.moveSteps(catStep);
-            cat.ifOnEdgeBounds();
+            cat.M.moveSteps(catStep);
+            cat.M.ifOnEdgeBounds();
         });
     });
 
