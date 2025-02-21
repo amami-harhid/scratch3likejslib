@@ -8,8 +8,8 @@ const Element = PlayGround.Element;
 
 Element.insertCss();
 
-window.onload = async function(){
-    init();
+const Initialize = async function() {
+    await PlayGround._init();
 };
 
 const Images = PlayGround.loadedImages;
@@ -18,13 +18,7 @@ const Sounds = PlayGround.loadedSounds;
 /** アプリデータ格納用（なんでも入る） */
 const Storage = PlayGround.dataPool;
 
-const init = async function() {
-    await PlayGround._init();
-    //process.threads.startAll();
-
-};
-
-
+Initialize();
 
 export {PlayGround, Libs, Storage, Images, Sounds};
 
