@@ -7,9 +7,8 @@
  * 各スプライトはマウスポインターに向いて追いかける。
  * ５秒ごとに元の位置に戻る。
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample16】３匹のネコの回転方向を変える"
 
@@ -19,23 +18,23 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat1 = new Libs.Sprite("Cat1");
+    St.cat1 = new Lib.Sprite("Cat1");
     St.cat1.Image.add( Images.Cat );
     St.cat1.Motion.gotoXY({x:-Pg.stageWidth/4, y:+Pg.stageHeight/4 });
     St.cat1.Looks.setEffect("color", 50);
-    St.cat1.Motion.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    St.cat1.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
 
-    St.cat2 = new Libs.Sprite("Cat2");
+    St.cat2 = new Lib.Sprite("Cat2");
     St.cat2.Image.add( Images.Cat );
     St.cat2.Motion.gotoXY({x:0, y:0 });
 
-    St.cat3 = new Libs.Sprite("Cat3");
+    St.cat3 = new Lib.Sprite("Cat3");
     St.cat3.Image.add( Images.Cat );
     St.cat3.Motion.gotoXY({x:Pg.stageWidth /4, y:-Pg.stageHeight/4 });
     St.cat3.Looks.setEffect("color", 10);
-    St.cat3.Motion.setRotationStyle( Libs.RotationStyle.DONT_ROTATE );
+    St.cat3.Motion.setRotationStyle( Lib.RotationStyle.DONT_ROTATE );
 }
 
 Pg.setting = async function setting() {
@@ -54,7 +53,7 @@ Pg.setting = async function setting() {
     const WAIT_TIME = 5000;//5秒
     St.stage.Event.whenFlag(async function(){
         this.C.forever( async _=>{
-            await Libs.wait(WAIT_TIME);
+            await Lib.wait(WAIT_TIME);
             St.cat1.Motion.gotoXY({x:-Pg.stageWidth/4, y:+Pg.stageHeight/4 });
             St.cat2.Motion.gotoXY({x:0, y:0 });
             St.cat3.Motion.gotoXY({x:Pg.stageWidth/4, y:-Pg.stageHeight/4 });

@@ -2,39 +2,33 @@
  * Sample04
  * ステージをクリック（タッチ）したときに音を鳴らす（ずっと繰り返し）
  */
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
-const main = function(Pg, Libs, St,  Images, Sounds){
+Pg.title = "【Sample04】 旗をクリックした後、ステージをクリック（タッチ）したら音を鳴らす";
 
-    Pg.title = "【Sample04】 旗をクリックした後、ステージをクリック（タッチ）したら音を鳴らす";
+Pg.preload = function() {
+    this.Image.load('../assets/Jurassic.svg','Jurassic');
+    this.Sound.load('../assets/Chill.wav','Chill');
+}
+Pg.prepare = function() {
+    St.stage = new Lib.Stage();
+    St.stage.Image.add( Images.Jurassic );
+}
+Pg.setting = function() {
+    // すぐに実行する。
+    // アロー関数として インスタンス(this)を受け取る書き方もできる
+    St.stage.Event.whenRightNow( async $s=>{ 
+        // ここでの『$s』は S.stageの『this』 である。
+        await $s.Sound.add( Sounds.Chill, { 'volume' : 100 } );
+    });
 
-    Pg.preload = function() {
-        this.Image.load('../assets/Jurassic.svg','Jurassic');
-        this.Sound.load('../assets/Chill.wav','Chill');
-    }
-    Pg.prepare = function() {
-        St.stage = new Libs.Stage();
-        St.stage.Image.add( Images.Jurassic );
-    }
-    Pg.setting = function() {
-        // すぐに実行する。
-        // アロー関数として インスタンス(this)を受け取る書き方もできる
-        St.stage.Event.whenRightNow( async $s=>{ 
-            // ここでの『$s』は S.stageの『this』 である。
-            await $s.Sound.add( Sounds.Chill, { 'volume' : 100 } );
+    // ステージをクリックしたときの動作
+    St.stage.Event.whenClicked( async $s=> {
+        // 「終わるまで音を鳴らす」をずっと繰り返す
+        await $s.C.while(true, async _=>{
+            // 処理が終わるまで待つために await をつける
+            await $s.Sound.playUntilDone();
         });
-
-        // ステージをクリックしたときの動作
-        St.stage.Event.whenClicked( async $s=> {
-            // 「終わるまで音を鳴らす」をずっと繰り返す
-            await $s.C.while(true, async _=>{
-                // 処理が終わるまで待つために await をつける
-                await $s.Sound.playUntilDone();
-            });
-        });
-    };
-
+    });
 };
-
-// ライブラリーをインポートして実行
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-main(PlayGround, Libs, Storage, Images, Sounds);

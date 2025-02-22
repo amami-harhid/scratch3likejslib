@@ -2,9 +2,8 @@
  * Sample13
  * スプライト（CAT) クリックした位置へ１秒で動く
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample13】クリックした位置へ１秒で動く"
 
@@ -15,9 +14,9 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
 }
 
@@ -36,7 +35,7 @@ Pg.setting = async function setting() {
     });
     St.stage.Event.whenClicked(async function(){
         // function() の中なので、【this】はProxy(stage)である。
-        const mousePosition = Libs.mousePosition;
+        const mousePosition = Lib.mousePosition;
         await St.cat.glideToPosition( 1, mousePosition );
     });
     St.cat.Event.whenFlag(async function(){

@@ -4,9 +4,8 @@
  * スプライトにタッチするとBGMを繰返し鳴らす。
  */
 // ライブラリーをインポートして実行
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample06】スプライトをタッチしたらＢＧＭを繰返し鳴らす";
 
@@ -16,10 +15,10 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage();
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
     // スプライトを作り、コスチュームを１個登録する
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
     St.cat.Sound.add( Sounds.Chill, { 'volume' : 100 } );
     St.cat.Looks.hide(); // 非表示

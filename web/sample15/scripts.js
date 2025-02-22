@@ -2,9 +2,8 @@
  * Sample15
  * スプライト（CAT) は端を越えて進めない。
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample15】端を越えては進めない。"
 
@@ -14,9 +13,9 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Motion.gotoXY({x:0, y:0});
     St.cat.Image.add( Images.Cat );
 }
@@ -34,11 +33,14 @@ Pg.setting = async function setting() {
             await this.Sound.playUntilDone();
         });
     });
+    St.cat.Event.whenFlag(async function($this){
+        $this.Motion.gotoXY({x:0, y:0});
+    });
 
     const CAT_WALK_STEP = 5;
-    St.cat.Event.whenFlag(async function(){
-        this.C.while(true, async _=>{
-            this.Motion.moveSteps(CAT_WALK_STEP);
+    St.cat.Event.whenFlag(async function($this){
+        $this.C.while(true, async _=>{
+            $this.Motion.moveSteps(CAT_WALK_STEP);
         });
     });
 }

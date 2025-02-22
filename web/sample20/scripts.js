@@ -6,9 +6,8 @@
  * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
  * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample20】二匹のネコ、メッセージを送信受信して会話をさせる"
 
@@ -27,17 +26,17 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat2.svg','Cat2');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.BackDrop );
 
-    St.cat = new Libs.Sprite("Cat");
-    St.cat.Motion.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    St.cat = new Lib.Sprite("Cat");
+    St.cat.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
     St.cat.Image.add( Images.Cat1 );
     St.cat.Image.add( Images.Cat2 );
     St.cat.Motion.moveTo({x: -150, y: 0});
     St.cat.Motion.pointInDirection( 90 );
-    St.cat2 = new Libs.Sprite("Cat2");
-    St.cat2.Motion.setRotationStyle( Libs.RotationStyle.LEFT_RIGHT );
+    St.cat2 = new Lib.Sprite("Cat2");
+    St.cat2.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
     St.cat2.Image.add( Images.Cat1 );
     St.cat2.Image.add( Images.Cat2 );
     St.cat2.Motion.pointInDirection( -90 );
@@ -49,7 +48,7 @@ Pg.setting = async function setting() {
     const BubbleScale = {scale:{x:100,y:100}};
     St.stage.Event.whenFlag( async function() {
         // 1秒待つ
-        await Libs.wait(1000);
+        await Lib.wait(1000);
         
         // (↓)順番にメッセージを送って待つ
 
@@ -95,7 +94,7 @@ Pg.setting = async function setting() {
         await this.C.forever( _=>{
             this.Motion.moveSteps(5);
             if(this.Sensing.isTouchingEdge()) {
-                Libs.Loop.break();
+                Lib.Loop.break();
             }
         });
         this.Looks.hide(); 
@@ -108,7 +107,7 @@ Pg.setting = async function setting() {
         await this.C.forever( _=>{
             this.Motion.moveSteps(5);
             if(this.Sensing.isTouchingEdge()) {
-                Libs.Loop.break();
+                Lib.Loop.break();
             }
         });
         this.Looks.hide();       

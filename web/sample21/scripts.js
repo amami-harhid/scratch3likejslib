@@ -16,9 +16,8 @@
  * https://synthesis-service.scratch.mit.edu/synth?locale=ja-JP&gender=male&text=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
  * 
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample21】スピーチ機能：ネコに触る、タッチするとお話しをする"
 
@@ -28,9 +27,9 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
 }
 
@@ -54,7 +53,7 @@ Pg.setting = async function setting() {
                 
                 // 「送って待つ」ではないので次のループに進ませないように、
                 // 「マウスタッチしない迄待つ」をする。
-                await Libs.waitWhile( _=>this.Sensing.isMouseTouching() ); 
+                await Lib.waitWhile( _=>this.Sensing.isMouseTouching() ); 
             }
         });
     });

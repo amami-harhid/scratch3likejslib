@@ -6,9 +6,8 @@
  * broadcastAndWait にて音声スピーチが終わりを検知できるようにしました。
  * 
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample22】スピーチ機能：「スピーチを終わるまで待つ」の確認";
 
@@ -21,9 +20,9 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
 
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat", {scale:{x:300,y:300}});//サイズを３倍にしています
+    St.cat = new Lib.Sprite("Cat", {scale:{x:300,y:300}});//サイズを３倍にしています
     St.cat.Image.add( Images.Cat );
     St.cat.Sound.add( Sounds.Cat );
 }
@@ -56,7 +55,7 @@ Pg.setting = async function setting() {
                 // 「送って待つ」を使うことで スピーチが終わるまで次のコードに進まない。
                 // スピーチは２つ同時にできないので、スプライトクリックのイベントと重なってしまう。
                 // 以下の「マウスタッチしている間、待つ」をして 「なになに？」のスピーチ開始を一旦とめる。
-                await Libs.waitWhile( ()=>this.Sensing.isMouseTouching()); 
+                await Lib.waitWhile( ()=>this.Sensing.isMouseTouching()); 
             }else{
                 await this.Event.broadcastAndWait('SPEECH_STOP');
             }

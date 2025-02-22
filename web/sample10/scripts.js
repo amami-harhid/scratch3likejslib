@@ -3,9 +3,8 @@
  * スプライトのクローンを作る（スプライトに触ったらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample10】スプライトに触ったらクローンを作る(5秒で死ぬ)"
 
@@ -16,9 +15,9 @@ Pg.preload = async function preload() {
     this.Sound.load('../assets/Cat.wav','Mya');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
     St.cat.Motion.gotoXY({x:200, y:150});
 //    St.cat.Motion.gotoXY(200, 150);
@@ -48,7 +47,7 @@ Pg.setting = async function setting() {
     const _changeDirection = 1;
     St.cat.Event.whenFlag( async function() {
         // ずっと繰り返して回転する
-        this.Control.while(true, _=>{
+        this.Control.forever( _=>{
             this.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
         });
     });
@@ -60,7 +59,7 @@ Pg.setting = async function setting() {
                 this.Control.clone();
             }
             // マウスタッチしないまで待つ
-            await Libs.waitWhile( ()=>this.Sensing.isMouseTouching() ); 
+            await Lib.waitWhile( ()=>this.Sensing.isMouseTouching() ); 
         });
     });
 

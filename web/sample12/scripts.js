@@ -3,9 +3,8 @@
  * スプライト（CAT)を クリックした場所へ移動する
  */
 
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample12】クリックした場所へ移動する"
 
@@ -15,9 +14,9 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/cat.svg','Cat');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage("stage");
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Motion.gotoXY({x:0, y:0});
     St.cat.Image.add( Images.Cat );
 }
@@ -40,7 +39,7 @@ Pg.setting = async function setting() {
     });
     St.stage.Event.whenClicked(async _=> {
         // アロー関数の中なので、【this】は 上の階層 の this = P である。
-        const mousePosition = Libs.mousePosition;
+        const mousePosition = Lib.mousePosition;
         St.cat.Motion.gotoXY(mousePosition)
     });
 }

@@ -3,9 +3,8 @@
  * スプライトのクローンを作る（スプライトをクリックしたらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample09】スプライトをクリックしたらクローンを作る。端に触れたらミャーとないて折り返す。"
 
@@ -16,9 +15,9 @@ Pg.preload = async function preload() {
     this.Sound.load('../assets/Cat.wav','Mya');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage();
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
 }
 

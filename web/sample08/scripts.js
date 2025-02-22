@@ -2,9 +2,8 @@
  * Sample08
  * スプライトを 動かす( 端に触れたら ミャーと鳴く)
  */
-import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
-
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
 
 Pg.title = "【Sample08】スプライトが動き、端に触れたらミャーと鳴く"
 
@@ -15,10 +14,10 @@ Pg.preload = async function preload() {
     this.Sound.load('../assets/Cat.wav','Mya');
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Libs.Stage();
+    St.stage = new Lib.Stage();
     St.stage.Image.add( Images.Jurassic );
     
-    St.cat = new Libs.Sprite("Cat");
+    St.cat = new Lib.Sprite("Cat");
     St.cat.Image.add( Images.Cat );
 }
 Pg.setting = async function setting() {
