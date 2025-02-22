@@ -2,7 +2,7 @@ import 'regenerator-runtime'
 import 'core-js'
 import { Buffer } from 'buffer'
 window.Buffer = window.Buffer || Buffer
-const Libs = require('../lib/libs').default;
+const Library = require('../lib/libs').default;
 const PlayGround = require('../lib/playGround').default;
 const Element = PlayGround.Element;
 
@@ -12,13 +12,13 @@ const Initialize = async function() {
     await PlayGround._init();
 };
 
-const Images = PlayGround.loadedImages;
-const Sounds = PlayGround.loadedSounds;
+const ImagePool = PlayGround.loadedImages;
+const SoundPool = PlayGround.loadedSounds;
 
-/** アプリデータ格納用（なんでも入る） */
-const Storage = PlayGround.dataPool;
+/** ステージ、スプライトデータ格納用 */
+const Storage = PlayGround.dataPools;
 
 Initialize();
 
-export {PlayGround, Libs, Storage, Images, Sounds};
+export {PlayGround, Library, Storage, ImagePool, SoundPool};
 

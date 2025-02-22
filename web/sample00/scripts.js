@@ -5,7 +5,7 @@
 // ライブラリーをインポートして実行
 import {PlayGround, Libs, Storage, Images, Sounds} from '../../build/likeScratchLib.js'
 
-const [Pg, St] = [PlayGround, Storage]; // 短縮名にする
+const [Pg] = [PlayGround]; // 短縮名にする
 
 Pg.title = "【Sample00】何もしない場合のサンプル";
 
