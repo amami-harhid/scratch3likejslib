@@ -7,26 +7,21 @@ const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, 
 
 Pg.title = "【Sample03】旗クリックでずっと『終わるまで音を鳴らす』を繰り返す";
 
+const Jurassic = 'Jurassic';
+const Chill = "Chill";
 Pg.preload = function() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    /**
-     * Sound ロードで、サウンドでないとき エラーにしたいが？？
-     */
+    this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Sound.load('../assets/Chill.wav', Chill);
 }
 Pg.prepare = function() {
     St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    /**
-     * St.stage.Image.add("Jurassic")の形が望ましい。
-     * Image/Images と2回書く意味が薄い。
-     */
+    St.stage.Image.add( Jurassic );
 }
 Pg.setting = function() {
     // すぐに実行する。
     St.stage.Event.whenRightNow( function(){
         // ここでの『this』は Proxy(stage)である。
-        this.Sound.add( Sounds.Chill, { 'volume' : 100 } );
+        this.Sound.add( Chill, { 'volume' : 100 } );
     });
     St.stage.Event.whenFlag( function(){ 
         // 「終わるまで音を鳴らす」をずっと繰り返す

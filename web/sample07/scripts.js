@@ -2,22 +2,27 @@
  * Sample07
  * スプライトを左右に動かす。端に触れたら跳ね返る
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library, Storage} from '../../build/likeScratchLib.js'
+const [Pg, Lib, St] = [PlayGround, Library, Storage]; // 短縮名にする
 
 Pg.title = "【Sample07】スプライトが横向きに動き、端に触れたら跳ね返る"
 
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+const SpriteCatName = "cat";
+
 Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Sound.load('../assets/Chill.wav', Chill);
+    this.Image.load('../assets/cat.svg', Cat);
 }
 Pg.prepare = async function prepare() {
     St.stage = new Lib.Stage();
-    St.stage.addImage( Images.Jurassic );
-    St.stage.addSound( Sounds.Chill, { 'volume' : 100 } );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Image.add( Images.Cat );
+    St.stage.addImage( Jurassic );
+    St.stage.addSound( Chill, { 'volume' : 100 } );
+    St.cat = new Lib.Sprite( SpriteCatName );
+    St.cat.Image.add( Cat );
 }
 Pg.setting = async function setting() {
 
