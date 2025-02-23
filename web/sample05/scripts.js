@@ -2,8 +2,8 @@
  * Sample05
  * スプライトを作る
  */
-import {PlayGround, Library, Storage} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St] = [PlayGround, Library, Storage]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample05】旗クリックでスプライトを表示する"
 
@@ -12,15 +12,18 @@ const Chill = "Chill";
 const Cat = "Cat";
 const SpriteCatName = "cat";
 
+let stage;
+let cat;
+
 Pg.preload = function() {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
     this.Sound.load('../assets/Chill.wav', Chill);
     this.Image.load('../assets/cat.svg', Cat);
 }
 Pg.prepare = function() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Jurassic );
-    St.stage.Image.add( Chill, { 'volume' : 100 } );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    stage.Sound.add( Chill, { 'volume' : 100 } );
 }
 Pg.setting = function() {
     // フラグをクリックしたときの動作
@@ -28,15 +31,15 @@ Pg.setting = function() {
     // Pのthisとして使うのであれば、アロー式（引数省略）で書いて
     // this.cat として明示的に使うことでもよい。
     // ここでは、this.cat は P.catと同じ意味である。
-    St.stage.Event.whenFlag( _=> {
+    stage.Event.whenFlag( _=> {
         // 旗クリックしたタイミングでネコのスプライトを作り、
         // コスチュームを１個登録する
-        St.cat = new Lib.Sprite( SpriteCatName );
+        cat = new Lib.Sprite( SpriteCatName );
     });
-    St.stage.Event.whenFlag( _=> {
+    stage.Event.whenFlag( _=> {
         // コスチュームを１個登録する
         // whenFlagを定義した順番に実行されるので、
         // ここの『旗クリック』の処理ではネコのスプライトは作成済である。
-        St.cat.Image.add( Cat );
+        cat.Image.add( Cat );
     });
 };

@@ -10,17 +10,18 @@ Pg.title = "【Sample02】旗クリックで背景を表示する";
 
 const Jurassic = "Jurassic";
 
+let stage;
+
 Pg.preload = function() {
     // ここでの『this』は M(Mainインスタンス) である。
     this.Image.load('../assets/Jurassic.svg', Jurassic);
 }
 Pg.prepare = function() {
-    St.stage = new Lib.Stage();
+    stage = new Lib.Stage();
 }
 Pg.setting = async function() {
     // すぐに実行する。
-    St.stage.Event.whenRightNow( function(){
-        // ここでの『this』は Proxy(Stage)である。
-        this.Image.add( Jurassic );
+    stage.Event.whenRightNow( function($stage){
+        $stage.Image.add( Jurassic );
     });
 };
