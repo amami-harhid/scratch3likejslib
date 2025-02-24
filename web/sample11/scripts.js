@@ -2,8 +2,8 @@
  * Sample11
  * スプライト（CAT)を １秒で「どこかの」場所へ移動する
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample11】１秒で「どこかの」場所へ移動する"
 
