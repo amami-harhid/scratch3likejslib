@@ -43,7 +43,8 @@ Pg.setting = async function setting() {
     const catStep = 2;
 
     cat.Event.whenFlag( async _cat=>{
-        _cat.Sound.add( Mya, { 'volume' : 50 } );
+        _cat.Sound.add( Mya );
+        _cat.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
     
     cat.Event.whenFlag( async _cat=> {
