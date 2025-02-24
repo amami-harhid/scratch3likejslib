@@ -22,9 +22,10 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( function(){
+    stage.Event.whenRightNow( function($stage){
         // ここでの『this』は Proxy(stage)である。
-        this.Sound.add( Chill, { 'volume' : 100 } );
+        $stage.Sound.add( Chill );
+        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
     });
     stage.Event.whenFlag( function(){ 
         // 「終わるまで音を鳴らす」をずっと繰り返す

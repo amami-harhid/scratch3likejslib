@@ -6,78 +6,90 @@
  * broadcastAndWait にて音声スピーチが終わりを検知できるようにしました。
  * 
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample22】スピーチ機能：「スピーチを終わるまで待つ」の確認";
 
-Pg.preload = async function preload() {
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+const Nya = "Nya";
 
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
-    this.Sound.load('../assets/Cat.wav','Cat');
+let stage, cat;
+
+Pg.preload = async function preload( $this ) {
+
+    $this.Image.load('../assets/Jurassic.svg', Jurassic );
+    $this.Sound.load('../assets/Chill.wav', Chill );
+    $this.Image.load('../assets/cat.svg', Cat );
+    $this.Sound.load('../assets/Cat.wav', Nya );
 }
 Pg.prepare = async function prepare() {
 
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat", {scale:{x:300,y:300}});//サイズを３倍にしています
-    St.cat.Image.add( Images.Cat );
-    St.cat.Sound.add( Sounds.Cat );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite( "Cat" );
+    cat.Looks.setSize( {x:300,y:300} );//サイズを３倍にしています
+    cat.Image.add( Cat );
+    cat.Sound.add( Nya );
 }
 
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(async function(){
-        await this.Sound.add( Sounds.Chill, { 'volume' : 20 } );
-        await this.C.forever( async _=>{
-            await this.Sound.playUntilDone();
+    stage.Event.whenFlag(async function( $this ){
+        await $this.Sound.add( Chill );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
+        await $this.Control.forever( async _=>{
+            await $this.Sound.playUntilDone();
         });
     })
 
-    St.cat.Event.whenFlag( async function(){
-        this.C.forever( async _=>{
-            await this.Sound.playUntilDone();
+    cat.Event.whenFlag( async function( $this ){
+        $this.Control.forever( async _=>{
+            await $this.Sound.playUntilDone();
         });
     });
     
     // ネコにさわったらお話する
-    St.cat.Event.whenFlag( async function(){
-        this.__waitTouching = false;
+    cat.Event.whenFlag( async function( $this ){
         const words = `なになに？`;
         const properties = {'pitch': 2, 'volume': 100}
-        this.C.forever( async _=>{
-            if( this.Sensing.isMouseTouching() ) {
-                this.Looks.say(words);// フキダシを出す
-                await this.Event.broadcastAndWait('SPEECH', words, properties, 'male');
-                this.Looks.say(""); // フキダシを消す
+        $this.C.forever( async _=>{
+            if( $this.Sensing.isMouseTouching() ) {
+                $this.Looks.say(words);// フキダシを出す
+                await $this.Event.broadcastAndWait('SPEECH', words, properties, 'male');
+                $this.Looks.say(""); // フキダシを消す
                 // 「送って待つ」を使うことで スピーチが終わるまで次のコードに進まない。
                 // スピーチは２つ同時にできないので、スプライトクリックのイベントと重なってしまう。
                 // 以下の「マウスタッチしている間、待つ」をして 「なになに？」のスピーチ開始を一旦とめる。
-                await Lib.waitWhile( ()=>this.Sensing.isMouseTouching()); 
+                await Lib.waitWhile( ()=>$this.Sensing.isMouseTouching()); 
             }else{
-                await this.Event.broadcastAndWait('SPEECH_STOP');
+                await $this.Event.broadcastAndWait('SPEECH_STOP');
             }
         });
     });
     // ネコをクリックしたらお話する
-    St.cat.Event.whenClicked(async function(){
+    cat.Event.whenClicked(async function( $this ){
         const words = `そこそこ。そこがかゆいの。`;
         const properties = {'pitch': 1.7, 'volume': 500}
         // スピーチを止めるためのメッセージを送る
-        await this.Event.broadcastAndWait('SPEECH_STOP');
+        await $this.Event.broadcastAndWait('SPEECH_STOP');
         // スピーチさせるメッセージを送る
-        await this.Event.broadcastAndWait('SPEECH', words, properties, 'female');
+        await $this.Event.broadcastAndWait('SPEECH', words, properties, 'female');
     });
     
-    St.cat.Event.whenBroadcastReceived('SPEECH', async function(words, properties, gender='male', locale='ja-JP') {
+    /** スピーチのメッセージを受信したとき */
+    cat.Event.whenBroadcastReceived('SPEECH', async function(words, properties, gender='male', locale='ja-JP') {
+        const $this = this;
         // speechAndWait に await をつけて、音声スピーチが終わるまで待つ。
-        await this.Extensions.speechAndWait(words, properties, gender, locale);
+        await $this.Extensions.speechAndWait(words, properties, gender, locale);
     });
-    St.cat.Event.whenBroadcastReceived('SPEECH_STOP', async function() {
+    /** スピーチ停止のメッセージを受信したとき */
+    cat.Event.whenBroadcastReceived('SPEECH_STOP', async function() {
+        const $this = this;
         // スピーチを全て停止する
-        this.Extensions.speechStopAll();
+        $this.Extensions.speechStopAll();
     });
 
 }

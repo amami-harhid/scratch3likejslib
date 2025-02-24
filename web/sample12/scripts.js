@@ -3,22 +3,28 @@
  * スプライト（CAT)を クリックした場所へ移動する
  */
 
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample12】クリックした場所へ移動する"
 
-Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+
+let stage, cat;
+
+Pg.preload = async function preload($this) {
+    $this.Image.load('../assets/Jurassic.svg', Jurassic );
+    $this.Sound.load('../assets/Chill.wav', Chill );
+    $this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Motion.gotoXY({x:0, y:0});
-    St.cat.Image.add( Images.Cat );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite("Cat");
+    cat.Motion.gotoXY({x:0, y:0});
+    cat.Image.add( Cat );
 }
 
 Pg.setting = async function setting() {
@@ -26,20 +32,24 @@ Pg.setting = async function setting() {
     // ここはfunction式の中なので 【this】= P である
     // ここをアロー式にすると 【this】= window となる
 
-    St.stage.Event.whenFlag(async function() {
+    stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
+        $this.Sound.add( Chill );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
     });
 
-    St.stage.Event.whenFlag(async function() {
+    stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はProxy(stage)である。
-        this.Control.while(true, async _=>{
-            await this.Sound.playUntilDone();
+        $this.Control.while(true, async _=>{
+            await $this.Sound.playUntilDone();
         });
     });
-    St.stage.Event.whenClicked(async _=> {
+    stage.Event.whenClicked(async ()=> {
         // アロー関数の中なので、【this】は 上の階層 の this = P である。
         const mousePosition = Lib.mousePosition;
-        St.cat.Motion.gotoXY(mousePosition)
+        cat.Motion.gotoXY(mousePosition)
+    });
+    cat.Event.whenFlag(async ( $this ) => {
+        $this.Motion.gotoXY({x:0, y:0});
     });
 }

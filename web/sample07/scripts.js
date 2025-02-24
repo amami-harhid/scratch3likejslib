@@ -22,7 +22,9 @@ Pg.preload = async function preload() {
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
     stage.Image.add( Jurassic );
-    stage.Sound.add( Chill, { 'volume' : 100 } );
+    const key = Lib.SoundOption.VOLUME;
+    stage.Sound.add( Chill );
+    stage.Sound.setOption(Lib.SoundOption.VOLUME, 100);
     cat = new Lib.Sprite( SpriteCatName );
     cat.Image.add( Cat );
 }

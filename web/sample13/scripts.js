@@ -2,44 +2,55 @@
  * Sample13
  * スプライト（CAT) クリックした位置へ１秒で動く
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample13】クリックした位置へ１秒で動く"
 
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+
+let stage, cat;
 
 Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Image.add( Images.Cat );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite("Cat");
+    cat.Image.add( Cat );
 }
 
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(async function() {
+    /** 旗をクリックしたときのステージのイベント */
+    stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
+        $this.Sound.add( Chill );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
     });
-
-    St.stage.Event.whenFlag(async function() {
+    /** 旗をクリックしたときのステージのイベント */
+    stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はProxy(stage)である。
-        this.Control.while(true, async _=>{
-            await this.Sound.playUntilDone();
+        $this.Control.while(true, async _=>{
+            await $this.Sound.playUntilDone();
         });
     });
-    St.stage.Event.whenClicked(async function(){
+
+    /** ステージをクリックしたときのステージイベント */
+    stage.Event.whenClicked(async function( ){
         // function() の中なので、【this】はProxy(stage)である。
         const mousePosition = Lib.mousePosition;
-        await St.cat.glideToPosition( 1, mousePosition );
+        // ステージイベント処理の中でネコを動かす
+        await cat.Motion.glideToPosition( 1, mousePosition );
     });
-    St.cat.Event.whenFlag(async function(){
-        this.Motion.gotoXY({x:0, y:0});
+    /** 旗をクリックしたときのネコのイベント */
+    cat.Event.whenFlag(async function( $this ){
+        $this.Motion.gotoXY({x:0, y:0});
 
     });
 }

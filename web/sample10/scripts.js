@@ -32,7 +32,8 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function($stage) {
-        $stage.Sound.add( Chill, { 'volume' : 50 } );
+        $stage.Sound.add( Chill );
+        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
     stage.Event.whenFlag(async function($stage) {
         $stage.Control.forever(async _=>{
@@ -73,7 +74,7 @@ Pg.setting = async function setting() {
     cat.Control.whenCloned(async function(clone){
         clone.Motion.gotoXY({x:100, y:-100});
         clone.Looks.setSize({x:50, y:50});
-        clone.Looks.setEffect(Lib.LooksEffectiveType.COLOR, 50);
+        clone.Looks.setEffect(Lib.ImageEffective.COLOR, 50);
         clone.life = 5000;
         clone.Looks.show();
         // ずっと繰り返す

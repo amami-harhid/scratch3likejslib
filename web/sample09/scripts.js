@@ -31,16 +31,18 @@ Pg.prepare = async function prepare() {
 const direction01 = 1;
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(function(){
+    stage.Event.whenFlag(function($stage){
         // function(){} と書くとき、『this』は Proxy(stage)である
-        this.Sound.add( Chill, { 'volume' : 50 } );
-        this.Control.while(true, async _=>{
+        $stage.Sound.add( Chill );
+        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        $stage.Control.while(true, async _=>{
             await this.Sound.playUntilDone();
         })
     });
-    cat.Event.whenFlag(function(){
+    cat.Event.whenFlag(function($cat){
         // function(){} と書くとき、『this』は Proxy(cat)である
-        this.Sound.add( Mya, { 'volume' : 20 } );
+        $cat.Sound.add( Mya );
+        $cat.Sound.setOption(Lib.SoundOption.VOLUME, 20)
     });
     cat.Event.whenFlag( async $cat=> {
         // 初期化

@@ -7,37 +7,45 @@ const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample11】１秒で「どこかの」場所へ移動する"
 
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+
+let stage, cat;
+
 Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Motion.gotoXY({x:0, y:0});
-    St.cat.Image.add( Images.Cat );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite("Cat");
+    cat.Motion.gotoXY({x:0, y:0});
+    cat.Image.add( Cat );
 }
 
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(async function() {
-        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
+    stage.Event.whenFlag(async function($this) {
+        $this.Sound.add( Chill );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
 
-    St.stage.Event.whenFlag(async function() {
-        this.Control.forever(async _=>{
-            await this.Sound.playUntilDone();
+    stage.Event.whenFlag(async function($this) {
+        $this.Control.forever(async _=>{
+            await $this.Sound.playUntilDone();
         });
     });
-    St.cat.Event.whenFlag(async function() {
-        this.Control.forever(async _=>{
+    cat.Event.whenFlag(async function($this) {
+        $this.Motion.gotoXY({x:0, y:0});
+        $this.Control.forever(async _=>{
             // 繰り返すごとに 1秒待つ
             await Lib.wait(1000);
             // １秒でどこかへ行く
             const randomPoint = Lib.randomPoint;
-            await this.Motion.glideToPosition(1,  randomPoint.x, randomPoint.y);
+            await $this.Motion.glideToPosition(1,  randomPoint.x, randomPoint.y);
         })
     });
 }

@@ -8,7 +8,6 @@ const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 Pg.title = "【Sample05】旗クリックでスプライトを表示する"
 
 const Jurassic = "Jurassic";
-const Chill = "Chill";
 const Cat = "Cat";
 const SpriteCatName = "cat";
 
@@ -17,13 +16,11 @@ let cat;
 
 Pg.preload = function() {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
-    this.Sound.load('../assets/Chill.wav', Chill);
     this.Image.load('../assets/cat.svg', Cat);
 }
 Pg.prepare = function() {
     stage = new Lib.Stage();
     stage.Image.add( Jurassic );
-    stage.Sound.add( Chill, { 'volume' : 100 } );
 }
 Pg.setting = function() {
     // フラグをクリックしたときの動作

@@ -27,7 +27,8 @@ Pg.prepare = async function prepare() {
     // スプライトを作り、コスチュームを１個登録する
     cat = new Lib.Sprite( SpriteCatName );
     cat.Image.add( Cat );
-    cat.Sound.add( Chill, { 'volume' : 100 } );
+    cat.Sound.add( Chill );
+    cat.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
     cat.Looks.hide(); // 非表示
 }
 Pg.setting = async function setting() {

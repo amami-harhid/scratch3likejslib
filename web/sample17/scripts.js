@@ -7,73 +7,82 @@
  * クローンを削除するメソッドを用意したい。
  * クローン削除されるとき、そのクローンで動いているスレッドも消すこと
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample17】十字にマウスポインターが触れたら 蝶のクローンを作る"
 
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cross01 = "Cross01";
+const Cross02 = "Cross02";
+const Butterfly01 = "Butterfly01";
+const Butterfly02 = "Butterfly02";
+
+let stage, cross, butterfly;
+
 Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cross1.svg','Cross01');
-    this.Image.load('../assets/cross2.svg','Cross02');
-    this.Image.load('../assets/butterfly1.svg','Butterfly01');
-    this.Image.load('../assets/butterfly2.svg','Butterfly02');
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cross1.svg', Cross01 );
+    this.Image.load('../assets/cross2.svg', Cross02 );
+    this.Image.load('../assets/butterfly1.svg', Butterfly01 );
+    this.Image.load('../assets/butterfly2.svg', Butterfly02 );
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
 
-    St.cross = new Lib.Sprite("Cross");
-    St.cross.Image.add( Images.Cross01 );
-    St.cross.Image.add( Images.Cross02 );
-    St.cross.Looks.setSize({x:300,y:300});
+    cross = new Lib.Sprite("Cross");
+    cross.Image.add( Cross01 );
+    cross.Image.add( Cross02 );
+    cross.Looks.setSize({x:300,y:300});
 
-    St.butterfly = new Lib.Sprite("Butterfly");
-    St.butterfly.Image.add( Images.Butterfly01 );
-    St.butterfly.Image.add( Images.Butterfly02 );
-    St.butterfly.Looks.hide();
+    butterfly = new Lib.Sprite("Butterfly");
+    butterfly.Image.add( Butterfly01 );
+    butterfly.Image.add( Butterfly02 );
+    butterfly.Looks.hide();
 }
 
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(async function() {
+    stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        this.Sound.add( Sounds.Chill, { 'volume' : 20 } );
+        $this.Sound.add( Chill );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
     });
 
-    St.stage.Event.whenFlag(async function() {
+    stage.Event.whenFlag(async function($this) {
         // function() の中なので、【this】はProxy(stage)である。
-        this.C.forever( async _=>{
-            await this.Sound.playUntilDone();
+        $this.Control.forever( async _=>{
+            await $this.Sound.playUntilDone();
         });
     });
 
     const ChangeDirection = 1;
-    St.cross.Event.whenFlag(async function(){
-        this.C.while(true, async _=>{
-            this.Motion.turnRightDegrees(ChangeDirection);
+    cross.Event.whenFlag(async function( $this ){
+        $this.Control.forever(async _=>{
+            $this.Motion.turnRightDegrees(ChangeDirection);
         });
     });
-    St.cross.Event.whenFlag(async function(){
-        this.C.while(true, async _=>{
-            if ( this.Sensing.isMouseTouching() ) {
-                this.Looks.nextCostume();
-                await Lib.waitWhile( ()=>this.Sensing.isMouseTouching());
-                this.Looks.nextCostume();
+    cross.Event.whenFlag(async function( $this ){
+        $this.Control.forever(async _=>{
+            if ( $this.Sensing.isMouseTouching() ) {
+                $this.Looks.nextCostume();
+                await Lib.waitWhile( ()=>$this.Sensing.isMouseTouching());
+                $this.Looks.nextCostume();
             }
         });
     });
-    St.cross.Event.whenFlag(async function(){
-        this.C.forever( async _=>{
-            if ( this.Sensing.isMouseTouching() ) {
-                const butterfly = St.butterfly;
+    cross.Event.whenFlag(async function( $cross ){
+        $cross.Control.forever( async _=>{
+            if ( $cross.Sensing.isMouseTouching() ) {
                 const mousePosition = Lib.mousePosition;
                 butterfly.Motion.gotoXY(mousePosition);
                 const scale = {x: 15, y: 15}
                 butterfly.Looks.setSize(scale);
                 butterfly.Motion.pointInDirection(Lib.randomDirection);
-                await St.butterfly.Control.clone();
+                await butterfly.Control.clone();
                 // 下をコメントアウトすると、十字にさわっている間は クローンを作り続ける
                 // 下を生かすと、十字に触ったときにクローンを作るが、次には進まない
                 //await Libs.waitUntil( this.isNotMouseTouching, this); // 「マウスポインターが触らない」迄待つ。
@@ -81,9 +90,9 @@ Pg.setting = async function setting() {
             }
         });
     });
-    St.butterfly.Control.whenCloned( function() {
-        const clone = this;
-        clone.C.forever( async _=>{
+    butterfly.Control.whenCloned( function( $this ) {
+        const clone = $this;
+        clone.Control.forever( async _=>{
             if(clone.life > 0 ){
                 this.Looks.nextCostume();
                 await Lib.wait(50);    
@@ -92,17 +101,17 @@ Pg.setting = async function setting() {
             }
         });
     });
-    St.butterfly.Control.whenCloned( function() {
-        const clone = this;
-        clone.show();
+    butterfly.Control.whenCloned( function( $this ) {
+        const clone = $this;
+        clone.Looks.show();
         clone.life = 5000; // ミリ秒。クローンが生きている時間。（およその時間）
-        clone.C.forever( async _=>{
+        clone.Control.forever( async _=>{
             // ランダムな場所
             const randomPoint = Lib.randomPoint;
             // １秒でどこかに行く。
-            await this.Motion.glideToPosition(5, randomPoint.x, randomPoint.y);
+            await $this.Motion.glideToPosition(5, randomPoint.x, randomPoint.y);
             // ライフがゼロになったら「繰り返し」を抜ける
-            if( this.life < 0) {
+            if( $this.life < 0) {
                 Lib.Loop.break();
             }        
         });

@@ -32,14 +32,15 @@ Pg.setting = async function setting() {
     stage.Event.whenFlag(async $stage=>{
         // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
         // stageのインスタンスは 『stage』の変数で受け取っている。
-        await $stage.Sound.add( Chill, { 'volume' : 50 } );
+        await $stage.Sound.add( Chill );
+        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
         await $stage.C.forever(async _=>{
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await $stage.Sound.playUntilDone();
         })
     });
 
-    const catStep = 10;
+    const catStep = 2;
 
     cat.Event.whenFlag( async _cat=>{
         _cat.Sound.add( Mya, { 'volume' : 50 } );
