@@ -73,7 +73,7 @@ Pg.setting = async function setting() {
     cat.Control.whenCloned(async function(clone){
         clone.Motion.gotoXY({x:100, y:-100});
         clone.Looks.setSize({x:50, y:50});
-        clone.Looks.setEffect(Lib.Looks.COLOR, 50);
+        clone.Looks.setEffect(Lib.LooksEffectiveType.COLOR, 50);
         clone.life = 5000;
         clone.Looks.show();
         // ずっと繰り返す
