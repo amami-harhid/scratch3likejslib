@@ -3,65 +3,72 @@
  * スプライトのクローンを作る（スプライトをクリックしたらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample09】スプライトをクリックしたらクローンを作る。端に触れたらミャーとないて折り返す。"
 
-Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
-    this.Sound.load('../assets/Cat.wav','Mya');
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+const Mya = "Mya";
+
+let stage, cat;
+
+Pg.preload = async function preload($this) {
+    $this.Image.load('../assets/Jurassic.svg', Jurassic);
+    $this.Sound.load('../assets/Chill.wav', Chill);
+    $this.Image.load('../assets/cat.svg', Cat);
+    $this.Sound.load('../assets/Cat.wav', Mya);
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Image.add( Images.Cat );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite("Cat");
+    cat.Image.add( Cat );
 }
 
 const direction01 = 1;
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(function(){
+    stage.Event.whenFlag(function(){
         // function(){} と書くとき、『this』は Proxy(stage)である
-        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
+        this.Sound.add( Chill, { 'volume' : 50 } );
         this.Control.while(true, async _=>{
             await this.Sound.playUntilDone();
         })
     });
-    St.cat.Event.whenFlag(function(){
+    cat.Event.whenFlag(function(){
         // function(){} と書くとき、『this』は Proxy(cat)である
-        this.Sound.add( Sounds.Mya, { 'volume' : 20 } );
+        this.Sound.add( Mya, { 'volume' : 20 } );
     });
-    St.cat.Event.whenFlag( async cat=> {
+    cat.Event.whenFlag( async $cat=> {
         // 初期化
-        cat.Motion.gotoXY({x:0, y:0});
-        cat.Motion.pointInDerection( 90 );
+        $cat.Motion.gotoXY({x:0, y:0});
+        $cat.Motion.pointInDirection( 90 );
     });
 
     // { }の外側のスコープを参照できる
     const direction02 = 1;
-    St.cat.Event.whenFlag( async function() {
-        this.Control.while(true, _=>{
-            this.Motion.turnRightDegrees(direction01+direction02);
+    cat.Event.whenFlag( async function($cat) {
+        $cat.Control.while(true, _=>{
+            $cat.Motion.turnRightDegrees(direction01+direction02);
         });
     });
-    St.cat.Event.whenClicked(async function () {
+    cat.Event.whenClicked(async function ($cat) {
         //this.soundPlay();
-        this.Control.clone();
+        $cat.Control.clone();
     });
 
     const catStep = 10;
-    St.cat.Control.whenCloned( async function() {
-        this.Looks.show();
-        this.Control.while(true, _=>{
-            this.Motion.moveSteps(catStep);
-            this.Motion.ifOnEdgeBounds();
-            if(this.Sensing.isTouchingEdge() ){
+    cat.Control.whenCloned( async function($cat) {
+        $cat.Looks.show();
+        $cat.Control.while(true, _=>{
+            $cat.Motion.moveSteps(catStep);
+            $cat.Motion.ifOnEdgeBounds();
+            if($cat.Sensing.isTouchingEdge() ){
                 // ミャーと鳴く。
-                this.Sound.play()
+                $cat.Sound.play()
             }        
         });
     });

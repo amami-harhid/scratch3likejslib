@@ -12,13 +12,7 @@ const Initialize = async function() {
     await PlayGround._init();
 };
 
-const ImagePool = PlayGround.loadedImages;
-const SoundPool = PlayGround.loadedSounds;
-
-/** ステージ、スプライトデータ格納用 */
-const Storage = PlayGround.dataPools;
-
 Initialize();
 
-export {PlayGround, Library, Storage, ImagePool, SoundPool};
+export {PlayGround, Library};
 

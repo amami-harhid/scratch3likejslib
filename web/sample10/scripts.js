@@ -3,72 +3,77 @@
  * スプライトのクローンを作る（スプライトに触ったらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import {PlayGround, Library, Storage, ImagePool, SoundPool} from '../../build/likeScratchLib.js'
-const [Pg, Lib, St, Images, Sounds] = [PlayGround, Library, Storage, ImagePool, SoundPool]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js'
+const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample10】スプライトに触ったらクローンを作る(5秒で死ぬ)"
 
-Pg.preload = async function preload() {
-    this.Image.load('../assets/Jurassic.svg','Jurassic');
-    this.Sound.load('../assets/Chill.wav','Chill');
-    this.Image.load('../assets/cat.svg','Cat');
-    this.Sound.load('../assets/Cat.wav','Mya');
+const Jurassic = "Jurassic";
+const Chill = "Chill";
+const Cat = "Cat";
+const Mya = "Mya";
+
+let stage, cat;
+
+Pg.preload = async function preload($pg) {
+    $pg.Image.load('../assets/Jurassic.svg', Jurassic);
+    $pg.Sound.load('../assets/Chill.wav', Chill);
+    $pg.Image.load('../assets/cat.svg', Cat);
+    $pg.Sound.load('../assets/Cat.wav', Mya);
 }
 Pg.prepare = async function prepare() {
-    St.stage = new Lib.Stage();
-    St.stage.Image.add( Images.Jurassic );
-    St.cat = new Lib.Sprite("Cat");
-    St.cat.Image.add( Images.Cat );
-    St.cat.Motion.gotoXY({x:200, y:150});
-//    St.cat.Motion.gotoXY(200, 150);
-    St.cat.Motion.pointInDirection( 90 );
+    stage = new Lib.Stage();
+    stage.Image.add( Jurassic );
+    cat = new Lib.Sprite("Cat");
+    cat.Image.add( Cat );
+    cat.Motion.gotoXY({x:200, y:150});
+    cat.Motion.pointInDirection( 90 );
 }
 Pg.setting = async function setting() {
 
-    St.stage.Event.whenFlag(async function() {
-        this.Sound.add( Sounds.Chill, { 'volume' : 50 } );
+    stage.Event.whenFlag(async function($stage) {
+        $stage.Sound.add( Chill, { 'volume' : 50 } );
     });
-    St.stage.Event.whenFlag(async function() {
-        this.Control.forever(async _=>{
-            await this.Sound.playUntilDone();
+    stage.Event.whenFlag(async function($stage) {
+        $stage.Control.forever(async _=>{
+            await $stage.Sound.playUntilDone();
         })
     });
 
-    St.cat.Event.whenFlag( async function() {
+    cat.Event.whenFlag( async function($cat) {
         // 音を登録する
-        this.Sound.add( Sounds.Mya, { 'volume' : 20 } );
+        $cat.Sound.add( Mya, { 'volume' : 20 } );
     });
-    St.cat.Event.whenFlag( async cat=> {
+    cat.Event.whenFlag( async ($cat)=> {
         // 初期化
-        St.cat.Motion.gotoXY({x:200, y:150});
-        St.cat.Motion.pointInDirection( 90 );
+        $cat.Motion.gotoXY({x:200, y:150});
+        $cat.Motion.pointInDirection( 90 );
     });
 
     const _changeDirection = 1;
-    St.cat.Event.whenFlag( async function() {
+    cat.Event.whenFlag( async function($cat) {
         // ずっと繰り返して回転する
-        this.Control.forever( _=>{
-            this.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
+        $cat.Control.forever( _=>{
+            $cat.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
         });
     });
-    St.cat.Event.whenFlag( async function() {
+    cat.Event.whenFlag( async function($cat) {
         // 次をずっと繰り返す
         // マウスカーソルでタッチしたら、クローンを作る
-        this.Control.forever(async _=>{
-            if( this.Sensing.isMouseTouching() ) {
-                this.Control.clone();
+        $cat.Control.forever(async _=>{
+            if( $cat.Sensing.isMouseTouching() ) {
+                $cat.Control.clone();
             }
             // マウスタッチしないまで待つ
-            await Lib.waitWhile( ()=>this.Sensing.isMouseTouching() ); 
+            await Lib.waitWhile( ()=>$cat.Sensing.isMouseTouching() ); 
         });
     });
 
     const steps = 10;
-    St.cat.Control.whenCloned(async function(){
-        const clone = this; // 'this' is cloned instance;
+    cat.Control.whenCloned(async function(clone){
         clone.Motion.gotoXY({x:100, y:-100});
         clone.Looks.setSize({x:50, y:50});
-        clone.Looks.setEffect('color', 50);
+        clone.Looks.setEffect(Lib.Looks.COLOR, 50);
         clone.life = 5000;
         clone.Looks.show();
         // ずっと繰り返す
