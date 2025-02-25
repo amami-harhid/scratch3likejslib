@@ -5,10 +5,15 @@
  * 左矢印、右矢印で、シップが左右に動く。
  * スペースキーで 弾を発射（発射する弾はクローン）
  */
+
+/**
+ * 【課題】 音量の設定が効かない。常に１００％になる。
+ */
+
 import {PlayGround, Library} from '../../build/likeScratchLib.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
-Pg.title = "【Sample18】３匹のネコの回転方向を変える"
+Pg.title = "【Sample18】左右矢印でシップが左右に動き、スペースキーで弾を発射。"
 
 const Jurassic = "Jurassic";
 const Chill = "Chill";
@@ -40,17 +45,20 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.Volume, 20 );
+        $this.Sound.add( Chill ).then(me=>{
+            me.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        });
     });
     cross.Event.whenFlag(async function( $this ){
-        $this.Sound.add( Pew );
-        $this.Sound.setOption( Lib.SoundOption.Volume, 100 );
+        await $this.Sound.add( Pew );
+        $this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
+        $this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
     });
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はProxy(stage)である。
         $this.Control.forever( async _=>{
+            console.log($this.sounds.volume);
             await $this.Sound.playUntilDone();
         });
     });
@@ -80,7 +88,7 @@ Pg.setting = async function setting() {
         });
     });
     cross.Control.whenCloned(async function( clone ){
-        const {_,height} = clone.Looks.getSelfDimensions();
+        const {_,height} = clone.Looks.drawingDimensions();
         clone.Motion.changeY( height / 2);
         clone.Looks.nextCostume();
         clone.Looks.show();
@@ -93,17 +101,22 @@ Pg.setting = async function setting() {
                 Lib.Loop.break();
             }
         });
-        clone.remove();
+        clone.Control.remove();
     });
     const TURN_RIGHT_DEGREE= 25;
     cross.Control.whenCloned( async function( clone ) {
         // while の後に処理があるときは await 忘れないようにしましょう
+        clone.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        clone.Sound.setOption( Lib.SoundOption.PITCH, 80 );
         await clone.Control.forever( async _=>{
             clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
             if(clone.Sensing.isTouchingEdge()){
+                clone.Sound.play();
+                await Lib.wait(500)
+
                 Lib.Loop.break();
             }
         });
-        clone.remove();
+        clone.Control.remove();
     });
 }

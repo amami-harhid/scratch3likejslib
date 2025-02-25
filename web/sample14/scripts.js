@@ -32,13 +32,13 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
+        await $this.Sound.add( Chill );
         $this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はProxy(stage)である。
-        $this.C.while(true, async _=>{
+        $this.Control.forevre(async _=>{
             await $this.Sound.playUntilDone();
         });
     });
@@ -60,7 +60,7 @@ Pg.setting = async function setting() {
     cat.Event.whenFlag(async function( $this ){
         // 1秒待ってからマウスカーソルを追跡する
         await Lib.wait(ms1000);
-        $this.C.while(true, async _=>{
+        $this.Control.forever(async _=>{
             // マウスの方向へ向く
             $this.Motion.pointToMouse();
             if(_5SecondsTimerOn){

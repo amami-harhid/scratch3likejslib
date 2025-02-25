@@ -3,9 +3,6 @@
  * スプライト（CROSS) : 右側に回転 、マウスポインターに触れたら 蝶のクローンを作る（クローンの位置はマウスポインターの位置）
  * スプライト（butterfly) : 非表示、クローンされたら表示に切り替える、クローンは指定した時間数（ﾐﾘ秒）だけ生きている。
  * 
- * 【課題】
- * クローンを削除するメソッドを用意したい。
- * クローン削除されるとき、そのクローンで動いているスレッドも消すこと
  */
 import {PlayGround, Library} from '../../build/likeScratchLib.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
@@ -48,11 +45,8 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
+        await $this.Sound.add( Chill );
         $this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
-    });
-
-    stage.Event.whenFlag(async function($this) {
         // function() の中なので、【this】はProxy(stage)である。
         $this.Control.forever( async _=>{
             await $this.Sound.playUntilDone();

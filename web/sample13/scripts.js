@@ -30,7 +30,7 @@ Pg.setting = async function setting() {
     /** 旗をクリックしたときのステージのイベント */
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
+        await $this.Sound.add( Chill );
         $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
     });
     /** 旗をクリックしたときのステージのイベント */
