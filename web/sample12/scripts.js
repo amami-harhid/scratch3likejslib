@@ -34,7 +34,7 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
+        await $this.Sound.add( Chill );
         $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
     });
 
