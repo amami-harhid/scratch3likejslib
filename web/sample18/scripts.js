@@ -58,7 +58,6 @@ Pg.setting = async function setting() {
     stage.Event.whenFlag(async function( $this ) {
         // function() の中なので、【this】はProxy(stage)である。
         $this.Control.forever( async _=>{
-            console.log($this.sounds.volume);
             await $this.Sound.playUntilDone();
         });
     });
@@ -112,7 +111,7 @@ Pg.setting = async function setting() {
             clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
             if(clone.Sensing.isTouchingEdge()){
                 clone.Sound.play();
-                await Lib.wait(500)
+                //await Lib.wait(500)
 
                 Lib.Loop.break();
             }
