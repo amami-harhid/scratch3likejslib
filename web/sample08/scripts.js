@@ -33,7 +33,7 @@ Pg.setting = async function setting() {
         // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
         // stageのインスタンスは 『stage』の変数で受け取っている。
         await $stage.Sound.add( Chill );
-        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
         await $stage.C.forever(async _=>{
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await $stage.Sound.playUntilDone();
@@ -43,8 +43,8 @@ Pg.setting = async function setting() {
     const catStep = 2;
 
     cat.Event.whenFlag( async _cat=>{
-        _cat.Sound.add( Mya );
-        _cat.Sound.setOption( Lib.SoundOption.VOLUME, 50);
+        await _cat.Sound.add( Mya );
+        _cat.Sound.setOption( Lib.SoundOption.VOLUME, 10);
     });
     
     cat.Event.whenFlag( async _cat=> {
@@ -60,6 +60,8 @@ Pg.setting = async function setting() {
             _cat.Motion.ifOnEdgeBounds();
             if(_cat.Sensing.isTouchingEdge()){
                 _cat.Sound.play();
+                const randomDegree = Lib.getRandomValueInRange(-50, 50);
+                _cat.Motion.turnRightDegrees(randomDegree);    
             }
         });
     });
