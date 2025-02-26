@@ -40,7 +40,7 @@ Pg.setting = async function setting() {
         })
     });
 
-    const catStep = 2;
+    const catStep = 20;
 
     cat.Event.whenFlag( async _cat=>{
         await _cat.Sound.add( Mya );
