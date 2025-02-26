@@ -17,7 +17,9 @@ let stage, cat;
 Pg.preload = async function preload() {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
     this.Sound.load('../assets/Chill.wav', Chill);
-    this.Image.load('../assets/cat.svg', Cat);
+//    this.Image.load('../assets/cat.svg', Cat);
+//    this.Image.load('../assets/cheesy puffs.png', Cat);
+    this.Image.load('../assets/ball-a.svg', Cat);
     this.Sound.load('../assets/Cat.wav', Mya);
 }
 Pg.prepare = async function prepare() {
@@ -53,15 +55,23 @@ Pg.setting = async function setting() {
         _cat.M.pointInDirection( 90 );
     });
 
+    // 課題
+    // ifOnEdgeBounds()のときに KeepInFence による
+    // 移動が足りていないと思われる。横向きに動くとき +1 してやると
+    // ちょうどよい感じがする( Ball のとき )
+    // Cat のときと Ball のときの動きの違い、どこに原因があるのかを
+    // 調べるとよさそう。
+
     cat.Event.whenFlag( async _cat=>{
         // ずっと「左右」に動く。端に触れたら跳ね返る。
         _cat.C.forever( _=> {
             _cat.Motion.moveSteps(catStep);
             _cat.Motion.ifOnEdgeBounds();
             if(_cat.Sensing.isTouchingEdge()){
+                //_cat.Motion.moveSteps(+1);
                 _cat.Sound.play();
-                const randomDegree = Lib.getRandomValueInRange(-50, 50);
-                _cat.Motion.turnRightDegrees(randomDegree);    
+                // const randomDegree = Lib.getRandomValueInRange(-50, 50);
+                // _cat.Motion.turnRightDegrees(randomDegree);    
             }
         });
     });
