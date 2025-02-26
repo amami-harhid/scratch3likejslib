@@ -17,9 +17,7 @@ let stage, cat;
 Pg.preload = async function preload() {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
     this.Sound.load('../assets/Chill.wav', Chill);
-//    this.Image.load('../assets/cat.svg', Cat);
-//    this.Image.load('../assets/cheesy puffs.png', Cat);
-    this.Image.load('../assets/ball-a.svg', Cat);
+    this.Image.load('../assets/cat.svg', Cat);
     this.Sound.load('../assets/Cat.wav', Mya);
 }
 Pg.prepare = async function prepare() {
@@ -52,7 +50,7 @@ Pg.setting = async function setting() {
     cat.Event.whenFlag( async _cat=> {
         // 初期化
         _cat.M.gotoXY({x:0, y:0});
-        _cat.M.pointInDirection( 90 );
+        _cat.M.pointInDirection( 50 );
     });
 
     // 課題
