@@ -34,15 +34,13 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     // フラグをクリックしたときの動作
-    stage.Event.whenFlag( _=> {
-        // アロー関数なので、ここでの『this』はPである
-        cat.Looks.show(); // 表示
+    stage.Event.whenFlag( function(){
+            cat.Looks.show(); // 表示
     });
 
     // スプライト（ネコ）をクリックしたときの動作
-    cat.Event.whenClicked( async (ネコ) => {
-        // アロー関数なので、ここでの『this』はPである
-        // catのインスタンスは 『ネコ』として受け取っている。
+    cat.Event.whenClicked( async function(){
+        const ネコ = this;
         // 「終わるまで音を鳴らす」をずっと繰り返す
         ネコ.C.forever(async _=>{
             // 処理が終わるまで待つために await をつける

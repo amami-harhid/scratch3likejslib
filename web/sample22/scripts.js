@@ -38,7 +38,7 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function(){
-        await this.Sound.add( Chill+2 );
+        await this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
         await this.Control.forever( async _=>{
             await this.Sound.playUntilDone();
@@ -52,7 +52,7 @@ Pg.setting = async function setting() {
     });
     
     // ネコにさわったらお話する
-    cat.Event.whenFlag( async function( ){
+    cat.Event.whenFlag( async function(){
         const words = `なになに？`;
         const properties = {'pitch': 2, 'volume': 100}
         this.C.forever( async _=>{

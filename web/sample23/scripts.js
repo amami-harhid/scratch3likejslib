@@ -24,16 +24,16 @@ let title;
 
 let score = 0;
 
-Pg.preload = async function preload($this) {
-    $this.Sound.load('../assets/Chill.wav', Chill );
-    $this.Sound.load('../assets/Pew.wav', Pew);
-    $this.Image.load('./assets/Neon Tunnel.png', NeonTunnel );
-    $this.Image.load('./assets/ball-a.svg', BallA );
-    $this.Image.load('./assets/paddle.svg', Paddle );
-    $this.Image.load('./assets/button3-b.svg', Block );
-    $this.Image.load('./assets/line.svg', Line );
-    $this.Image.load('./assets/YouWon.svg', YouWon );
-    $this.Image.load('./assets/GameOver.svg', GameOver );
+Pg.preload = async function preload() {
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Sound.load('../assets/Pew.wav', Pew);
+    this.Image.load('./assets/Neon Tunnel.png', NeonTunnel );
+    this.Image.load('./assets/ball-a.svg', BallA );
+    this.Image.load('./assets/paddle.svg', Paddle );
+    this.Image.load('./assets/button3-b.svg', Block );
+    this.Image.load('./assets/line.svg', Line );
+    this.Image.load('./assets/YouWon.svg', YouWon );
+    this.Image.load('./assets/GameOver.svg', GameOver );
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
@@ -61,116 +61,112 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function($this){
-        await $this.Sound.add( Chill );
-        $this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
-        await $this.Control.while(true, async ()=>{
-            await $this.Sound.playUntilDone();
+    stage.Event.whenFlag(async function(){
+        await this.Sound.add( Chill );
+        this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
+        await this.Control.while(true, async ()=>{
+            await this.Sound.playUntilDone();
         });
     })
-    ball.Event.whenFlag(async function($this){
-        $this.Motion.setXY(0,-100);
+    ball.Event.whenFlag(async function(){
+        this.Motion.setXY(0,-100);
     });
     const BallSpeed = 10;
     const InitDirection = 25;
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = this;
         score = 0;
-        $this.Motion.pointInDirection(InitDirection);
-        $this.Motion.setXY(0,-100);
-        await $this.Control.waitUntil(()=>Lib.anyKeyIsDown());
-        await $this.Control.forever(async ()=>{
-            $this.Motion.moveSteps(BallSpeed);
-            $this.Motion.ifOnEdgeBounds();
-            if($this.Sensing.isTouchingEdge()){
+        this.Motion.pointInDirection(InitDirection);
+        this.Motion.setXY(0,-100);
+        await this.Control.waitUntil(()=>Lib.anyKeyIsDown());
+        await this.Control.forever(async ()=>{
+            this.Motion.moveSteps(BallSpeed);
+            this.Motion.ifOnEdgeBounds();
+            if(this.Sensing.isTouchingEdge()){
                 const randomDegree = Lib.getRandomValueInRange(-25, 25);
-                $this.Motion.turnRightDegrees(randomDegree);    
+                this.Motion.turnRightDegrees(randomDegree);    
             }
         });
     });
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = this;
-        await $this.Control.forever(async ()=>{
-            if($this.Sensing.isTouchingTarget(block)){
-                $this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-5, 5)+180 );
+        await this.Control.forever(async ()=>{
+            if(this.Sensing.isTouchingTarget(block)){
+                this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-5, 5)+180 );
             }
         });
     });
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = this;
-        await $this.Control.forever(async ()=>{
-            if($this.Sensing.isTouchingTarget(paddle)){
-                $this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-2, 2)+180 );
-                $this.Motion.moveSteps(BallSpeed*2);
+        await this.Control.forever(async ()=>{
+            if(this.Sensing.isTouchingTarget(paddle)){
+                this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-2, 2)+180 );
+                this.Motion.moveSteps(BallSpeed*2);
                 await Lib.wait(0.2 * 1000);
             }
         });
     });
     line.Event.whenFlag(async function($this){
-        await $this.Control.forever(async ()=>{
-            if( $this.Sensing.isTouchingTarget(ball)){
+        await this.Control.forever(async ()=>{
+            if( this.Sensing.isTouchingTarget(ball)){
                 // Ball に触れたとき
-                $this.Event.broadcast(GameOver);
+                this.Event.broadcast(GameOver);
                 Lib.Loop.break();
             }
         });
     });
     paddle.Event.whenBroadcastReceived('Start', async function(){
-        const $this = this;
-        await $this.Control.forever(async ()=>{
+        await this.Control.forever(async ()=>{
             const mousePos = Lib.mousePosition;
-            const selfPosition = $this.Motion.getCurrentPosition();
-            $this.Motion.moveTo(mousePos.x, selfPosition.y);
+            const selfPosition = this.Motion.getCurrentPosition();
+            this.Motion.moveTo(mousePos.x, selfPosition.y);
             //const ballPosition = ball.Motion.getCurrentPosition();
             //$this.Motion.moveTo(ballPosition.x, selfPosition.y);
         });
 
     });
     let blockCount = 0;
-    block.Event.whenFlag(async ($this)=>{
-        await $this.Sound.add(Pew);
-        $this.Looks.setSize({x:50, y:50});
-        const pos = $this.Motion.getCurrentPosition();
-        const demension = $this.Looks.drawingDimensions();
+    block.Event.whenFlag(async function(){
+        await this.Sound.add(Pew);
+        this.Looks.setSize({x:50, y:50});
+        const pos = this.Motion.getCurrentPosition();
+        const demension = this.Looks.drawingDimensions();
         let y=0;
         blockCount = 0;
-        await $this.Control.repeat(3, async ()=>{
+        await this.Control.repeat(3, async ()=>{
             let x=0;
-            await $this.Control.repeat(10, async ()=>{
+            await this.Control.repeat(10, async ()=>{
                 const blkPos = { x: pos.x + x*demension.width, y: pos.y + (-y)*demension.height };
-                await $this.Control.clone({position: blkPos});
+                await this.Control.clone({position: blkPos});
                 x+=1;
             });
             y+=1;
         });
-        $this.Event.broadcast('Start');
+        this.Event.broadcast('Start');
     });
 
-    block.Control.whenCloned(async ($this)=>{
+    block.Control.whenCloned(async function(){
         blockCount+=1;
-        $this.Looks.show();
-        await $this.Control.forever(async ()=>{
-            if($this.Sensing.isTouchingTarget(ball)){
+        this.Looks.show();
+        await this.Control.forever(async ()=>{
+            if(this.Sensing.isTouchingTarget(ball)){
                 score += 1;
-                $this.Sound.play();
-                $this.Looks.hide();
+                this.Sound.play();
+                this.Looks.hide();
                 Lib.Loop.break();
             }    
         })
         if(score == blockCount) {
-            $this.Event.broadcast(YouWon);
+            this.Event.broadcast(YouWon);
         }
-        $this.Control.remove();
+        this.Control.remove();
     })
-    title.Event.whenFlag(async ($this)=>{
-        $this.Looks.hide();
+    title.Event.whenFlag(async function(){
+        this.Looks.hide();
     })
-    title.Event.whenBroadcastReceived(YouWon, async ()=>{
+    title.Event.whenBroadcastReceived(YouWon, async function(){
         title.Looks.switchCostume(YouWon);
         title.Looks.show();
         Pg.Control.stopAll();
     });
-    title.Event.whenBroadcastReceived(GameOver, async ()=>{
+    title.Event.whenBroadcastReceived(GameOver, async function(){
         title.Looks.switchCostume(GameOver);
         title.Looks.show();
         Pg.Control.stopAll();

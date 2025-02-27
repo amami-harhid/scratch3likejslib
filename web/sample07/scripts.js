@@ -31,25 +31,25 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     // フラグクリック
-    stage.Event.whenFlag( async $stage=> {
+    stage.Event.whenFlag( async function(){
         // 「終わるまで音を鳴らす」をずっと繰り返す、スレッドを起動する
-        await $stage.while( true, async _=> {
-            await $stage.Sound.playUntilDone();
+        await this.while( true, async function(){
+            await this.Sound.playUntilDone();
         });
     });
 
     const catStep = 5;
     // フラグクリック
-    cat.Event.whenFlag( async $cat=> {
+    cat.Event.whenFlag( async function(){
         // 初期化
-        $cat.M.gotoXY({x:0, y:0});
-        $cat.M.pointInDerection( 90 );
+        this.Motion.gotoXY({x:0, y:0});
+        this.Motion.pointInDerection( 90 );
     });
-    cat.Event.whenFlag( async $cat=> {
+    cat.Event.whenFlag( async function(){
         // 「左右」に動く。端に触れたら跳ね返る。
-        await $cat.C.forever( async _=> {
-            $cat.M.moveSteps(catStep);
-            $cat.M.ifOnEdgeBounds();
+        await this.Control.forever( _=> {
+            this.Motion.moveSteps(catStep);
+            this.Motion.ifOnEdgeBounds();
         });
     });
 }
