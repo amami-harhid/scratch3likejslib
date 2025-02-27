@@ -3,10 +3,6 @@
  * ボールがパドルに触れたら跳ね返る
  */
 
-// Size変更した直後のdrawingDimensionsは変更適用後を取得できない
-// これはバグかも。--> スレッド１回ループしたら適用されるっぽい。
-// Size変更時は update() をかけるべきかも。
-
 import {PlayGround, Library} from '../../build/likeScratchLib.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
@@ -44,7 +40,7 @@ Pg.prepare = async function prepare() {
     stage.Image.add( NeonTunnel );
     ball = new Lib.Sprite("cat");
     ball.Image.add( BallA );
-    ball.Motion.setXY(0,-100);
+    //ball.Motion.setXY(0,-100);
     ball.Looks.setSize(50, 50);
     paddle = new Lib.Sprite("paddle");
     paddle.Image.add( Paddle );
@@ -72,10 +68,13 @@ Pg.setting = async function setting() {
             await $this.Sound.playUntilDone();
         });
     })
+    ball.Event.whenFlag(async function($this){
+        $this.Motion.setXY(0,-100);
+    });
     const BallSpeed = 10;
     const InitDirection = 25;
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = ball;
+        const $this = this;
         score = 0;
         $this.Motion.pointInDirection(InitDirection);
         $this.Motion.setXY(0,-100);
@@ -90,7 +89,7 @@ Pg.setting = async function setting() {
         });
     });
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = ball;
+        const $this = this;
         await $this.Control.forever(async ()=>{
             if($this.Sensing.isTouchingTarget(block)){
                 $this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-5, 5)+180 );
@@ -98,7 +97,7 @@ Pg.setting = async function setting() {
         });
     });
     ball.Event.whenBroadcastReceived('Start', async function(){
-        const $this = ball;
+        const $this = this;
         await $this.Control.forever(async ()=>{
             if($this.Sensing.isTouchingTarget(paddle)){
                 $this.Motion.turnRightDegrees( Lib.getRandomValueInRange(-2, 2)+180 );
@@ -117,10 +116,7 @@ Pg.setting = async function setting() {
         });
     });
     paddle.Event.whenBroadcastReceived('Start', async function(){
-        console.log('paddle start')
-        const $this = paddle;
-        // whenBroadcastReceivedのなかで foreverが使えない様子
-        // whenFlagなどの中では使える。バグです。
+        const $this = this;
         await $this.Control.forever(async ()=>{
             const mousePos = Lib.mousePosition;
             const selfPosition = $this.Motion.getCurrentPosition();
@@ -156,7 +152,6 @@ Pg.setting = async function setting() {
         await $this.Control.forever(async ()=>{
             if($this.Sensing.isTouchingTarget(ball)){
                 score += 1;
-                //console.log('Touching score='+score);
                 $this.Sound.play();
                 $this.Looks.hide();
                 Lib.Loop.break();
