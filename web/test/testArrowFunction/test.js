@@ -44,9 +44,14 @@ const f03 = async () => {
     return true;
 }
 
-const f04 = async   () => {
+const f04 = () => {
     return true;
 }
+
+const f05 = function*(){
+    return true;
+}
+
 
 console.log( "f01 is arrow ? = " + FunctionChecker.isArrowFunction( f01 ));
    
@@ -55,3 +60,5 @@ console.log( "f02 is arrow ? =" + FunctionChecker.isArrowFunction( f02 ));
 console.log( "f03 is arrow ? =" + FunctionChecker.isArrowFunction( f03 ));
 
 console.log( "f04 is arrow ? =" + FunctionChecker.isArrowFunction( f04 ));
+
+console.log( "f05 is arrow ? =" + FunctionChecker.isArrowFunction( f04 ));
