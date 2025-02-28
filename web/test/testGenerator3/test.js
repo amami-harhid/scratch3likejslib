@@ -14,7 +14,7 @@ class TestA {
 
 let count = 0;
 let _status = 'YIELD';
-const func01 = async function*(obj) { 
+const func01 = async function*() { 
     
     for(let i=0; i< 6; i++){
         //_status = 'RUNNING';
@@ -24,16 +24,16 @@ const func01 = async function*(obj) {
             console.log('【1】5秒停止')
             console.log(this)
             this.speak(`【1】(${i})`);
-            await sleep(5*1000);
+            await sleep(0.5*1000);
         }
         _status = 'YIELD';
         console.log("【1】LOOP E("+i+")");
-        yield;
+        //await sleep(500);
+        //yield;
     }
 }
 
-const func02 = async function*(obj) { 
-    
+const func02 = async function*() { 
     for(let i=0; i< 6; i++){
         //_status = 'RUNNING';
         console.log("---【2】LOOP S("+i+")");
@@ -45,7 +45,8 @@ const func02 = async function*(obj) {
         }
         _status = 'YIELD';
         console.log("---【2】LOOP E("+i+")");
-        yield;
+        //await sleep(500);
+        if(yield) break;
     }
 }
 const testA = new TestA();
@@ -58,7 +59,7 @@ const main = async () => {
                 obj.running = true;
                 // next().then() の形で 非同期として投げっぱなしにしつつ
                 // 終わっていない next() は実行を抑止することができた。
-                obj.f.next().then(rtn=>{
+                obj.f.next(false).then(rtn=>{
                     obj.running = false;
                     if(rtn.done){
                         obj.done = true;
@@ -66,8 +67,11 @@ const main = async () => {
                 })
             }
         }
-        await sleep(0.5*1000);
+        const _arr = thread.filter(e=> e.done == false )
+        if(_arr.length == 0) break;
+        await sleep(1000);
     }
+    console.log('END');
 }
 
 main();
