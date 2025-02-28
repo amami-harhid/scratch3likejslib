@@ -6,6 +6,12 @@ const sleep = async function (ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+class TestA {
+    speak(str) {
+        console.log('speak!! ('+str+")");
+    }
+}
+
 let count = 0;
 let _status = 'YIELD';
 const func01 = async function*(obj) { 
@@ -16,6 +22,8 @@ const func01 = async function*(obj) {
         count += 1;
         if(i == 0){
             console.log('【1】5秒停止')
+            console.log(this)
+            this.speak(`【1】(${i})`);
             await sleep(5*1000);
         }
         _status = 'YIELD';
@@ -32,6 +40,7 @@ const func02 = async function*(obj) {
         count += 1;
         if(i== 4){
             console.log('---【2】5秒停止')
+            this.speak(`---【2】(${i})`);
             await sleep(5*1000);
         }
         _status = 'YIELD';
@@ -39,11 +48,10 @@ const func02 = async function*(obj) {
         yield;
     }
 }
-
-const thread = [{f:func01(),done:false,running:false}, {f:func02(),done:false,running:false}];
+const testA = new TestA();
+const thread = [{f:func01.bind(testA)(),done:false,running:false}, {f:func02.bind(testA)(),done:false,running:false}];
 
 const main = async () => {
-    const f = func01();
     for(;;){
         for(const obj of thread){
             if(obj.running === false && obj.done === false){

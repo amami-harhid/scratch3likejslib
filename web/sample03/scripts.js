@@ -22,16 +22,21 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( function(){
+    stage.Event.whenRightNow( async function*(){
         // ここでの『this』は Proxy(stage)である。
         this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
     });
-    stage.Event.whenFlag( function(){ 
+    stage.Event.whenFlag( async function*(){ 
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        this.while(true, async _=>{
+        while(true){
             // 処理が終わるまで待つために await をつける
             await this.Sound.playUntilDone();
-        });
+            yield
+        }
+        // this.while(true, async _=>{
+        //     // 処理が終わるまで待つために await をつける
+        //     await this.Sound.playUntilDone();
+        // });
     });
 };
