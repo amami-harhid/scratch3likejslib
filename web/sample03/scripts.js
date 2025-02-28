@@ -12,9 +12,9 @@ const Chill = "Chill";
 
 let stage;
 
-Pg.preload = function($pg) {
-    $pg.Image.load('../assets/Jurassic.svg', Jurassic);
-    $pg.Sound.load('../assets/Chill.wav', Chill);
+Pg.preload = function() {
+    this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Sound.load('../assets/Chill.wav', Chill);
 }
 Pg.prepare = function() {
     stage = new Lib.Stage();
@@ -22,10 +22,10 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( function($stage){
+    stage.Event.whenRightNow( function(){
         // ここでの『this』は Proxy(stage)である。
-        $stage.Sound.add( Chill );
-        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
+        this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
     });
     stage.Event.whenFlag( function(){ 
         // 「終わるまで音を鳴らす」をずっと繰り返す
