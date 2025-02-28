@@ -39,18 +39,12 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function(){
         await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 )
         await this.Control.forever( async _=>{
             await this.Sound.playUntilDone();
         });
     })
 
-    cat.Event.whenFlag( async function(){
-        this.Control.forever( async _=>{
-            await this.Sound.playUntilDone();
-        });
-    });
-    
     // ネコにさわったらお話する
     cat.Event.whenFlag( async function(){
         const words = `なになに？`;
