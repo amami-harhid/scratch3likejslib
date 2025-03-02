@@ -1,5 +1,3 @@
-const test = function() {return true}
-const testArr = ["","",""];
 module.exports =  function* testFunc() {
   let y = 0;
   while(true) {
@@ -11,6 +9,6 @@ module.exports =  function* testFunc() {
   while(true){
     y+=1;
     if(y==4) break;
-    //yield; // <--- 検知しない
+    //yield; // <--- 検知する
   }
 }
