@@ -1,6 +1,15 @@
 /*
   Generator function による複数スレッドの試行
 
+  無限ループ内で 適切な位置（処理の最後など）に yield がないとき
+  ループの繰り返しがブラウザプロセスの資源を占有してしまい、ブラウザが固まってしまう。
+  そのときには、Chromeの場合、次のステップで処理を止めてあげる
+  1) 固まっているタブのURLを覚えておく
+  2) 別のタブを開く
+  3) Shift + Escキーを押し Chromeのタスクマネージャーを表示する
+  4) 上記の 1) で
+
+
 */
 const sleep = async function (ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -16,7 +25,7 @@ let count = 0;
 let _status = 'YIELD';
 const func01 = async function*() { 
     
-    for(let i=0; i< 6; i++){
+    for(let i=0; i< Infinity; i++){
         //_status = 'RUNNING';
         console.log("【1】LOOP S("+i+")");
         count += 1;
@@ -24,12 +33,12 @@ const func01 = async function*() {
             console.log('【1】5秒停止')
             console.log(this)
             this.speak(`【1】(${i})`);
-            await sleep(0.5*1000);
+            //await sleep(0.5*1000);
         }
         _status = 'YIELD';
         console.log("【1】LOOP E("+i+")");
         //await sleep(500);
-        //yield;
+        yield;
     }
 }
 
