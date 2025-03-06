@@ -16,6 +16,17 @@ export default [
           "selector": "WhileStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
           "message": "(ScratchLib)while構文の最後はyieldを書いてください"
         },
+        "error",
+        {
+          "selector": "ForStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
+          "message": "(ScratchLib)for構文の最後はyieldを書いてください"
+        },
+      ],
+      'no-unused-vars': [
+        'error', 
+        { 
+          'argsIgnorePattern': '^_' 
+        }
       ]
     }
   },

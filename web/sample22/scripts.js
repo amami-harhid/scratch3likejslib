@@ -18,12 +18,12 @@ const Nya = "Nya";
 
 let stage, cat;
 
-Pg.preload = async function preload( $this ) {
+Pg.preload = async function preload() {
 
-    $this.Image.load('../assets/Jurassic.svg', Jurassic );
-    $this.Sound.load('../assets/Chill.wav', Chill );
-    $this.Image.load('../assets/cat.svg', Cat );
-    $this.Sound.load('../assets/Cat.wav', Nya );
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
+    this.Sound.load('../assets/Cat.wav', Nya );
 }
 Pg.prepare = async function prepare() {
 
@@ -46,10 +46,10 @@ Pg.setting = async function setting() {
     })
 
     // ネコにさわったらお話する
-    cat.Event.whenFlag( async function(){
+    cat.Event.whenFlag( async function*(){
         const words = `なになに？`;
         const properties = {'pitch': 2, 'volume': 100}
-        this.C.forever( async _=>{
+        while(true){
             if( this.Sensing.isMouseTouching() ) {
                 this.Looks.say(words);// フキダシを出す
                 await this.Event.broadcastAndWait('SPEECH', words, properties, 'male');
@@ -61,7 +61,8 @@ Pg.setting = async function setting() {
             }else{
                 await this.Event.broadcastAndWait('SPEECH_STOP');
             }
-        });
+            yield;            
+        }
     });
     // ネコをクリックしたらお話する
     cat.Event.whenClicked(async function( ){
