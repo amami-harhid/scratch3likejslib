@@ -9,6 +9,7 @@ module.exports =  function* testFunc() {
     }
     while(y<2){
       y+=1;
+      yield
     }
     if(y == 5) break;
     yield;
@@ -31,13 +32,7 @@ module.exports =  function* testFunc() {
 
   testArr.forEach( function* (v){
     console.log(v);
-//    yield(2);
+    yield(2);
   })
-  // const xx = 10;
-  // testArr.forEach( v => {
-  //   console.log(v);
-  //   //yield(2);
-  // })
-  //console.log(xx);
 
 }
