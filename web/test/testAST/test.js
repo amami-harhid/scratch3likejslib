@@ -10,7 +10,7 @@
  */
 
 const esprima = require('esprima');
-const testFunc = require('./src00');
+const testFunc = require('./src05');
 const ast = esprima.parseScript("const x= "+testFunc.toString());
 
 console.log(ast);

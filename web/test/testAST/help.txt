@@ -1,0 +1,19 @@
+https://qiita.com/erukiti/items/e01b1b2f904f4fb2000e
+JavaScriptでASTを使ってコードをインジェクションしてみる
+
+https://zenn.dev/sosukesuzuki/scraps/fa4d48f9098d66
+ESTree 互換っぽい AST を出力する JavaScript のパーサーまとめ
+
+https://ts-ast-viewer.com/
+Tscript AST viewer
+
+eslint カスタム ( atom に組み込みやすいらしい )
+https://zenn.dev/counterworks/articles/1d85f1022a9195
+
+https://zenn.dev/yamaren/articles/341a75d5dc6722
+ESLint の拡張機能をエディタ(VSCode など)に導入することで、Lint エラーをリアルタイムで検知することが可能
+
+https://qiita.com/mikurisa/items/b6665763d5c87a513851
+ESLint カスタムルールの作り方
+
+

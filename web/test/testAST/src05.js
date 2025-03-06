@@ -1,11 +1,10 @@
-const test = function() {return true}
 const testArr = ["","",""];
-module.exports =  function* testFunc() {
+const test =  async function*(){
   let y = 0;
   while(true) {
     y+=1;
     if(y == 5) break;
-    yield;
+    //yield;
   }
   y = 0;
   while(true){
@@ -14,3 +13,4 @@ module.exports =  function* testFunc() {
     //yield; // <--- 検知しない
   }
 }
+module.exports  = test;
