@@ -3,8 +3,9 @@
  * preset()内で addImageする場合と比較してステージに表示するのが一瞬だけ遅延する。
  */
 // ライブラリーをインポートして実行
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
-const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
+import {PlayGround, Library} from '../../build/likeScratchLib.js';
+// 短縮名にする
+const [Pg, Lib] = [PlayGround, Library]; 
 
 Pg.title = "【Sample02】旗クリックで背景を表示する";
 
@@ -21,7 +22,7 @@ Pg.prepare = function() {
 }
 Pg.setting = async function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( async function*(){
+    stage.Event.whenRightNow( async function(){
         this.Image.add( Jurassic );
     });
 };

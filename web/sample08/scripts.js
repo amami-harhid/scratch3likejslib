@@ -34,7 +34,7 @@ Pg.setting = async function setting() {
         // stageのインスタンスは 『stage』の変数で受け取っている。
         await $stage.Sound.add( Chill );
         $stage.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
-        await $stage.C.forever(async _=>{
+        await $stage.C.forever(async _=>{ // eslint-disable-line no-unused-vars
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
             await $stage.Sound.playUntilDone();
         })
@@ -60,14 +60,14 @@ Pg.setting = async function setting() {
     // Cat のときと Ball のときの動きの違い、どこに原因があるのかを
     // 調べるとよさそう。
 
-    cat.Event.whenFlag( async _cat=>{
+    cat.Event.whenFlag( async function(){
         // ずっと「左右」に動く。端に触れたら跳ね返る。
-        _cat.C.forever( _=> {
-            _cat.Motion.moveSteps(catStep);
-            _cat.Motion.ifOnEdgeBounds();
-            if(_cat.Sensing.isTouchingEdge()){
+        this.C.forever( _=> { // eslint-disable-line no-unused-vars
+            this.Motion.moveSteps(catStep);
+            this.Motion.ifOnEdgeBounds();
+            if(this.Sensing.isTouchingEdge()){
                 //_cat.Motion.moveSteps(+1);
-                _cat.Sound.play();
+                this.Sound.play();
                 // const randomDegree = Lib.getRandomValueInRange(-50, 50);
                 // _cat.Motion.turnRightDegrees(randomDegree);    
             }

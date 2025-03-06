@@ -15,10 +15,10 @@ const Cat = "Cat";
 
 let stage, cat;
 
-Pg.preload = async function preload( $this ) {
-    $this.Image.load('../assets/Jurassic.svg', Jurassic );
-    $this.Sound.load('../assets/Chill.wav', Chill );
-    $this.Image.load('../assets/cat.svg', Cat );
+Pg.preload = async function preload() {
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
@@ -30,20 +30,21 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        await $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
+        await this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.forevre(async _=>{
-            await $this.Sound.playUntilDone();
-        });
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        };
     });
-    cat.Event.whenFlag(async function( $this ){
-        $this.Motion.gotoXY({x:0, y:0});
+    cat.Event.whenFlag(async function(){
+        this.Motion.gotoXY({x:0, y:0});
     })
     // ms の値
     const ms1000 = 1000;
@@ -57,21 +58,21 @@ Pg.setting = async function setting() {
         await Lib.wait(ms1000+ms5000);
         _5SecondsTimerOn = true;
     });
-    cat.Event.whenFlag(async function( $this ){
+    cat.Event.whenFlag(async function*(){
         // 1秒待ってからマウスカーソルを追跡する
         await Lib.wait(ms1000);
-        $this.Control.forever(async _=>{
+        while(true){
             // マウスの方向へ向く
-            $this.Motion.pointToMouse();
+            this.Motion.pointToMouse();
             if(_5SecondsTimerOn){
                 // 枠内にあった最後の場所
                 const mousePosition = Lib.mousePosition;
                 // マウスカーソルの場所へ1秒かけて移動する
-                await $this.Motion.glideToPosition( 1, mousePosition.x, mousePosition.y );
+                await this.Motion.glideToPosition( 1, mousePosition.x, mousePosition.y );
             }else{
-                $this.Motion.moveSteps(catStep);
+                this.Motion.moveSteps(catStep);
             }
-    
-        });
+            yield;
+        }
     });
 }

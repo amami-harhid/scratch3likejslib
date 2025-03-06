@@ -15,11 +15,11 @@ const Mya = "Mya";
 
 let stage, cat;
 
-Pg.preload = async function preload($pg) {
-    $pg.Image.load('../assets/Jurassic.svg', Jurassic);
-    $pg.Sound.load('../assets/Chill.wav', Chill);
-    $pg.Image.load('../assets/cat.svg', Cat);
-    $pg.Sound.load('../assets/Cat.wav', Mya);
+Pg.preload = async function preload() {
+    this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Sound.load('../assets/Chill.wav', Chill);
+    this.Image.load('../assets/cat.svg', Cat);
+    this.Sound.load('../assets/Cat.wav', Mya);
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
@@ -31,54 +31,60 @@ Pg.prepare = async function prepare() {
 }
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function($stage) {
+    stage.Event.whenFlag(async function() {
+        const $stage = this;
         $stage.Sound.add( Chill );
         $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
-    stage.Event.whenFlag(async function($stage) {
-        $stage.Control.forever(async _=>{
-            await $stage.Sound.playUntilDone();
-        })
+    stage.Event.whenFlag(async function*() {
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        }
     });
 
-    cat.Event.whenFlag( async function($cat) {
+    cat.Event.whenFlag( async function() {
         // 音を登録する
-        $cat.Sound.add( Mya, { 'volume' : 20 } );
+        this.Sound.add( Mya );
+        this.Sound.setEffect( Lib.SoundOption.VOLUME, 20 )
     });
-    cat.Event.whenFlag( async ($cat)=> {
+    cat.Event.whenFlag( async function(){
         // 初期化
-        $cat.Motion.gotoXY({x:200, y:150});
-        $cat.Motion.pointInDirection( 90 );
+        this.Motion.gotoXY({x:200, y:150});
+        this.Motion.pointInDirection( 90 );
     });
 
     const _changeDirection = 1;
-    cat.Event.whenFlag( async function($cat) {
+    cat.Event.whenFlag( async function*() {
         // ずっと繰り返して回転する
-        $cat.Control.forever( _=>{
-            $cat.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
-        });
+        while(true){
+            this.Motion.turnRightDegrees(_changeDirection);// 外側Scope 参照可能
+            yield;
+        }
     });
-    cat.Event.whenFlag( async function($cat) {
+    cat.Event.whenFlag( async function*() {
         // 次をずっと繰り返す
         // マウスカーソルでタッチしたら、クローンを作る
-        $cat.Control.forever(async _=>{
-            if( $cat.Sensing.isMouseTouching() ) {
-                $cat.Control.clone();
+        while(true){
+            if( this.Sensing.isMouseTouching() ) {
+                this.Control.clone();
             }
             // マウスタッチしないまで待つ
-            await Lib.waitWhile( ()=>$cat.Sensing.isMouseTouching() ); 
-        });
+            await Lib.waitWhile( ()=>this.Sensing.isMouseTouching() ); 
+            yield;
+        }
     });
 
     const steps = 10;
-    cat.Control.whenCloned(async function(clone){
+    cat.Control.whenCloned(async function*(){
+        const clone = this;
         clone.Motion.gotoXY({x:100, y:-100});
         clone.Looks.setSize({x:50, y:50});
         clone.Looks.setEffect(Lib.ImageEffective.COLOR, 50);
         clone.life = 5000;
         clone.Looks.show();
         // ずっと繰り返す
-        clone.Control.while(true, _=>{
+        while(true){
             clone.Motion.moveSteps( steps );
             // 端に触れたら
             clone.Motion.ifOnEdgeBounds();
@@ -86,6 +92,7 @@ Pg.setting = async function setting() {
                 // ミャーと鳴く。
                 clone.Sound.play()
             }
-        });
+            yield;
+        }
     });
 }

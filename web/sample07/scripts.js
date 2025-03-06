@@ -22,7 +22,6 @@ Pg.preload = async function preload() {
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
     stage.Image.add( Jurassic );
-    const key = Lib.SoundOption.VOLUME;
     stage.Sound.add( Chill );
     stage.Sound.setOption(Lib.SoundOption.VOLUME, 100);
     cat = new Lib.Sprite( SpriteCatName );
@@ -45,7 +44,7 @@ Pg.setting = async function setting() {
 
     const catStep = 5;
     // フラグクリック
-    cat.Event.whenFlag( async function*(){
+    cat.Event.whenFlag( async function(){
         // 初期化
         this.Motion.gotoXY({x:0, y:0});
         this.Motion.pointInDerection( 90 );

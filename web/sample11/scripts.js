@@ -28,24 +28,27 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function($this) {
-        $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
+    stage.Event.whenFlag(async function() {
+        this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
 
-    stage.Event.whenFlag(async function($this) {
-        $this.Control.forever(async _=>{
-            await $this.Sound.playUntilDone();
-        });
+    stage.Event.whenFlag(async function*() {
+        // ずっと繰り返す
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        };
     });
-    cat.Event.whenFlag(async function($this) {
-        $this.Motion.gotoXY({x:0, y:0});
-        $this.Control.forever(async _=>{
+    cat.Event.whenFlag(async function*() {
+        this.Motion.gotoXY({x:0, y:0});
+        while(true){
             // 繰り返すごとに 1秒待つ
             await Lib.wait(1000);
             // １秒でどこかへ行く
             const randomPoint = Lib.randomPoint;
-            await $this.Motion.glideToPosition(1,  randomPoint.x, randomPoint.y);
-        })
+            await this.Motion.glideToPosition(1,  randomPoint.x, randomPoint.y);
+            yield;
+        }
     });
 }

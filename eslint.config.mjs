@@ -15,7 +15,7 @@ export default [
         {
           "selector": "WhileStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
           "message": "(ScratchLib)while構文の最後はyieldを書いてください"
-        }
+        },
       ]
     }
   },

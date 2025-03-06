@@ -43,33 +43,37 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はstageである。
-        await $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
+        await this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
         // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.forever( async _=>{
-            await $this.Sound.playUntilDone();
-        });
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        };
     });
 
     const ChangeDirection = 1;
-    cross.Event.whenFlag(async function( $this ){
-        $this.Control.forever(async _=>{
-            $this.Motion.turnRightDegrees(ChangeDirection);
-        });
+    cross.Event.whenFlag(async function*(){
+        while(true){
+            this.Motion.turnRightDegrees(ChangeDirection);
+            yield;
+        };
     });
-    cross.Event.whenFlag(async function( $this ){
-        $this.Control.forever(async _=>{
-            if ( $this.Sensing.isMouseTouching() ) {
-                $this.Looks.nextCostume();
-                await Lib.waitWhile( ()=>$this.Sensing.isMouseTouching());
-                $this.Looks.nextCostume();
+    cross.Event.whenFlag(async function*(){
+        while(true){
+            if ( this.Sensing.isMouseTouching() ) {
+                this.Looks.nextCostume();
+                await Lib.waitWhile( ()=>this.Sensing.isMouseTouching());
+                this.Looks.nextCostume();
             }
-        });
+            yield;
+        };
     });
-    cross.Event.whenFlag(async function( $cross ){
-        $cross.Control.forever( async _=>{
+    cross.Event.whenFlag(async function*(){
+        const $cross = this;
+        while(true){
             if ( $cross.Sensing.isMouseTouching() ) {
                 const mousePosition = Lib.mousePosition;
                 butterfly.Motion.gotoXY(mousePosition);
@@ -82,33 +86,36 @@ Pg.setting = async function setting() {
                 //await Libs.waitUntil( this.isNotMouseTouching, this); // 「マウスポインターが触らない」迄待つ。
                 await Lib.wait(100); // 100ミリ秒待つ。 <== クローン発生する間隔
             }
-        });
+            yield;
+        };
     });
-    butterfly.Control.whenCloned( function( $this ) {
-        const clone = $this;
-        clone.Control.forever( async _=>{
+    butterfly.Control.whenCloned( async function*() {
+        const clone = this;
+        while(true){
             if(clone.life > 0 ){
                 this.Looks.nextCostume();
                 await Lib.wait(50);    
             }else{
                 Lib.Loop.break();
             }
-        });
+            yield;
+        };
     });
-    butterfly.Control.whenCloned( function( $this ) {
-        const clone = $this;
+    butterfly.Control.whenCloned( async function*() {
+        const clone = this;
         clone.Looks.show();
         clone.life = 5000; // ミリ秒。クローンが生きている時間。（およその時間）
-        clone.Control.forever( async _=>{
+        while(true){
             // ランダムな場所
             const randomPoint = Lib.randomPoint;
             // １秒でどこかに行く。
-            await $this.Motion.glideToPosition(5, randomPoint.x, randomPoint.y);
+            await clone.Motion.glideToPosition(5, randomPoint.x, randomPoint.y);
             // ライフがゼロになったら「繰り返し」を抜ける
-            if( $this.life < 0) {
+            if( clone.life < 0) {
                 Lib.Loop.break();
-            }        
-        });
+            }
+            yield;
+        };
     
     });
 }

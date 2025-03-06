@@ -23,7 +23,7 @@ Pg.prepare = function() {
 Pg.setting = function() {
     // すぐに実行する。
     // アロー関数として インスタンス(this)を受け取る書き方もできる
-    stage.Event.whenRightNow( async function*(){ 
+    stage.Event.whenRightNow( async function(){ 
         // ここでの『this』は S.stageのインスタンスである。
         await this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 100)

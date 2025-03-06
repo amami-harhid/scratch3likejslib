@@ -23,7 +23,8 @@ const Pew = "Pew";
 
 let stage, cross;
 
-Pg.preload = async function preload($play) {
+Pg.preload = async function preload() {
+    const $play = this;
     $play.Image.load('../assets/Jurassic.svg', Jurassic );
     $play.Sound.load('../assets/Chill.wav', Chill );
     $play.Image.load('../assets/cross1.svg', Cross01 );
@@ -43,79 +44,85 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill ).then(me=>{
+        this.Sound.add( Chill ).then(me=>{
             me.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
         });
     });
-    cross.Event.whenFlag(async function( $this ){
-        await $this.Sound.add( Pew );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
-        $this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
+    cross.Event.whenFlag(async function(){
+        await this.Sound.add( Pew );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
+        this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
     });
 
-    stage.Event.whenFlag(async function( $this ) {
-        // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.forever( async _=>{
-            await $this.Sound.playUntilDone();
-        });
+    stage.Event.whenFlag(async function*() {
+        // 【this】はProxy(stage)である。
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        };
     });
 
     const MoveSteps = 15;
-    cross.Event.whenFlag(async function( $this ){
-        $this.direction = 90;
-        $this.Control.forever( async _=>{
+    cross.Event.whenFlag(async function*(){
+        this.direction = 90;
+        while(true){
             if(Lib.keyIsDown('RightArrow')){
-                $this.Motion.moveSteps(MoveSteps);
+                this.Motion.moveSteps(MoveSteps);
             }
             if(Lib.keyIsDown('LeftArrow')){
-                $this.Motion.moveSteps(-MoveSteps);
+                this.Motion.moveSteps(-MoveSteps);
             }
-        });
+            yield;
+        };
     });
-    cross.Event.whenFlag(async function( $this ){
-        $this.Control.while(true, async _=>{
+    cross.Event.whenFlag(async function*(){
+        while(true){
             // 矢印キーを押しながら、スペースキーを検知させたい
             if(Lib.keyIsDown('Space')){
-                $this.Sound.play();
+                this.Sound.play();
                 const options = {scale:{x:20,y:20}, direction:0}
-                $this.C.clone(options);
+                this.C.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
                 //await Libs.waitWhile( ()=>Libs.keyIsDown('Space'));
             }
-        });
+            yield;
+        };
     });
-    cross.Control.whenCloned(async function( clone ){
+    cross.Control.whenCloned(async function(){
+        const clone = this;
         const {_,height} = clone.Looks.drawingDimensions();
         clone.Motion.changeY( height / 2);
         clone.Looks.nextCostume();
         clone.Looks.show();
     });
-    cross.Control.whenCloned( async function( clone ) {
+    cross.Control.whenCloned( async function*() {
+        const clone = this;
         // while の後に処理があるときは await 忘れないようにしましょう
-        await clone.Control.forever( async _=>{
+        while(true){
             clone.Motion.changeY(+10); // 10だけ上にする
             if(clone.Sensing.isTouchingEdge()){
-                Lib.Loop.break();
+                break;
             }
-        });
+            yield;
+        };
         clone.Control.remove();
     });
     const TURN_RIGHT_DEGREE= 25;
-    cross.Control.whenCloned( async function( clone ) {
+    cross.Control.whenCloned( async function*() {
+        const clone = this;
         // while の後に処理があるときは await 忘れないようにしましょう
         clone.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
         clone.Sound.setOption( Lib.SoundOption.PITCH, 80 );
-        await clone.Control.forever( async _=>{
+        while(true){
             clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
             if(clone.Sensing.isTouchingEdge()){
                 clone.Sound.play();
-                //await Lib.wait(500)
-
-                Lib.Loop.break();
+                break;
             }
-        });
+            yield;
+        };
         clone.Control.remove();
     });
 }

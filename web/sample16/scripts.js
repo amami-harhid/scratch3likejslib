@@ -45,47 +45,52 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
+        this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
     });
 
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.forever( async _=>{
+        while(true){
             await this.Sound.playUntilDone();
-        });
+            yield;
+        }
     });
     const WAIT_TIME = 5000;//5秒
-    stage.Event.whenFlag(async function( $this ){
-        $this.Control.forever( async _=>{
+    stage.Event.whenFlag(async function*(){
+        while(true){
             await Lib.wait(WAIT_TIME);
             cat1.Motion.gotoXY({x:-Lib.stageWidth/4, y:+Lib.stageHeight/4 });
             cat2.Motion.gotoXY({x:0, y:0 });
             cat3.Motion.gotoXY({x:Lib.stageWidth/4, y:-Lib.stageHeight/4 });
-        });
+            yield;
+        }
     });
 
     const CAT_WALK_STEP = 2;
-    cat1.Event.whenFlag(async function( $this ){
-        $this.Control.forever( async _=>{
-            $this.Motion.pointToMouse();
-            $this.Motion.moveSteps(CAT_WALK_STEP);
-        });
+    cat1.Event.whenFlag(async function*(){
+        while(true){
+            this.Motion.pointToMouse();
+            this.Motion.moveSteps(CAT_WALK_STEP);
+            yield;
+        };
     });
 
-    cat2.Event.whenFlag(async function( $this ){
-        $this.Control.forever(async _=>{
-            $this.Motion.pointToMouse();
-            $this.Motion.moveSteps(CAT_WALK_STEP);
-        });
+    cat2.Event.whenFlag(async function*(){
+        while(true){
+            this.Motion.pointToMouse();
+            this.Motion.moveSteps(CAT_WALK_STEP);
+            yield;
+        }
     });
 
-    cat3.Event.whenFlag(async function( $this ){
-        $this.Control.forever(async _=>{
-            $this.Motion.pointToMouse();
-            $this.Motion.moveSteps(CAT_WALK_STEP);
-        });
+    cat3.Event.whenFlag(async function*(){
+        while(true){
+            this.Motion.pointToMouse();
+            this.Motion.moveSteps(CAT_WALK_STEP);
+            yield;
+        };
     });
 }

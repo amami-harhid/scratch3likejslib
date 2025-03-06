@@ -28,17 +28,18 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     /** 旗をクリックしたときのステージのイベント */
-    stage.Event.whenFlag(async function( $this ) {
-        // function() の中なので、【this】はstageである。
-        await $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
+    stage.Event.whenFlag(async function() {
+        // 【this】はstageである。
+        await this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
     });
     /** 旗をクリックしたときのステージのイベント */
-    stage.Event.whenFlag(async function( $this ) {
+    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.while(true, async _=>{
-            await $this.Sound.playUntilDone();
-        });
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        };
     });
 
     /** ステージをクリックしたときのステージイベント */
@@ -49,8 +50,8 @@ Pg.setting = async function setting() {
         await cat.Motion.glideToPosition( 1, mousePosition );
     });
     /** 旗をクリックしたときのネコのイベント */
-    cat.Event.whenFlag(async function( $this ){
-        $this.Motion.gotoXY({x:0, y:0});
+    cat.Event.whenFlag(async function(){
+        this.Motion.gotoXY({x:0, y:0});
 
     });
 }

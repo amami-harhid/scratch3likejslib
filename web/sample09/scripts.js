@@ -31,47 +31,49 @@ Pg.prepare = async function prepare() {
 const direction01 = 1;
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(function($stage){
+    stage.Event.whenFlag(async function*(){
         // function(){} と書くとき、『this』は Proxy(stage)である
-        $stage.Sound.add( Chill );
-        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
-        $stage.Control.while(true, async _=>{
+        this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        while( true ){
             await this.Sound.playUntilDone();
-        })
+            yield;
+        }
     });
-    cat.Event.whenFlag(function($cat){
-        // function(){} と書くとき、『this』は Proxy(cat)である
-        $cat.Sound.add( Mya );
-        $cat.Sound.setOption(Lib.SoundOption.VOLUME, 20)
+    cat.Event.whenFlag(function(){
+        // 『this』は Proxy(cat)である
+        this.Sound.add( Mya );
+        this.Sound.setOption(Lib.SoundOption.VOLUME, 20)
     });
-    cat.Event.whenFlag( async $cat=> {
+    cat.Event.whenFlag( async function(){
         // 初期化
-        $cat.Motion.gotoXY({x:0, y:0});
-        $cat.Motion.pointInDirection( 90 );
+        this.Motion.gotoXY({x:0, y:0});
+        this.Motion.pointInDirection( 90 );
     });
 
     // { }の外側のスコープを参照できる
     const direction02 = 1;
-    cat.Event.whenFlag( async function($cat) {
-        $cat.Control.while(true, _=>{
-            $cat.Motion.turnRightDegrees(direction01+direction02);
+    cat.Event.whenFlag( async function() {
+        this.Control.while(true, ()=>{ 
+            this.Motion.turnRightDegrees(direction01+direction02);
         });
     });
-    cat.Event.whenClicked(async function ($cat) {
+    cat.Event.whenClicked(async function () {
         //this.soundPlay();
-        $cat.Control.clone();
+        this.Control.clone();
     });
 
     const catStep = 10;
-    cat.Control.whenCloned( async function($cat) {
-        $cat.Looks.show();
-        $cat.Control.while(true, _=>{
-            $cat.Motion.moveSteps(catStep);
-            $cat.Motion.ifOnEdgeBounds();
-            if($cat.Sensing.isTouchingEdge() ){
+    cat.Control.whenCloned( async function*() {
+        this.Looks.show();
+        while(true){
+            this.Motion.moveSteps(catStep);
+            this.Motion.ifOnEdgeBounds();
+            if(this.Sensing.isTouchingEdge() ){
                 // ミャーと鳴く。
-                $cat.Sound.play()
+                this.Sound.play()
             }        
-        });
+            yield;
+        }
     });
 }

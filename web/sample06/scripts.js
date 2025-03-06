@@ -42,7 +42,7 @@ Pg.setting = async function setting() {
     cat.Event.whenClicked( async function(){
         const ネコ = this;
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        ネコ.C.forever(async _=>{
+        ネコ.C.forever(async _=>{ // eslint-disable-line no-unused-vars
             // 処理が終わるまで待つために await をつける
             await ネコ.Sound.playUntilDone();
         });

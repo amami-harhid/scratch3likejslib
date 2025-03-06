@@ -28,12 +28,12 @@ Pg.setting = function() {
     // Pのthisとして使うのであれば、アロー式（引数省略）で書いて
     // this.cat として明示的に使うことでもよい。
     // ここでは、this.cat は P.catと同じ意味である。
-    stage.Event.whenFlag( function*(){
+    stage.Event.whenFlag( function(){
         // 旗クリックしたタイミングでネコのスプライトを作り、
         // コスチュームを１個登録する
         cat = new Lib.Sprite( SpriteCatName );
     });
-    stage.Event.whenFlag( function*(){
+    stage.Event.whenFlag( function(){
         // コスチュームを１個登録する
         // whenFlagを定義した順番に実行されるので、
         // ここの『旗クリック』の処理ではネコのスプライトは作成済である。

@@ -22,7 +22,7 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( async function*(){
+    stage.Event.whenRightNow( async function(){
         // ここでの『this』は Proxy(stage)である。
         this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
