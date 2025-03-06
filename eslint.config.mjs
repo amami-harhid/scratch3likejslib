@@ -3,6 +3,7 @@ import pluginJs from "@eslint/js";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+  pluginJs.configs.recommended,
   {
     ignores: ["web/test", "lib", "src"]
   },
@@ -25,10 +26,12 @@ export default [
       'no-unused-vars': [
         'error', 
         { 
-          'argsIgnorePattern': '^_' 
+          'argsIgnorePattern': '^_$' , // 引数
+          "varsIgnorePattern": "^_$",  // 変数
+          "caughtErrorsIgnorePattern": "^_$",  // errorハンドリング
+          "destructuredArrayIgnorePattern": "^_$"  // 配列内の変数参照
         }
       ]
     }
   },
-  pluginJs.configs.recommended,
 ];
