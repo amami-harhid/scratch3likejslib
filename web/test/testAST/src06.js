@@ -10,4 +10,23 @@ const test05 =  ()=>{
 }
 const test06 =  async ()=>{
 }
-module.exports  = {test01,test02,test03,test04,test05,test06};
+const test07 =  async ()=>{
+    let y = 1;
+    while(true){
+        y+=1;
+        if(y>10) break;
+        continue;
+    }
+    const arr = ["a","b","c"];
+    for(const x of arr){
+        console.log(x)
+    }
+    arr.forEach(x => {console.log(x)});
+    let x = 0;
+    do {
+        x+=1;
+        if(x>10) break;
+        yield;
+    } while(true);
+}
+module.exports  = {test01,test02,test03,test04,test05,test06, test07};

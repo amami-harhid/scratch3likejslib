@@ -37,18 +37,19 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function(){
+    stage.Event.whenFlag(async function*(){
         await this.Sound.add( Chill );
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 )
-        await this.Control.forever( async _=>{
+        while(true){
             await this.Sound.playUntilDone();
-        });
+            yield;
+        }
     })
 
     // ネコにさわったらお話する
     cat.Event.whenFlag( async function*(){
         const words = `なになに？`;
-        const properties = {'pitch': 2, 'volume': 100}
+        const properties = {'pitch': 2, 'volume': 100};
         while(true){
             if( this.Sensing.isMouseTouching() ) {
                 this.Looks.say(words);// フキダシを出す
@@ -57,15 +58,15 @@ Pg.setting = async function setting() {
                 // 「送って待つ」を使うことで スピーチが終わるまで次のコードに進まない。
                 // スピーチは２つ同時にできないので、スプライトクリックのイベントと重なってしまう。
                 // 以下の「マウスタッチしている間、待つ」をして 「なになに？」のスピーチ開始を一旦とめる。
-                await Lib.waitWhile( ()=>this.Sensing.isMouseTouching()); 
+                await Lib.waitWhile(_=>this.Sensing.isMouseTouching()); 
             }else{
                 await this.Event.broadcastAndWait('SPEECH_STOP');
             }
-            yield;            
+            yield;
         }
     });
     // ネコをクリックしたらお話する
-    cat.Event.whenClicked(async function( ){
+    cat.Event.whenClicked(async function(){
         const words = `そこそこ。そこがかゆいの。`;
         const properties = {'pitch': 1.7, 'volume': 500}
         // スピーチを止めるためのメッセージを送る

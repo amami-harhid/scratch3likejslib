@@ -1,9 +1,15 @@
+/**
+ * no-restricted-syntax
+ * (1) while構文の最後の行はyieldでなければならない
+ * (2) do...while構文の最後の行はyieldでなければならない
+ * (3) for構文の最後の行はyieldでなければならない
+ * (4) for...of, for...in, Array#forEachは yieldは任意とするのでエラーにはしない。
+ */
 import globals from "globals";
 import pluginJs from "@eslint/js";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  pluginJs.configs.recommended,
   {
     ignores: ["web/test", "lib", "src"]
   },
@@ -17,11 +23,14 @@ export default [
           "selector": "WhileStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
           "message": "(ScratchLib)while構文の最後はyieldを書いてください"
         },
-        "error",
+        {
+          "selector": "DoWhileStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
+          "message": "(ScratchLib)do...while構文の最後はyieldを書いてください"
+        },
         {
           "selector": "ForStatement > BlockStatement >:last-child[expression.type!='YieldExpression']",
           "message": "(ScratchLib)for構文の最後はyieldを書いてください"
-        },
+        }
       ],
       'no-unused-vars': [
         'error', 
@@ -34,4 +43,5 @@ export default [
       ]
     }
   },
+  pluginJs.configs.recommended,
 ];
