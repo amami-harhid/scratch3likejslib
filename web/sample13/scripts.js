@@ -31,7 +31,7 @@ Pg.setting = async function setting() {
     stage.Event.whenFlag(async function() {
         // 【this】はstageである。
         await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 )
     });
     /** 旗をクリックしたときのステージのイベント */
     stage.Event.whenFlag(async function*() {

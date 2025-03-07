@@ -24,10 +24,6 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // フラグをクリックしたときの動作
-    // whenFlagのなかでStageの『this』を使わずに、
-    // Pのthisとして使うのであれば、アロー式（引数省略）で書いて
-    // this.cat として明示的に使うことでもよい。
-    // ここでは、this.cat は P.catと同じ意味である。
     stage.Event.whenFlag( function(){
         // 旗クリックしたタイミングでネコのスプライトを作り、
         // コスチュームを１個登録する

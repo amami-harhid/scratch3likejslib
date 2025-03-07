@@ -46,7 +46,7 @@ Pg.setting = async function setting() {
     stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はstageである。
         await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
         // function() の中なので、【this】はProxy(stage)である。
         while(true){
             await this.Sound.playUntilDone();
@@ -96,10 +96,11 @@ Pg.setting = async function setting() {
                 this.Looks.nextCostume();
                 await Lib.wait(50);    
             }else{
-                Lib.Loop.break();
+                break;
             }
             yield;
         };
+        clone.Control.remove();
     });
     butterfly.Control.whenCloned( async function*() {
         const clone = this;
@@ -112,7 +113,7 @@ Pg.setting = async function setting() {
             await clone.Motion.glideToPosition(5, randomPoint.x, randomPoint.y);
             // ライフがゼロになったら「繰り返し」を抜ける
             if( clone.life < 0) {
-                Lib.Loop.break();
+                break;
             }
             yield;
         };

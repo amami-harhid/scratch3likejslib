@@ -22,11 +22,10 @@ Pg.prepare = function() {
 }
 Pg.setting = function() {
     // すぐに実行する。
-    // アロー関数として インスタンス(this)を受け取る書き方もできる
     stage.Event.whenRightNow( async function(){ 
         // ここでの『this』は S.stageのインスタンスである。
         await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 100)
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 100)
     });
 
     // ステージをクリックしたときの動作
@@ -37,11 +36,5 @@ Pg.setting = function() {
             await this.Sound.playUntilDone();
             yield;
         }
- 
-        // // 「終わるまで音を鳴らす」をずっと繰り返す
-        // await this.Control.while(true, async _=>{
-        //     // 処理が終わるまで待つために await をつける
-        //     await this.Sound.playUntilDone();
-        // });
     });
 };

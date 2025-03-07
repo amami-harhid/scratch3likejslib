@@ -33,8 +33,8 @@ Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function*(){
         // function(){} と書くとき、『this』は Proxy(stage)である
-        this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
+        await this.Sound.add( Chill );
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
         while( true ){
             await this.Sound.playUntilDone();
             yield;

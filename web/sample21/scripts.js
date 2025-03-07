@@ -27,10 +27,10 @@ const Cat = "Cat";
 
 let stage, cat;
 
-Pg.preload = async function preload( $this ) {
-    $this.Image.load('../assets/Jurassic.svg', Jurassic );
-    $this.Sound.load('../assets/Chill.wav', Chill );
-    $this.Image.load('../assets/cat.svg', Cat );
+Pg.preload = async function preload() {
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
@@ -41,39 +41,40 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-        stage.Event.whenFlag(async function( $this ){
-            await $this.Sound.add( Chill );
-            $this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
-            await $this.Control.forever( async _=>{
-                await $this.Sound.playUntilDone();
-            });
+        stage.Event.whenFlag(async function*(){
+            await this.Sound.add( Chill );
+            this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
+            while(true){
+                await this.Sound.playUntilDone();
+                yield;
+            }
         })
         
         // ネコにさわったらお話する
-        cat.Event.whenFlag( async function( $this ){
+        cat.Event.whenFlag( async function*(){
             const words = `おっと`;
             const properties = {'pitch': 2, 'volume': 100}
-            $this.Control.forever( async _=>{
-                if( $this.Sensing.isMouseTouching() ) {
-                    $this.Event.broadcast('SPEAK', words, properties, 'male');
+            while(true){
+                if( this.Sensing.isMouseTouching() ) {
+                    this.Event.broadcast('SPEAK', words, properties, 'male');
                     
                     // 「送って待つ」ではないので次のループに進ませないように、
                     // 「マウスタッチしない迄待つ」をする。
-                    await Lib.waitWhile( _=>$this.Sensing.isMouseTouching() ); 
+                    await Lib.waitWhile( _=>this.Sensing.isMouseTouching() ); 
                 }
-            });
+                yield;
+            }
         });
         // ネコをクリックしたらお話する
-        cat.Event.whenClicked(function( $this ){
+        cat.Event.whenClicked(async function(){
             const words = `そこそこ`;
             const properties = {'pitch': 1.7, 'volume': 500}
-            $this.Event.broadcast('SPEAK', words, properties, 'female')
+            this.Event.broadcast('SPEAK', words, properties, 'female')
         });
         
         /** SPEAK を受信したらスピーチする */
         cat.Event.whenBroadcastReceived('SPEAK', async function(words, properties, gender='male', locale='ja-JP') {
-            const $this = this;
-            $this.Extensions.speech(words, properties, gender, locale);
+            this.Extensions.speech(words, properties, gender, locale);
 
         });
 

@@ -3,7 +3,8 @@
  * (1) while構文の最後の行はyieldでなければならない
  * (2) do...while構文の最後の行はyieldでなければならない
  * (3) for構文の最後の行はyieldでなければならない
- * (4) for...of, for...in, Array#forEachは yieldは任意とするのでエラーにはしない。
+ * (4) for...of, for...inは任意とするのでエラーにはしない。
+ * (5) Array#forEachは yieldが使えないのでエラーにはしない。
  */
 import globals from "globals";
 import pluginJs from "@eslint/js";

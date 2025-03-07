@@ -36,10 +36,6 @@ Pg.setting = async function () {
             await this.Sound.playUntilDone();
             yield;
         };
-        // // 「終わるまで音を鳴らす」をずっと繰り返す、スレッドを起動する
-        // await this.while( true, async function(){
-        //     await this.Sound.playUntilDone();
-        // });
     });
 
     const catStep = 5;
@@ -56,10 +52,5 @@ Pg.setting = async function () {
             this.Motion.ifOnEdgeBounds();
             yield;
         };
-        // // 「左右」に動く。端に触れたら跳ね返る。
-        // await this.Control.forever( _=> {
-        //     this.Motion.moveSteps(catStep);
-        //     this.Motion.ifOnEdgeBounds();
-        // });
     });
 }

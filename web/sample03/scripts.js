@@ -34,9 +34,5 @@ Pg.setting = function() {
             await this.Sound.playUntilDone();
             yield
         }
-        // this.while(true, async _=>{
-        //     // 処理が終わるまで待つために await をつける
-        //     await this.Sound.playUntilDone();
-        // });
     });
 };

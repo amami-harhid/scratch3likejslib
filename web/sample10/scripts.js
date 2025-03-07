@@ -31,12 +31,9 @@ Pg.prepare = async function prepare() {
 }
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function() {
-        const $stage = this;
-        $stage.Sound.add( Chill );
-        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 50);
-    });
     stage.Event.whenFlag(async function*() {
+        await this.Sound.add( Chill );
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
         while(true){
             await this.Sound.playUntilDone();
             yield;

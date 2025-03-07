@@ -29,49 +29,41 @@ Pg.prepare = async function prepare() {
 }
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async $stage=>{
+    stage.Event.whenFlag(async function*(){
         // ここでの『this』は P であるので、this.sounds は P.soundsと同じである。 
         // stageのインスタンスは 『stage』の変数で受け取っている。
-        await $stage.Sound.add( Chill );
-        $stage.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
-        await $stage.C.forever(async _=>{ // eslint-disable-line no-unused-vars
+        await this.Sound.add( Chill );
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
+        while(true){
             // ＢＧＭを鳴らし続ける（終わるまで待つ）
-            await $stage.Sound.playUntilDone();
-        })
+            await this.Sound.playUntilDone();
+            yield;
+        }
     });
 
     const catStep = 20;
 
-    cat.Event.whenFlag( async _cat=>{
-        await _cat.Sound.add( Mya );
-        _cat.Sound.setOption( Lib.SoundOption.VOLUME, 10);
+    cat.Event.whenFlag( async function(){
+        await this.Sound.add( Mya );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 10);
     });
     
-    cat.Event.whenFlag( async _cat=> {
+    cat.Event.whenFlag( async function(){
         // 初期化
-        _cat.M.gotoXY({x:0, y:0});
-        _cat.M.pointInDirection( 50 );
+        this.Motion.gotoXY({x:0, y:0});
+        this.Motion.pointInDirection( 50 );
     });
 
-    // 課題
-    // ifOnEdgeBounds()のときに KeepInFence による
-    // 移動が足りていないと思われる。横向きに動くとき +1 してやると
-    // ちょうどよい感じがする( Ball のとき )
-    // Cat のときと Ball のときの動きの違い、どこに原因があるのかを
-    // 調べるとよさそう。
-
-    cat.Event.whenFlag( async function(){
+    cat.Event.whenFlag( async function*(){
         // ずっと「左右」に動く。端に触れたら跳ね返る。
-        this.C.forever( _=> { // eslint-disable-line no-unused-vars
+        while(true){
             this.Motion.moveSteps(catStep);
             this.Motion.ifOnEdgeBounds();
             if(this.Sensing.isTouchingEdge()){
-                //_cat.Motion.moveSteps(+1);
-                this.Sound.play();
-                // const randomDegree = Lib.getRandomValueInRange(-50, 50);
-                // _cat.Motion.turnRightDegrees(randomDegree);    
+                this.Sound.play(); // ニャーと鳴く
             }
-        });
+            yield;
+        }
     });
 
 

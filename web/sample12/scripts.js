@@ -32,14 +32,10 @@ Pg.setting = async function setting() {
     // ここはfunction式の中なので 【this】= P である
     // ここをアロー式にすると 【this】= window となる
 
-    stage.Event.whenFlag(async function() {
-        // function() の中なので、【this】はstageである。
-        await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
-    });
-
     stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
+        await this.Sound.add( Chill );
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
         while(true){
             await this.Sound.playUntilDone();
             yield;

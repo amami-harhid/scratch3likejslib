@@ -35,17 +35,20 @@ Pg.setting = async function setting() {
 
     // フラグをクリックしたときの動作
     stage.Event.whenFlag( function(){
-            cat.Looks.show(); // 表示
+        // 本来は cat表示は catのwhenFlag()内で行うことが
+        // 望ましいが、StageのwhenFlag()でも実行はできる。
+        cat.Looks.show(); // 表示
     });
 
     // スプライト（ネコ）をクリックしたときの動作
-    cat.Event.whenClicked( async function(){
-        const ネコ = this;
+    cat.Event.whenClicked( async function*(){
+        const ネコ = this; // 変数名を全角文字にすることが可能。
         // 「終わるまで音を鳴らす」をずっと繰り返す
-        ネコ.C.forever(async _=>{ // eslint-disable-line no-unused-vars
+        while(true){
             // 処理が終わるまで待つために await をつける
             await ネコ.Sound.playUntilDone();
-        });
+            yield;
+        }
     });
 }
 
