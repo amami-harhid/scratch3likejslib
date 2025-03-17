@@ -38,87 +38,95 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
     const WALK_STEP = 1;
-    cat.Event.whenFlag( async function( $this ) {
-        $this.Control.forever( async _=>{
-            $this.Motion.ifOnEdgeBounds();
-            $this.Motion.moveSteps(WALK_STEP);
+    cat.Event.whenFlag( async function*() {
+        while(true){
+            this.Motion.ifOnEdgeBounds();
+            this.Motion.moveSteps(WALK_STEP);
             if( bubble.exit === true) {
                 Lib.Loop.break();
             }
-        });
+            yield;
+        }
     });
-    cat.Event.whenFlag( async function( $this ) {
+    cat.Event.whenFlag( async function*() {
         await Lib.wait(100)
-        $this.Control.forever( async _=>{
-            $this.Looks.nextCostume();
+        while(true){
+            this.Looks.nextCostume();
             await Lib.wait(100)
             if( bubble.exit === true) {
-                Lib.Loop.break();
+                break;
             }
-        });
+            yield;
+        }
     });
-    cat.Event.whenFlag( async function( $this ) {
+    cat.Event.whenFlag( async function*() {
         await Lib.wait(100)
         const MOVE_STEP = 2;
         const SCALE = {MIN:50, MAX:150};
-        $this.Control.forever( async _=>{
-            await $this.Control.forever( async _=>{
-                $this.Looks.changeSizeBy({x:-MOVE_STEP, y: -MOVE_STEP});
-                const scale = $this.Looks.getSize();
-                if(scale.x < SCALE.MIN) Lib.Loop.break();
-            });
-            await $this.Control.forever( async _=>{
-                $this.Looks.changeSizeBy({x: +MOVE_STEP, y: +MOVE_STEP});
-                const scale = $this.Looks.getSize();
-                if(scale.x > SCALE.MAX) Lib.Loop.break();
-            });
-            if( bubble.exit === true) {
-                Lib.Loop.break();
+        while(true){
+            while(true){
+                this.Looks.changeSizeBy({x:-MOVE_STEP, y: -MOVE_STEP});
+                const scale = this.Looks.getSize();
+                if(scale.x < SCALE.MIN) break;
+                yield;
             }
-        });
+            while(true){
+                this.Looks.changeSizeBy({x: +MOVE_STEP, y: +MOVE_STEP});
+                const scale = this.Looks.getSize();
+                if(scale.x > SCALE.MAX) break;
+                yield;
+            }
+            if( bubble.exit === true) {
+                break;
+            }
+            yield;
+        }
     });
-    cat.Event.whenFlag( async function( $this ) {
+    cat.Event.whenFlag( async function*() {
         let counter = 0;
-        $this.Control.forever( async _=>{
+        while(true){
             const text = bubbleTextArr[ Math.ceil(Math.random() * bubbleTextArr.length) - 1 ];
-            if( $this.Sensing.isTouchingEdge() ) {
+            if( this.Sensing.isTouchingEdge() ) {
                 counter += 1;
                 counter = counter % 2;
             }
             if( counter == 0 ) {
-                $this.Looks.say(text);
+                this.Looks.say(text);
 
             }else{
-                $this.Looks.think(text);
+                this.Looks.think(text);
 
             }
             if( bubble.exit === true) {
-                $this.Looks.say();
-                Lib.Loop.break();
+                this.Looks.say();
+                break;
             }
             await Lib.wait(500)
-        });
+            yield;
+        }
     });
-    cat2.Event.whenFlag( async function( $this ) {
-        $this.Control.forever( async _=>{
-            $this.Motion.ifOnEdgeBounds();
-            $this.Motion.moveSteps(WALK_STEP);
+    cat2.Event.whenFlag( async function*() {
+        while(true){
+            this.Motion.ifOnEdgeBounds();
+            this.Motion.moveSteps(WALK_STEP);
             if( bubble.exit === true) {
-                Lib.Loop.break();
+                break;
             }
-        });
+            yield;
+        }
     });
-    cat2.Event.whenFlag( async function( $this ) {
+    cat2.Event.whenFlag( async function*() {
         let scale = {x: 60, y:60};
-        $this.Control.forever( async _=>{
+        while(true){
             const text = bubbleTextArr2[ Math.ceil(Math.random() * bubbleTextArr2.length) - 1 ]
-            $this.Looks.think(text, {scale:scale});
+            this.Looks.think(text, {scale:scale});
             if( bubble2.exit === true) {
-                $this.Looks.say();
-                Lib.Loop.break();
+                this.Looks.say();
+                break;
             }
             await Lib.wait(500)
-        });
+            yield;
+        }
     });
 
     stage.Event.whenFlag( async function() {

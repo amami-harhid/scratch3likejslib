@@ -28,26 +28,27 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function($this) {
+    stage.Event.whenFlag(async function() {
         // function() の中なので、【this】はstageである。
-        await $this.Sound.add( Chill );
-        $this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
+        await this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
     });
 
-    stage.Event.whenFlag(async function($this) {
+    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
-        $this.Control.forever( async _=>{
-            await $this.Sound.playUntilDone();
-        });
+        while(true){
+            await this.Sound.playUntilDone();
+            yield;
+        }
     });
-    cat.Event.whenFlag(async function($this){
-        $this.Motion.gotoXY({x:0, y:0});
+    cat.Event.whenFlag(async function(){
+        this.Motion.gotoXY({x:0, y:0});
     });
 
     const CAT_WALK_STEP = 5;
-    cat.Event.whenFlag(async function($this){
-        $this.Control.forever( async _=>{
-            $this.Motion.moveSteps(CAT_WALK_STEP);
+    cat.Event.whenFlag(async function(){
+        this.Control.forever( async ()=>{
+            this.Motion.moveSteps(CAT_WALK_STEP);
         });
     });
 }
