@@ -4835,7 +4835,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -6642,8 +6642,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
   }, {
