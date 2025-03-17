@@ -10,7 +10,7 @@
       "url": "https://github.com/amami-harhid"
     }
   ],
-  "main": "inlikeScratchLib.js",
+  "main": "likeScratchLib.js",
   "type": "module",
   "repository": {
     "type": "git",
