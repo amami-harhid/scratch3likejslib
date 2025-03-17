@@ -10,12 +10,12 @@
       "url": "https://github.com/amami-harhid"
     }
   ],
-  "main": "likeScratchLib.js",
+  "main": "inlikeScratchLib.js",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "git://github.com/amami-harhid/scratch3likejslib.git",
-    "directory": "build"
+    "directory": "scratch3likejslib"
   },
   "scripts": {},
   "devDependencies": {}
