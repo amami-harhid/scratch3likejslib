@@ -9,7 +9,7 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, '/build'),
-        filename: '[name].js',
+        filename: 'index.js',
         clean: true,
         library:{
             type: "module",
