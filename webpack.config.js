@@ -1,6 +1,5 @@
 const path = require('path');
 const CopyFilePlugin = require("copy-webpack-plugin");
-//const WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
     context: `${__dirname}/src`,
