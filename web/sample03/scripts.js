@@ -20,7 +20,7 @@ Pg.preload = function() {
 }
 Pg.prepare = async function() {
     stage = new Lib.Stage();
-    await stage.Image.add( Jurassic,);
+    await stage.Image.add( Jurassic );
     await stage.Image.add( Jurassic2 );
 }
 Pg.setting = function() {
