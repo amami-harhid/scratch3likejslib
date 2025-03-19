@@ -28,16 +28,16 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
 
     cross = new Lib.Sprite("Cross");
-    cross.Image.add( Cross01 );
-    cross.Image.add( Cross02 );
+    await cross.Image.add( Cross01 );
+    await cross.Image.add( Cross02 );
     cross.Looks.setSize({x:300,y:300});
 
     butterfly = new Lib.Sprite("Butterfly");
-    butterfly.Image.add( Butterfly01 );
-    butterfly.Image.add( Butterfly02 );
+    await butterfly.Image.add( Butterfly01 );
+    await butterfly.Image.add( Butterfly02 );
     butterfly.Looks.hide();
 }
 

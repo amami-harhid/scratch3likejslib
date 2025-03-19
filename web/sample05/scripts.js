@@ -15,21 +15,21 @@ let stage;
 let cat;
 
 Pg.preload = function() {
-    this.Image.load('../assets/Jurassic.svg', Jurassic);
-    this.Image.load('../assets/cat.svg', Cat);
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Image.load('../assets/cat.svg', Cat );
 }
-Pg.prepare = function() {
+Pg.prepare = async function() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
 }
 Pg.setting = function() {
     // フラグをクリックしたときの動作
-    stage.Event.whenFlag( function(){
+    stage.Event.whenFlag( async function(){
         // 旗クリックしたタイミングでネコのスプライトを作り、
         // コスチュームを１個登録する
         cat = new Lib.Sprite( SpriteCatName );
     });
-    stage.Event.whenFlag( function(){
+    stage.Event.whenFlag( async function(){
         // コスチュームを１個登録する
         // whenFlagを定義した順番に実行されるので、
         // ここの『旗クリック』の処理ではネコのスプライトは作成済である。

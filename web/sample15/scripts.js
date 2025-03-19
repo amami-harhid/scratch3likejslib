@@ -28,14 +28,10 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function() {
-        // function() の中なので、【this】はstageである。
-        await this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
-    });
-
     stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
+        await this.Sound.add( Chill );
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
         while(true){
             await this.Sound.playUntilDone();
             yield;

@@ -32,18 +32,18 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( BackDrop );
+    await stage.Image.add( BackDrop );
 
     cat = new Lib.Sprite("Cat");
     cat.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
-    cat.Image.add( Cat1 );
-    cat.Image.add( Cat2 );
+    await cat.Image.add( Cat1 );
+    await cat.Image.add( Cat2 );
     cat.Motion.moveTo({x: -150, y: 0});
     cat.Motion.pointInDirection( 90 );
     cat2 = new Lib.Sprite("Cat2");
     cat2.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
-    cat2.Image.add( Cat1 );
-    cat2.Image.add( Cat2 );
+    await cat2.Image.add( Cat1 );
+    await cat2.Image.add( Cat2 );
     cat2.Motion.pointInDirection( -90 );
     cat2.Motion.moveTo({x: 150, y: 0});
 }

@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyFilePlugin = require("copy-webpack-plugin");
 
 module.exports = {
     context: `${__dirname}/src`,
@@ -8,7 +9,7 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, '/build'),
-        filename: '[name].js',
+        filename: 'index.js',
         clean: true,
         library:{
             type: "module",
@@ -39,4 +40,18 @@ module.exports = {
         ]
     },
     devtool: 'source-map',
+    plugins: [
+        new CopyFilePlugin({
+            patterns: [
+                {
+                    context: "buildPackageConf",
+                    from: "**/*.json",
+                    to: path.resolve(__dirname, "build")
+                },        
+
+            ],
+        }),
+        //new WriteFilePlugin()
+    ],
+
 }
