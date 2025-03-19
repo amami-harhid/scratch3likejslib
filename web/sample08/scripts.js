@@ -22,10 +22,10 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
     
     cat = new Lib.Sprite("Cat");
-    cat.Image.add( Cat );
+    await cat.Image.add( Cat );
 }
 Pg.setting = async function setting() {
 
@@ -45,7 +45,7 @@ Pg.setting = async function setting() {
 
     cat.Event.whenFlag( async function(){
         await this.Sound.add( Mya );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 10);
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10);
     });
     
     cat.Event.whenFlag( async function(){

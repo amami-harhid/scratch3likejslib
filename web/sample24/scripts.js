@@ -31,9 +31,9 @@ Pg.preload = async function () {
 }
 Pg.prepare = async function () {
     stage = new Lib.Stage();
-    stage.Image.add( NeonTunnel );
+    await stage.Image.add( NeonTunnel );
     ball = new Lib.Sprite("ball");
-    ball.Image.add( Ball );
+    await ball.Image.add( Ball );
     ball.Looks.setSize(50, 50);
     monitors = new Lib.Monitors();
     monitors.add(SECONDS_COUNTER);

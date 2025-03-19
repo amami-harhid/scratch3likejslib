@@ -43,7 +43,7 @@ Pg.setting = async function setting() {
     cat.Event.whenFlag( async function() {
         // 音を登録する
         this.Sound.add( Mya );
-        this.Sound.setEffect( Lib.SoundOption.VOLUME, 20 )
+        this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
     });
     cat.Event.whenFlag( async function(){
         // 初期化

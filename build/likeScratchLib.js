@@ -2153,9 +2153,9 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               }
               // 音量変更時直後の再生にて 最初に雑音「ブッ」が入る。
-              // 1FPS分待つことで解消させる
+              // 2FPS分待つことで解消させる
               _context7.next = 3;
-              return Libs["default"].wait(1000 / 33);
+              return Libs["default"].wait(1000 / 33 * 2);
             case 3:
             case "end":
               return _context7.stop();
@@ -3546,6 +3546,7 @@ var _ImageLoader = /*#__PURE__*/function () {
           _text,
           parser,
           svgDoc,
+          size,
           changed,
           localUrl,
           _img,
@@ -3558,15 +3559,15 @@ var _ImageLoader = /*#__PURE__*/function () {
                 y: 0
               };
               if (!image) {
-                _context.next = 22;
+                _context.next = 27;
                 break;
               }
               if (!(typeof image === 'string')) {
-                _context.next = 22;
+                _context.next = 27;
                 break;
               }
               if (!image.match(_ImageLoader.REGEX_SVG_DATA_IMAGE_FILE)) {
-                _context.next = 15;
+                _context.next = 20;
                 break;
               }
               _context.next = 6;
@@ -3581,28 +3582,41 @@ var _ImageLoader = /*#__PURE__*/function () {
             case 9:
               parser = SVGParser["default"];
               svgDoc = parser.parseFromString(_text);
+              size = parser.getSize();
+              if (!(size.w > 480 || size.h > 360)) {
+                _context.next = 17;
+                break;
+              }
               changed = parser.sizeChange(svgDoc, 480, 360, translate);
               return _context.abrupt("return", {
                 name: name,
                 data: changed
               });
-            case 15:
-              localUrl = image;
-              _context.next = 18;
-              return _ImageLoader._loadImage(localUrl);
+            case 17:
+              return _context.abrupt("return", {
+                name: name,
+                data: _text
+              });
             case 18:
+              _context.next = 27;
+              break;
+            case 20:
+              localUrl = image;
+              _context.next = 23;
+              return _ImageLoader._loadImage(localUrl);
+            case 23:
               _img = _context.sent;
               if (!(_img == "ERROR")) {
-                _context.next = 21;
+                _context.next = 26;
                 break;
               }
               throw "イメージローディングエラー。画像データの指定を確認してください。";
-            case 21:
+            case 26:
               return _context.abrupt("return", {
                 name: name,
                 data: _img
               });
-            case 22:
+            case 27:
             case "end":
               return _context.stop();
           }
@@ -4734,7 +4748,6 @@ var Monitor = /*#__PURE__*/function () {
     value: function init() {
       var libs = Libs["default"];
       var renderRate = libs.renderRate;
-      console.log(renderRate);
       var getElementById = function getElementById(id) {
         return document.getElementById(id);
       };
@@ -5503,14 +5516,14 @@ var _PlayGround = /*#__PURE__*/function () {
     }
   }, {
     key: "$loadImage",
-    value: function $loadImage(imageUrl, name, transport) {
+    value: function $loadImage(imageUrl, name, translate) {
       var _name;
       if (name) {
         _name = name;
       } else {
         _name = imageUrl.replace(/\.[^.]+$/);
       }
-      var data = ImageLoader.loadImage(imageUrl, _name, transport);
+      var data = ImageLoader.loadImage(imageUrl, _name, translate);
       this._preloadImagePromise.push(data);
       return data;
     }
@@ -8425,7 +8438,20 @@ var SVGParser = /*#__PURE__*/function () {
     key: "parseFromString",
     value: function parseFromString(svgText) {
       var parsedSVGDoc = this.domParser.parseFromString(svgText, 'image/svg+xml');
+      this.svgDoc = parsedSVGDoc.childNodes[0];
       return parsedSVGDoc.childNodes[0];
+    }
+  }, {
+    key: "getSize",
+    value: function getSize() {
+      var w = this.svgDoc.getAttribute('width');
+      var h = this.svgDoc.getAttribute('height');
+      var _w = "".concat(w).replace('px', '');
+      var _h = "".concat(h).replace('px', '');
+      return {
+        w: _w,
+        h: _h
+      };
     }
   }, {
     key: "sizeChange",
@@ -8441,10 +8467,12 @@ var SVGParser = /*#__PURE__*/function () {
       svgDoc.setAttribute('height', "".concat(h, "px"));
       svgDoc.setAttribute('viewBox', "0 0 ".concat(w, " ").concat(h));
       // transformをもつgTag
-      var translateX = translate.x;
-      var translateY = translate.y;
       var gTagTransform = svgDoc.querySelectorAll('g[transform]');
-      gTagTransform[0].setAttribute('transform', "translate(".concat(translateX, ", ").concat(translateY, ")"));
+      if (gTagTransform) {
+        var translateX = translate.x;
+        var translateY = translate.y;
+        gTagTransform[0].setAttribute('transform', "translate(".concat(translateX, ", ").concat(translateY, ")"));
+      }
       var changed = this.serializer.serializeToString(svgDoc);
       return changed;
     }

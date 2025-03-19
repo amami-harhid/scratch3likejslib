@@ -18,26 +18,26 @@ const Cat = "Cat";
 
 let stage, cat1, cat2, cat3;
 
-Pg.preload = async function preload($this) {
-    $this.Image.load('../assets/Jurassic.svg', Jurassic );
-    $this.Sound.load('../assets/Chill.wav', Chill );
-    $this.Image.load('../assets/cat.svg', Cat );
+Pg.preload = async function preload() {
+    this.Image.load('../assets/Jurassic.svg', Jurassic );
+    this.Sound.load('../assets/Chill.wav', Chill );
+    this.Image.load('../assets/cat.svg', Cat );
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
     cat1 = new Lib.Sprite("Cat1");
-    cat1.Image.add( Cat );
+    await cat1.Image.add( Cat );
     cat1.Motion.gotoXY({x:-Lib.stageWidth/4, y:+Lib.stageHeight/4 });
     cat1.Looks.setEffect(Lib.ImageEffective.COLOR, 50);
     cat1.Motion.setRotationStyle( Lib.RotationStyle.LEFT_RIGHT );
 
     cat2 = new Lib.Sprite("Cat2");
-    cat2.Image.add( Cat );
+    await cat2.Image.add( Cat );
     cat2.Motion.gotoXY({x:0, y:0 });
 
     cat3 = new Lib.Sprite("Cat3");
-    cat3.Image.add( Cat );
+    await cat3.Image.add( Cat );
     cat3.Motion.gotoXY({x:Lib.stageWidth /4, y:-Lib.stageHeight/4 });
     cat3.Looks.setEffect( Lib.ImageEffective.COLOR, 10);
     cat3.Motion.setRotationStyle( Lib.RotationStyle.DONT_ROTATE );
@@ -45,13 +45,9 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function() {
-        // function() の中なので、【this】はstageである。
+    stage.Event.whenFlag(async function*() {
         this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
-    });
-
-    stage.Event.whenFlag(async function*() {
         // function() の中なので、【this】はProxy(stage)である。
         while(true){
             await this.Sound.playUntilDone();

@@ -37,25 +37,25 @@ Pg.preload = async function () {
 }
 Pg.prepare = async function () {
     stage = new Lib.Stage();
-    stage.Image.add( NeonTunnel );
+    await stage.Image.add( NeonTunnel );
     ball = new Lib.Sprite("cat");
-    ball.Image.add( BallA );
+    await ball.Image.add( BallA );
     //ball.Motion.setXY(0,-100);
     ball.Looks.setSize(50, 50);
     paddle = new Lib.Sprite("paddle");
-    paddle.Image.add( Paddle );
+    await paddle.Image.add( Paddle );
     paddle.Motion.setXY(0, -140);
     block = new Lib.Sprite( "block");
-    block.Image.add( Block );
+    await block.Image.add( Block );
 //    block.Looks.setSize({x:50, y:50});
     block.Motion.setXY(-220,180);
     block.Looks.hide();
     line = new Lib.Sprite( "line" );
-    line.Image.add( Line );
+    await line.Image.add( Line );
     line.Motion.setXY(0, -170);
     title = new Lib.Sprite("title");
-    title.Image.add(YouWon);
-    title.Image.add(GameOver);
+    await title.Image.add(YouWon);
+    await title.Image.add(GameOver);
     title.Looks.hide();
 }
 
@@ -63,7 +63,7 @@ Pg.setting = async function () {
 
     stage.Event.whenFlag(async function*(){
         await this.Sound.add( Chill );
-        this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
+        await this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
         while(true) {
             await this.Sound.playUntilDone();
             yield;         
