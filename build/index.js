@@ -3583,7 +3583,7 @@ var _ImageLoader = /*#__PURE__*/function () {
               parser = SVGParser["default"];
               svgDoc = parser.parseFromString(_text);
               size = parser.getSize();
-              if (!(size.w > 480 || size.h > 360)) {
+              if (!(size.w > 480 && size.h > 360)) {
                 _context.next = 17;
                 break;
               }
