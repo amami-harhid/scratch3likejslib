@@ -2787,7 +2787,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       //        const proxy = this.getProxyForHat();
       //        proxy.threadId = threadId;
       setTimeout(function (_) {
-        me.hatProc(func, self);
+        me.hatProc(func, me);
         //            me.startThread(func, proxy);
       }, 0);
     }
