@@ -2783,11 +2783,12 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "$whenRightNow",
     value: function $whenRightNow(func) {
       var me = this;
-      var threadId = this._generateUUID();
-      var proxy = this.getProxyForHat();
-      proxy.threadId = threadId;
+      //        const threadId = this._generateUUID();
+      //        const proxy = this.getProxyForHat();
+      //        proxy.threadId = threadId;
       setTimeout(function (_) {
-        me.startThread(func, proxy);
+        me.hatProc(func, self);
+        //            me.startThread(func, proxy);
       }, 0);
     }
   }, {
@@ -2840,8 +2841,8 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     }()
   }, {
     key: "hatProc",
-    value: function hatProc(func) {
-      var me = this;
+    value: function hatProc(func, self) {
+      var me = self ? self : this;
       var threadId = me._generateUUID();
       var proxy = me.getProxyForHat();
       proxy.threadId = threadId;
