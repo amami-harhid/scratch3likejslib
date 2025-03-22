@@ -2782,32 +2782,40 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenRightNow",
     value: function $whenRightNow(func) {
+      var functionDeclareType = FunctionChecker.getFunctionDeclares(func);
+      if (functionDeclareType.isArrow === true) {
+        // アロー関数は許可しない
+        console.log(func.toString());
+        throw "イベントで宣言する関数は アロー関数を使ってはいけません。";
+      }
+      if (functionDeclareType.isAsync === false) {
+        // async でないときは許可しない
+        console.log(func.toString());
+        throw "イベントで宣言する関数は async をつけてください。";
+      }
+      if (functionDeclareType.isGenerator === true) {
+        // Generator は許可しない
+        console.log(func.toString());
+        throw "WhenRightNowイベントで宣言する関数は Generatorを使えません";
+      }
       var me = this;
-      // setTimeout(_=>{
-      //     me.hatProc(func, me);
-      // },0);
-      // hatProc()を使うならば旗が押されたときに動作してしまう。
-      // whenRightNowのなかではループ処理を置けないルールの
-      // 前提であるならば、funcをすぐに実行してもよいはず。
-      // 前提１： whenRightNowには generator関数は渡せない！
-      // 前提２： whenRightNowの中にある ループ処理はエラーとする
-      var _p = PlayGround["default"];
-      var wait = Libs["default"].wait;
       setTimeout(/*#__PURE__*/function () {
         var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(_) {
-          var f;
+          var _p, wait, f;
           return _regeneratorRuntime().wrap(function _callee15$(_context15) {
             while (1) switch (_context15.prev = _context15.next) {
               case 0:
+                _p = PlayGround["default"];
+                wait = Libs["default"].wait;
                 f = func.bind(me);
-                _context15.next = 3;
-                return f(me);
-              case 3:
                 _context15.next = 5;
-                return wait(33);
+                return f(me);
               case 5:
+                _context15.next = 7;
+                return wait(5);
+              case 7:
                 _p._draw();
-              case 6:
+              case 8:
               case "end":
                 return _context15.stop();
             }
@@ -4891,7 +4899,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -6700,8 +6708,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-              v.hatProc(func);
-          });
+             v.hatProc(func);
+         });
     }
     */
   }, {
@@ -9882,7 +9890,13 @@ var FunctionChecker = /*#__PURE__*/function () {
   }
   return _createClass(FunctionChecker, null, [{
     key: "getFunctionDeclares",
-    value: function getFunctionDeclares(func) {
+    value:
+    /**
+     * 関数定義を渡しアロー関数、Async、Generatorの種類を返す。
+     * @param {*} func 
+     * @returns 関数の種類
+     */
+    function getFunctionDeclares(func) {
       var ast = parse("const x = ".concat(func.toString()));
       var functionInit = ast.program.body[0].declarations[0].init;
       var isArrow = functionInit.type == "ArrowFunctionExpression";
@@ -9894,6 +9908,11 @@ var FunctionChecker = /*#__PURE__*/function () {
         isGenerator: isGenerator
       };
     }
+    /**
+     * 未使用
+     * @param {*} func 
+     * @returns {isAsyncGenerator, isAwaiter}
+     */
   }, {
     key: "getTypeOfGenerator",
     value: function getTypeOfGenerator(func) {
