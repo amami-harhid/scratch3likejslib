@@ -3,7 +3,7 @@
  * スプライトのクローンを作る（スプライトをクリックしたらクローンを作る）
  * クローンされたら動きだす（端に触れたらミャーとないて折り返す）
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample09】スプライトをクリックしたらクローンを作る。端に触れたらミャーとないて折り返す。"

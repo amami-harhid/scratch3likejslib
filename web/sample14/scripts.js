@@ -4,7 +4,7 @@
  * マウスポインターがステージの外に出た最後の位置へ追いかける
  * 5秒経過したら 1秒かけて移動する！に切り替わる
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample14】マウスポインターを追いかける（５秒経過後『１秒間でマウスポインターの位置へ移動する』に変化する）"

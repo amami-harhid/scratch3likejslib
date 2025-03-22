@@ -7,7 +7,7 @@
  * 各スプライトはマウスポインターに向いて追いかける。
  * ５秒ごとに元の位置に戻る。
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample16】３匹のネコの回転方向を変える"

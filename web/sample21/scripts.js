@@ -16,7 +16,7 @@
  * https://synthesis-service.scratch.mit.edu/synth?locale=ja-JP&gender=male&text=%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A
  * 
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample21】スピーチ機能：ネコに触る、タッチするとお話しをする"

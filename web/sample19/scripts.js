@@ -3,7 +3,7 @@
  * 
  * 吹き出し(SAY, THINK)
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample19】いろんな文字列でフキダシ(言う, 思う)。20秒間。"

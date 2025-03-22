@@ -6,11 +6,7 @@
  * スペースキーで 弾を発射（発射する弾はクローン）
  */
 
-/**
- * 【課題】 音量の設定が効かない。常に１００％になる。
- */
-
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample18】左右矢印でシップが左右に動き、スペースキーで弾を発射。"
@@ -85,7 +81,7 @@ Pg.setting = async function setting() {
                 const options = {scale:{x:20,y:20}, direction:0}
                 this.C.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
-                //await Libs.waitWhile( ()=>Libs.keyIsDown('Space'));
+                //await Libs.waitWhile( ()=>Lib.keyIsDown('Space'));
             }
             yield;
         };

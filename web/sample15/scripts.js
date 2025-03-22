@@ -2,7 +2,7 @@
  * Sample15
  * スプライト（CAT) は端を越えて進めない。
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample15】端を越えては進めない。"

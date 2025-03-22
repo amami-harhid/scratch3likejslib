@@ -2,7 +2,7 @@
  * 背景を表示＆ＢＧＭを鳴らす
  * ＢＧＭ『終わるまで音を鳴らす』をずっと繰り返す。
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample03】旗クリックでずっと『終わるまで音を鳴らす』を繰り返す";

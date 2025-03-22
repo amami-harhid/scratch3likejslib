@@ -4,7 +4,7 @@
  * スプライトにタッチするとBGMを繰返し鳴らす。
  */
 // ライブラリーをインポートして実行
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample06】スプライトをタッチしたらＢＧＭを繰返し鳴らす";

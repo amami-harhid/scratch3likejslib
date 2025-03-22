@@ -6,7 +6,7 @@
  * 『whenBroadcastReceived』を使うことで、同一IDの受信登録数について
  * 実装上の上限はない（ただし受信登録数が極端に多いときは動きが遅くなるかも）
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample20】二匹のネコ、メッセージを送信受信して会話をさせる"

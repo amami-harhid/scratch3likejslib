@@ -2783,13 +2783,40 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "$whenRightNow",
     value: function $whenRightNow(func) {
       var me = this;
-      //        const threadId = this._generateUUID();
-      //        const proxy = this.getProxyForHat();
-      //        proxy.threadId = threadId;
-      setTimeout(function (_) {
-        me.hatProc(func, me);
-        //            me.startThread(func, proxy);
-      }, 0);
+      // setTimeout(_=>{
+      //     me.hatProc(func, me);
+      // },0);
+      // hatProc()を使うならば旗が押されたときに動作してしまう。
+      // whenRightNowのなかではループ処理を置けないルールの
+      // 前提であるならば、funcをすぐに実行してもよいはず。
+      // 前提１： whenRightNowには generator関数は渡せない！
+      // 前提２： whenRightNowの中にある ループ処理はエラーとする
+      var _p = PlayGround["default"];
+      var wait = Libs["default"].wait;
+      setTimeout(/*#__PURE__*/function () {
+        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(_) {
+          var f;
+          return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+            while (1) switch (_context15.prev = _context15.next) {
+              case 0:
+                f = func.bind(me);
+                _context15.next = 3;
+                return f(me);
+              case 3:
+                _context15.next = 5;
+                return wait(33);
+              case 5:
+                _p._draw();
+              case 6:
+              case "end":
+                return _context15.stop();
+            }
+          }, _callee15);
+        }));
+        return function (_x25) {
+          return _ref5.apply(this, arguments);
+        };
+      }(), 0);
     }
   }, {
     key: "getProxyForHat",
@@ -2802,39 +2829,39 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenFlag",
     value: function () {
-      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(func) {
+      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(func) {
         var me, flag, clickFunc;
-        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-          while (1) switch (_context16.prev = _context16.next) {
+        return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+          while (1) switch (_context17.prev = _context17.next) {
             case 0:
               //const process = Process.default;
               me = this;
               flag = Element.getControlGreenFlag();
               clickFunc = /*#__PURE__*/function () {
-                var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(e) {
-                  return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-                    while (1) switch (_context15.prev = _context15.next) {
+                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(e) {
+                  return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+                    while (1) switch (_context16.prev = _context16.next) {
                       case 0:
                         me.hatProc(func);
                         e.stopPropagation();
                       case 2:
                       case "end":
-                        return _context15.stop();
+                        return _context16.stop();
                     }
-                  }, _callee15);
+                  }, _callee16);
                 }));
-                return function clickFunc(_x26) {
-                  return _ref5.apply(this, arguments);
+                return function clickFunc(_x27) {
+                  return _ref6.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
               flag.addEventListener('click', clickFunc);
             case 4:
             case "end":
-              return _context16.stop();
+              return _context17.stop();
           }
-        }, _callee16, this);
+        }, _callee17, this);
       }));
-      function $whenFlag(_x25) {
+      function $whenFlag(_x26) {
         return _$whenFlag.apply(this, arguments);
       }
       return $whenFlag;
@@ -2901,18 +2928,18 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var entityId = this.id;
       var me = this;
       var eventf = /*#__PURE__*/function () {
-        var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(e) {
+        var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(e) {
           var mouseX, mouseY, _touchDrawableId, threadId, proxy;
-          return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-            while (1) switch (_context17.prev = _context17.next) {
+          return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+            while (1) switch (_context18.prev = _context18.next) {
               case 0:
                 e.stopPropagation();
                 // 緑の旗押されていないときは何もしない。
                 if (!(p.runningGame === false)) {
-                  _context17.next = 3;
+                  _context18.next = 3;
                   break;
                 }
-                return _context17.abrupt("return");
+                return _context18.abrupt("return");
               case 3:
                 threads.removeObjById(entityId); // 前回のクリック分を止める。
                 mouseX = e.offsetX;
@@ -2930,12 +2957,12 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               case 8:
               case "end":
-                return _context17.stop();
+                return _context18.stop();
             }
-          }, _callee17);
+          }, _callee18);
         }));
-        return function eventf(_x27) {
-          return _ref6.apply(this, arguments);
+        return function eventf(_x28) {
+          return _ref7.apply(this, arguments);
         };
       }();
       Canvas.canvas.removeEventListener('click', eventf);
@@ -3051,17 +3078,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func2 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
-            return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-              while (1) switch (_context18.prev = _context18.next) {
+          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
+            return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+              while (1) switch (_context19.prev = _context19.next) {
                 case 0:
-                  _context18.next = 2;
+                  _context19.next = 2;
                   return _awaitAsyncGenerator(_func2(_entity));
                 case 2:
                 case "end":
-                  return _context18.stop();
+                  return _context19.stop();
               }
-            }, _callee18);
+            }, _callee19);
           }));
           return function f() {
             return _ref.apply(this, arguments);
@@ -3104,17 +3131,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func3 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
-            return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-              while (1) switch (_context19.prev = _context19.next) {
+          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
+            return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+              while (1) switch (_context20.prev = _context20.next) {
                 case 0:
-                  _context19.next = 2;
+                  _context20.next = 2;
                   return _awaitAsyncGenerator(_func3.apply(void 0, args));
                 case 2:
                 case "end":
-                  return _context19.stop();
+                  return _context20.stop();
               }
-            }, _callee19);
+            }, _callee20);
           }));
           return function f() {
             return _ref2.apply(this, arguments);
@@ -3287,30 +3314,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$speechAndWait",
     value: function () {
-      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(words, properties) {
+      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(words, properties) {
         var gender,
           locale,
           _properties,
           speech,
-          _args20 = arguments;
-        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-          while (1) switch (_context20.prev = _context20.next) {
+          _args21 = arguments;
+        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+          while (1) switch (_context21.prev = _context21.next) {
             case 0:
-              gender = _args20.length > 2 && _args20[2] !== undefined ? _args20[2] : 'male';
-              locale = _args20.length > 3 && _args20[3] !== undefined ? _args20[3] : 'ja-JP';
+              gender = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : 'male';
+              locale = _args21.length > 3 && _args21[3] !== undefined ? _args21[3] : 'ja-JP';
               _properties = properties ? properties : {};
               speech = Speech.getInstance();
               speech.gender = gender;
               speech.locale = locale;
-              _context20.next = 8;
+              _context21.next = 8;
               return speech.speechAndWait(this, words, _properties);
             case 8:
             case "end":
-              return _context20.stop();
+              return _context21.stop();
           }
-        }, _callee20, this);
+        }, _callee21, this);
       }));
-      function $speechAndWait(_x28, _x29) {
+      function $speechAndWait(_x29, _x30) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3331,19 +3358,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "forever",
     value: function () {
-      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(func) {
-        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
-          while (1) switch (_context21.prev = _context21.next) {
+      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(func) {
+        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+          while (1) switch (_context22.prev = _context22.next) {
             case 0:
-              _context21.next = 2;
+              _context22.next = 2;
               return Loop["while"](true, func, this);
             case 2:
             case "end":
-              return _context21.stop();
+              return _context22.stop();
           }
-        }, _callee21, this);
+        }, _callee22, this);
       }));
-      function forever(_x30) {
+      function forever(_x31) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3351,19 +3378,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "while",
     value: function () {
-      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
-          while (1) switch (_context22.prev = _context22.next) {
+      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+          while (1) switch (_context23.prev = _context23.next) {
             case 0:
-              _context22.next = 2;
+              _context23.next = 2;
               return Loop["while"](condition, func, this);
             case 2:
             case "end":
-              return _context22.stop();
+              return _context23.stop();
           }
-        }, _callee22, this);
+        }, _callee23, this);
       }));
-      function _while(_x31, _x32) {
+      function _while(_x32, _x33) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3371,19 +3398,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeat",
     value: function () {
-      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23(count, func) {
-        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-          while (1) switch (_context23.prev = _context23.next) {
+      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(count, func) {
+        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+          while (1) switch (_context24.prev = _context24.next) {
             case 0:
-              _context23.next = 2;
+              _context24.next = 2;
               return Loop.repeat(count, func, this);
             case 2:
             case "end":
-              return _context23.stop();
+              return _context24.stop();
           }
-        }, _callee23, this);
+        }, _callee24, this);
       }));
-      function repeat(_x33, _x34) {
+      function repeat(_x34, _x35) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3391,19 +3418,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeatUntil",
     value: function () {
-      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
-          while (1) switch (_context24.prev = _context24.next) {
+      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+          while (1) switch (_context25.prev = _context25.next) {
             case 0:
-              _context24.next = 2;
+              _context25.next = 2;
               return Loop.repeatUntil(condition, func, this);
             case 2:
             case "end":
-              return _context24.stop();
+              return _context25.stop();
           }
-        }, _callee24, this);
+        }, _callee25, this);
       }));
-      function repeatUntil(_x35, _x36) {
+      function repeatUntil(_x36, _x37) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -5510,6 +5537,8 @@ var _PlayGround = /*#__PURE__*/function () {
       if (this._stage) {
         this._stage.update();
         this._stage.draw();
+        // draw関数を定義済であれば実行する
+        // これは p5.js の名残り。なくてもよいと思う。
         if (this.draw) {
           this.draw();
         }

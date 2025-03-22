@@ -2,7 +2,7 @@
  * Sample05
  * スプライトを作る
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample05】旗クリックでスプライトを表示する"

@@ -2,7 +2,7 @@
  * Sample13
  * スプライト（CAT) クリックした位置へ１秒で動く
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample13】クリックした位置へ１秒で動く"

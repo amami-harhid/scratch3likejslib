@@ -6,7 +6,7 @@
  * broadcastAndWait にて音声スピーチが終わりを検知できるようにしました。
  * 
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample22】スピーチ機能：「スピーチを終わるまで待つ」の確認";

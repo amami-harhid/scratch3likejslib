@@ -3,7 +3,7 @@
  * preset()内で addImageする場合と比較してステージに表示するのが一瞬だけ遅延する。
  */
 // ライブラリーをインポートして実行
-import {PlayGround, Library} from '../../build/likeScratchLib.js';
+import {PlayGround, Library} from '../../build/index.js';
 // 短縮名にする
 const [Pg, Lib] = [PlayGround, Library]; 
 
@@ -22,7 +22,7 @@ Pg.prepare = function() {
 }
 Pg.setting = async function() {
     // すぐに実行する。
-    stage.Event.whenRightNow( async function(){
+    stage.Event.whenFlag( async function(){
         this.Image.add( Jurassic );
     });
 };

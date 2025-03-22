@@ -6,7 +6,7 @@
  * スプライトが端に触れた回数のモニター
  */
 
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample24】ボールがランダムな方向へ動き端についたら跳ね返る"

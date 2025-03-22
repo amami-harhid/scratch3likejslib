@@ -3,7 +3,7 @@
  * スプライト（CAT)を クリックした場所へ移動する
  */
 
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample12】クリックした場所へ移動する"

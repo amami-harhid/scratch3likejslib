@@ -2,7 +2,7 @@
  * Sample08
  * スプライトを 動かす( 端に触れたら ミャーと鳴く)
  */
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample08】スプライトが動き、端に触れたらミャーと鳴く"
