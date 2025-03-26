@@ -1203,7 +1203,7 @@ var CSS = {
   scratch3Header: "\n.scratch3Header {\n        position: fixed;\n        background-color: rgb(232, 237, 241);\n        top: 0;\n        left: 0;\n        right: 0;\n        z-index: 5000;\n        width: 100%;\n  }\n.scratch3HeaderMenu {\n    display: flex;\n    margin: auto;\n    justify-content: space-between;\n    flex-shrink: 0;\n    align-items: center;\n    height: 2.0rem;\n    padding-top: 0;\n    padding-bottom: 0;\n}\n.controls_controls-container {\n    display: flex;\n}\n.green-flag_green-flag {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    user-drag: none;\n    cursor: pointer;\n}\n.green-flag_green-flag:hover {\n    background-color: hsla(260, 60%, 60%, 0.15);\n}\n.green-flag_green-flag.running {\n    background-color: hsla(260, 60%, 60%, 0.55);\n    opacity: 0.5;\n    filter:brightness(1.2);\n    transform:none;\n}\n.green-flag_green-flag.not-running {\n    opacity: 1.0;\n}\n\n\n.pause-button {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    user-drag: none;\n    cursor: pointer;\n}\n.stop-all_stop-all_pluqe {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    cursor: pointer;\n}\n.stop-all_stop-all_pluqe:hover {\n    background-color: hsla(260, 60%, 60%, 0.15);\n}\n.stop-all_stop-all_pluqe.is-not-active {\n    opacity: 0.5;\n    filter:brightness(1.2);\n    transform:none;\n}\n.stop-all_stop-all_pluqe.is-active {\n    opacity: 1.0;\n}\n.title-field {\n    padding-left: 0.65rem;\n    padding-top: 0.375rem;\n    padding-right: 0.375rem;\n    padding-bottom: 0.375rem;\n    font-size: 0.8rem  \n}\n\n",
   canvasCss: "\n.stageCanvasWrapper {\n    position: fixed;\n    top: 2rem;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 5000;\n    background-color: hsla(0, 100%, 100%, 1);\n    padding: 0.1rem;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n}\n.likeScratch-canvas {\n        display: block;\n        border: 1px solid #141414;\n        border-radius: 15px;\n  }  \n",
   textCanvasCss: "\n.likeScratch-text-canvas {\n        pointer-events: none;\n  }\n",
-  mainTmpCss: "\n.nowLoading {\n      background-image: url(https://amami-harhid.github.io/scratch3LikeJs/web/assets/NowLoading.svg);\n      background-repeat: no-repeat;\n      background-position: center;\n}\n"
+  mainTmpCss: "\n.nowLoading {\n    background-image: url(https://amami-harhid.github.io/scratch3LikeJs/web/assets/NowLoading.svg);\n    background-repeat: no-repeat;\n    background-position: center;\n    background-color: #f0f0f0;\n}\n"
 };
 module.exports = CSS;
 
@@ -5408,7 +5408,7 @@ var _PlayGround = /*#__PURE__*/function () {
               this.mainTmp = mainTmp;
               mainTmp.id = 'mainTmp';
               mainTmp.classList.add('nowLoading');
-              mainTmp.style.zIndex = -1;
+              mainTmp.style.zIndex = Infinity; // 手前
               mainTmp.style.position = 'absolute';
               mainTmp.style.touchAction = 'manipulation';
               mainTmp.style.width = "".concat(innerWidth, "px");
@@ -5451,7 +5451,14 @@ var _PlayGround = /*#__PURE__*/function () {
               this.runtime.on('PAUSING_GAME', function () {
                 _this.runningGame = false;
               });
-            case 33:
+              _context2.next = 35;
+              return Utils.wait(100);
+            case 35:
+              // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
+              main.classList.remove(Element.DISPLAY_NONE);
+              // NowLoadingを消す。
+              this.mainTmp.remove();
+            case 37:
             case "end":
               return _context2.stop();
           }
@@ -5519,7 +5526,6 @@ var _PlayGround = /*#__PURE__*/function () {
     key: "_setting",
     value: function () {
       var _setting2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var main;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
@@ -5530,12 +5536,6 @@ var _PlayGround = /*#__PURE__*/function () {
               _context5.next = 3;
               return this.setting(this);
             case 3:
-              // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
-              main = this.main;
-              main.classList.remove(Element.DISPLAY_NONE);
-              // NowLoadingを消す。
-              this.mainTmp.remove();
-            case 6:
             case "end":
               return _context5.stop();
           }
