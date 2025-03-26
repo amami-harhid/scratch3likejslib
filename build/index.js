@@ -5408,15 +5408,14 @@ var _PlayGround = /*#__PURE__*/function () {
               this.mainTmp = mainTmp;
               mainTmp.id = 'mainTmp';
               mainTmp.classList.add('nowLoading');
-              mainTmp.style.zIndex = 9999; // 手前
+              mainTmp.style.zIndex = 9999; // 一番手前 ( 本体main z-index= 999)
               mainTmp.style.position = 'absolute';
               mainTmp.style.touchAction = 'manipulation';
               mainTmp.style.width = "".concat(innerWidth, "px");
               mainTmp.style.height = "".concat(innerHeight, "px");
               document.body.appendChild(mainTmp);
-              // ちょっとだけ待つ（ Now Loading を見せたいため )
               _context2.next = 12;
-              return Utils.wait(1000);
+              return Utils.wait(100);
             case 12:
               this._preload();
               _context2.next = 15;
@@ -5454,12 +5453,11 @@ var _PlayGround = /*#__PURE__*/function () {
               _context2.next = 35;
               return Utils.wait(100);
             case 35:
-              console.log('start removeer');
               // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
               main.classList.remove(Element.DISPLAY_NONE);
               // NowLoadingを消す。
               this.mainTmp.remove();
-            case 38:
+            case 37:
             case "end":
               return _context2.stop();
           }
