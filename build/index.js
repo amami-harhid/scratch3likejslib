@@ -4421,6 +4421,19 @@ var _Libs = /*#__PURE__*/function () {
       return _r.keyIsDown(key);
     }
     /**
+     * 指定したkeyが押されていないとき TRUE
+     * key 省略時は 何かのキーが押されていないとき TRUE
+     * 
+     * @param {*} key 
+     * @returns TRUE/FALSE
+     */
+  }, {
+    key: "keyIsNotDown",
+    value: function keyIsNotDown(key) {
+      return !this.keyIsDown(key);
+    }
+
+    /**
      * 何かのキーが押されているとき TRUE
      * @returns TRUE/FALSE
      */
