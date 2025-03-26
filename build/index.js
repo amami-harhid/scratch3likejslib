@@ -7564,6 +7564,12 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return $addImage;
     }()
   }, {
+    key: "$getImageNames",
+    value: function $getImageNames() {
+      var iterator = this.costumes.costumes.keys();
+      return iterator.toArray();
+    }
+  }, {
     key: "$say",
     value: function $say(text) {
       var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -7811,7 +7817,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     key: "Image",
     get: function get() {
       return {
-        "add": this.$addImage.bind(this)
+        "add": this.$addImage.bind(this),
+        "names": this.$getImageNames.bind(this)
       };
     }
   }, {
