@@ -5487,29 +5487,24 @@ var _PlayGround = /*#__PURE__*/function () {
     key: "_prepare",
     value: function () {
       var _prepare2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var main;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
-              main = this.main;
-              main.classList.remove(Element.DISPLAY_NONE);
-              // prepareメソッドの実行を開始する
               if (!this.prepare) {
-                _context4.next = 8;
+                _context4.next = 6;
                 break;
               }
-              _context4.next = 5;
+              _context4.next = 3;
               return this.prepare(this);
-            case 5:
-              _context4.next = 7;
+            case 3:
+              _context4.next = 5;
               return Utils.wait(Env.pace);
-            case 7:
+            case 5:
               if (this._stage) {
                 this._stage.update();
                 this._stage.draw();
               }
-            case 8:
+            case 6:
             case "end":
               return _context4.stop();
           }
@@ -5524,18 +5519,22 @@ var _PlayGround = /*#__PURE__*/function () {
     key: "_setting",
     value: function () {
       var _setting2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var main;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
+              // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
+              main = this.main;
+              main.classList.remove(Element.DISPLAY_NONE);
               // NowLoadingを消す。
               this.mainTmp.remove();
               if (!this.setting) {
-                _context5.next = 4;
+                _context5.next = 6;
                 break;
               }
-              _context5.next = 4;
+              _context5.next = 6;
               return this.setting(this);
-            case 4:
+            case 6:
             case "end":
               return _context5.stop();
           }
