@@ -5408,7 +5408,7 @@ var _PlayGround = /*#__PURE__*/function () {
               this.mainTmp = mainTmp;
               mainTmp.id = 'mainTmp';
               mainTmp.classList.add('nowLoading');
-              mainTmp.style.zIndex = Infinity; // 手前
+              mainTmp.style.zIndex = 9999; // 手前
               mainTmp.style.position = 'absolute';
               mainTmp.style.touchAction = 'manipulation';
               mainTmp.style.width = "".concat(innerWidth, "px");
