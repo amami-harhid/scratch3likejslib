@@ -5491,27 +5491,27 @@ var _PlayGround = /*#__PURE__*/function () {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              // この時点で各種ローディングは終わっているので、NowLoadingを消す。
-              this.mainTmp.remove();
-
               // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
               main = this.main;
               main.classList.remove(Element.DISPLAY_NONE);
               // prepareメソッドの実行を開始する
               if (!this.prepare) {
-                _context4.next = 9;
+                _context4.next = 8;
                 break;
               }
-              _context4.next = 6;
+              _context4.next = 5;
               return this.prepare(this);
-            case 6:
-              _context4.next = 8;
+            case 5:
+              _context4.next = 7;
               return Utils.wait(Env.pace);
-            case 8:
+            case 7:
               if (this._stage) {
                 this._stage.update();
                 this._stage.draw();
               }
+            case 8:
+              // NowLoadingを消す。
+              this.mainTmp.remove();
             case 9:
             case "end":
               return _context4.stop();
