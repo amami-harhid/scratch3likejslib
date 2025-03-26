@@ -5454,11 +5454,12 @@ var _PlayGround = /*#__PURE__*/function () {
               _context2.next = 35;
               return Utils.wait(100);
             case 35:
+              console.log('start removeer');
               // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
               main.classList.remove(Element.DISPLAY_NONE);
               // NowLoadingを消す。
               this.mainTmp.remove();
-            case 37:
+            case 38:
             case "end":
               return _context2.stop();
           }
