@@ -32,6 +32,7 @@ Pg.preload = async function () {
 Pg.prepare = async function () {
     stage = new Lib.Stage();
     await stage.Image.add( NeonTunnel );
+    await stage.Sound.add( Chill );
     ball = new Lib.Sprite("ball");
     await ball.Image.add( Ball );
     ball.Looks.setSize(50, 50);
@@ -52,7 +53,6 @@ Pg.prepare = async function () {
 Pg.setting = async function () {
 
     stage.Event.whenFlag(async function(){
-        await this.Sound.add( Chill );
         await this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
         secondsCounter = 0;
         monitors.get(SECONDS_COUNTER).value = secondsCounter;

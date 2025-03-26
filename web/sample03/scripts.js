@@ -22,15 +22,13 @@ Pg.prepare = async function() {
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic );
     await stage.Image.add( Jurassic2 );
+    await stage.Sound.add( Chill );
 }
 Pg.setting = function() {
-    // すぐに実行する。
-    stage.Event.whenRightNow( async function(){
-        // ここでの『this』は Proxy(stage)である。
-        this.Sound.add( Chill );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
-    });
+
     stage.Event.whenFlag( async function*(){ 
+        // 音量 20
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 20 );
         // 「終わるまで音を鳴らす」をずっと繰り返す
         while(true){
             // 処理が終わるまで待つために await をつける

@@ -23,7 +23,6 @@ Pg.prepare = async function () {
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic );
     await stage.Sound.add( Chill );
-    await stage.Sound.setOption(Lib.SoundOption.VOLUME, 100);
     cat = new Lib.Sprite( SpriteCatName );
     await cat.Image.add( Cat );
 }
@@ -31,6 +30,7 @@ Pg.setting = async function () {
 
     // フラグクリック
     stage.Event.whenFlag( async function*() {
+        await stage.Sound.setOption(Lib.SoundOption.VOLUME, 10);
         // 「終わるまで音を鳴らす」をずっと繰り返す、スレッドを起動する
         while( true ){
             await this.Sound.playUntilDone();

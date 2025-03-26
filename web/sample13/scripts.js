@@ -20,7 +20,8 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
     cat = new Lib.Sprite("Cat");
     cat.Image.add( Cat );
 }
@@ -30,7 +31,6 @@ Pg.setting = async function setting() {
     /** 旗をクリックしたときのステージのイベント */
     stage.Event.whenFlag(async function*() {
         // 【this】はstageである。
-        await this.Sound.add( Chill );
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 )
         // function() の中なので、【this】はProxy(stage)である。
         while(true){

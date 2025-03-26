@@ -23,27 +23,22 @@ Pg.preload = async function preload($this) {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
     cat = new Lib.Sprite("Cat");
-    cat.Image.add( Cat );
+    await cat.Image.add( Cat );
+    await cat.Sound.add( Mya );
 }
 
 const direction01 = 1;
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function*(){
-        // function(){} と書くとき、『this』は Proxy(stage)である
-        await this.Sound.add( Chill );
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 20 );
         while( true ){
             await this.Sound.playUntilDone();
             yield;
         }
-    });
-    cat.Event.whenFlag(async function(){
-        // 『this』は Proxy(cat)である
-        await this.Sound.add( Mya );
-        await this.Sound.setOption(Lib.SoundOption.VOLUME, 20)
     });
     cat.Event.whenFlag( async function(){
         // 初期化
@@ -65,6 +60,7 @@ Pg.setting = async function setting() {
 
     const catStep = 10;
     cat.Control.whenCloned( async function*() {
+        await this.Sound.setOption(Lib.SoundOption.VOLUME, 20)
         this.Looks.show();
         while(true){
             this.Motion.moveSteps(catStep);

@@ -2118,6 +2118,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     value: function $soundSwitch(sound) {
       var name = sound.name;
       if (this.sounds == null) return;
+      if (this.sounds.soundPlayer.name == name) return;
       this.sounds["switch"](name);
     }
   }, {
@@ -2129,10 +2130,12 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     }
   }, {
     key: "$soundPlay",
-    value: function $soundPlay(sound) {
+    value: function $soundPlay(name) {
       if (this.sounds == null) return;
-      if (sound) {
-        this.$soundSwitch(sound);
+      if (name) {
+        this.$soundSwitch({
+          name: name
+        });
       }
       this.sounds.play();
     }
@@ -2213,25 +2216,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$startSoundUntilDone",
     value: function () {
-      var _$startSoundUntilDone = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+      var _$startSoundUntilDone = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(name) {
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
               if (!this.sounds) {
-                _context8.next = 3;
+                _context8.next = 4;
                 break;
               }
-              _context8.next = 3;
+              if (name) {
+                this.$soundSwitch({
+                  name: name
+                });
+              }
+              _context8.next = 4;
               return this.sounds.startSoundUntilDone();
-            case 3:
-              return _context8.abrupt("return");
             case 4:
+              return _context8.abrupt("return");
+            case 5:
             case "end":
               return _context8.stop();
           }
         }, _callee8, this);
       }));
-      function $startSoundUntilDone() {
+      function $startSoundUntilDone(_x18) {
         return _$startSoundUntilDone.apply(this, arguments);
       }
       return $startSoundUntilDone;
@@ -2326,7 +2334,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee9);
       }));
-      function $waitSeconds(_x18) {
+      function $waitSeconds(_x19) {
         return _$waitSeconds.apply(this, arguments);
       }
       return $waitSeconds;
@@ -2346,7 +2354,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee10);
       }));
-      function $waitUntil(_x19) {
+      function $waitUntil(_x20) {
         return _$waitUntil.apply(this, arguments);
       }
       return $waitUntil;
@@ -2366,7 +2374,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee11);
       }));
-      function $waitWhile(_x20) {
+      function $waitWhile(_x21) {
         return _$waitWhile.apply(this, arguments);
       }
       return $waitWhile;
@@ -2538,7 +2546,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee12, this);
       }));
-      function $broadcastAndWait(_x21) {
+      function $broadcastAndWait(_x22) {
         return _$broadcastAndWait.apply(this, arguments);
       }
       return $broadcastAndWait;
@@ -2629,7 +2637,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee13, this);
       }));
-      function $broadcastAndWaitToTargets(_x22, _x23) {
+      function $broadcastAndWaitToTargets(_x23, _x24) {
         return _$broadcastAndWaitToTargets.apply(this, arguments);
       }
       return $broadcastAndWaitToTargets;
@@ -2772,7 +2780,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee14);
         }));
-        return function (_x24) {
+        return function (_x25) {
           return _ref4.apply(this, arguments);
         };
       }());
@@ -2821,7 +2829,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee15);
         }));
-        return function (_x25) {
+        return function (_x26) {
           return _ref5.apply(this, arguments);
         };
       }(), 0);
@@ -2858,7 +2866,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                     }
                   }, _callee16);
                 }));
-                return function clickFunc(_x27) {
+                return function clickFunc(_x28) {
                   return _ref6.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
@@ -2869,7 +2877,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee17, this);
       }));
-      function $whenFlag(_x26) {
+      function $whenFlag(_x27) {
         return _$whenFlag.apply(this, arguments);
       }
       return $whenFlag;
@@ -2969,7 +2977,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee18);
         }));
-        return function eventf(_x28) {
+        return function eventf(_x29) {
           return _ref7.apply(this, arguments);
         };
       }();
@@ -3345,7 +3353,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee21, this);
       }));
-      function $speechAndWait(_x29, _x30) {
+      function $speechAndWait(_x30, _x31) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3378,7 +3386,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee22, this);
       }));
-      function forever(_x31) {
+      function forever(_x32) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3398,7 +3406,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee23, this);
       }));
-      function _while(_x32, _x33) {
+      function _while(_x33, _x34) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3418,7 +3426,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee24, this);
       }));
-      function repeat(_x34, _x35) {
+      function repeat(_x35, _x36) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3438,7 +3446,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee25, this);
       }));
-      function repeatUntil(_x36, _x37) {
+      function repeatUntil(_x37, _x38) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -4899,7 +4907,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -6708,8 +6716,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
   }, {

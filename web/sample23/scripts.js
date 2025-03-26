@@ -38,6 +38,7 @@ Pg.preload = async function () {
 Pg.prepare = async function () {
     stage = new Lib.Stage();
     await stage.Image.add( NeonTunnel );
+    await stage.Sound.add( Chill );
     ball = new Lib.Sprite("cat");
     await ball.Image.add( BallA );
     //ball.Motion.setXY(0,-100);
@@ -47,7 +48,8 @@ Pg.prepare = async function () {
     paddle.Motion.setXY(0, -140);
     block = new Lib.Sprite( "block");
     await block.Image.add( Block );
-//    block.Looks.setSize({x:50, y:50});
+    await block.Sound.add(Pew);
+    //    block.Looks.setSize({x:50, y:50});
     block.Motion.setXY(-220,180);
     block.Looks.hide();
     line = new Lib.Sprite( "line" );
@@ -62,10 +64,9 @@ Pg.prepare = async function () {
 Pg.setting = async function () {
 
     stage.Event.whenFlag(async function*(){
-        await this.Sound.add( Chill );
         await this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
         while(true) {
-            await this.Sound.playUntilDone();
+            await this.Sound.playUntilDone(Chill);
             yield;         
         }
     })
@@ -125,7 +126,6 @@ Pg.setting = async function () {
     });
     let blockCount;
     block.Event.whenFlag(async function*(){
-        await this.Sound.add(Pew);
         this.Looks.setSize({x:50, y:50});
         const pos = this.Motion.getCurrentPosition();
         const demension = this.Looks.drawingDimensions();
@@ -147,7 +147,7 @@ Pg.setting = async function () {
         while(true){
             if(this.Sensing.isTouchingTarget(ball)){
                 score += 1;
-                this.Sound.play();
+                this.Sound.play(Pew);
                 this.Looks.hide();
                 break;
             }    

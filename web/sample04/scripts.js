@@ -16,23 +16,19 @@ Pg.preload = function() {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
     this.Sound.load('../assets/Chill.wav', Chill);
 }
-Pg.prepare = function() {
+Pg.prepare = async function() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
 }
 Pg.setting = function() {
-    // すぐに実行する。
-    stage.Event.whenRightNow( async function(){ 
-        // ここでの『this』は S.stageのインスタンスである。
-        await this.Sound.add( Chill );
-        await this.Sound.setOption( Lib.SoundOption.VOLUME, 100)
-    });
-
     // ステージをクリックしたときの動作
     // 音が鳴っている最中に再度クリックしたときの
     // 動作に着目してください（前回のイベント=音を鳴らす)をキャンセルした
     // うえで音が鳴り始めます。
     stage.Event.whenClicked( async function*(){
+        // 音量 10
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10);
         // 「終わるまで音を鳴らす」をずっと繰り返す
         for(;;){
             // 処理が終わるまで待つために await をつける

@@ -23,16 +23,17 @@ Pg.preload = async function preload() {
 }
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic );
+    await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
     cat = new Lib.Sprite("Cat");
-    cat.Image.add( Cat );
+    await cat.Image.add( Cat );
     cat.Motion.gotoXY({x:200, y:150});
     cat.Motion.pointInDirection( 90 );
+    await cat.Sound.add( Mya );
 }
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function*() {
-        await this.Sound.add( Chill );
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 50);
         while(true){
             await this.Sound.playUntilDone();
@@ -42,8 +43,6 @@ Pg.setting = async function setting() {
 
     cat.Event.whenFlag( async function() {
         // 音を登録する
-        this.Sound.add( Mya );
-        this.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
     });
     cat.Event.whenFlag( async function(){
         // 初期化
@@ -75,6 +74,7 @@ Pg.setting = async function setting() {
     const steps = 10;
     cat.Control.whenCloned(async function*(){
         const clone = this;
+        await cat.Sound.setOption( Lib.SoundOption.VOLUME, 20 )
         clone.Motion.gotoXY({x:100, y:-100});
         clone.Looks.setSize({x:50, y:50});
         clone.Looks.setEffect(Lib.ImageEffective.COLOR, 50);

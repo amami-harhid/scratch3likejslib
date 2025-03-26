@@ -14,7 +14,6 @@ Pg.title = "【Sample22】スピーチ機能：「スピーチを終わるまで
 const Jurassic = "Jurassic";
 const Chill = "Chill";
 const Cat = "Cat";
-const Nya = "Nya";
 
 let stage, cat;
 
@@ -23,25 +22,23 @@ Pg.preload = async function preload() {
     this.Image.load('../assets/Jurassic.svg', Jurassic );
     this.Sound.load('../assets/Chill.wav', Chill );
     this.Image.load('../assets/cat.svg', Cat );
-    this.Sound.load('../assets/Cat.wav', Nya );
 }
 Pg.prepare = async function prepare() {
 
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
     cat = new Lib.Sprite( "Cat" );
     cat.Looks.setSize( {x:300,y:300} );//サイズを３倍にしています
     await cat.Image.add( Cat );
-    await cat.Sound.add( Nya );
 }
 
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function*(){
-        await this.Sound.add( Chill );
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 )
         while(true){
-            await this.Sound.playUntilDone();
+            await this.Sound.playUntilDone(Chill);
             yield;
         }
     })

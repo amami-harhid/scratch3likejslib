@@ -101,7 +101,7 @@ Pg.setting = async function setting() {
                 this.Looks.say();
                 break;
             }
-            await Lib.wait(500)
+            await this.Control.wait(0.5)
             yield;
         }
     });
@@ -124,13 +124,13 @@ Pg.setting = async function setting() {
                 this.Looks.say();
                 break;
             }
-            await Lib.wait(500)
+            await this.Control.wait(0.5)
             yield;
         }
     });
 
     stage.Event.whenFlag( async function() {
-        await Lib.wait(20*1000); // 20秒たったらバブルループを終わらせる。
+        await this.Control.wait(20); // 20秒たったらバブルループを終わらせる。
         bubble.exit = true;
         bubble2.exit = true;
     });

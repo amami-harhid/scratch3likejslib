@@ -26,6 +26,8 @@ Pg.preload = async function preload() {
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
+ 
     cat1 = new Lib.Sprite("Cat1");
     await cat1.Image.add( Cat );
     cat1.Motion.gotoXY({x:-Lib.stageWidth/4, y:+Lib.stageHeight/4 });
@@ -46,7 +48,6 @@ Pg.prepare = async function prepare() {
 Pg.setting = async function setting() {
 
     stage.Event.whenFlag(async function*() {
-        this.Sound.add( Chill );
         this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
         // function() の中なので、【this】はProxy(stage)である。
         while(true){

@@ -28,7 +28,6 @@ Pg.prepare = async function prepare() {
     cat = new Lib.Sprite( SpriteCatName );
     await cat.Image.add( Cat );
     await cat.Sound.add( Chill );
-    await cat.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
     cat.Looks.hide(); // 非表示
 }
 Pg.setting = async function setting() {
@@ -43,6 +42,7 @@ Pg.setting = async function setting() {
     // スプライト（ネコ）をクリックしたときの動作
     cat.Event.whenClicked( async function*(){
         const ネコ = this; // 変数名を全角文字にすることが可能。
+        await ネコ.Sound.setOption( Lib.SoundOption.VOLUME, 20 );
         // 「終わるまで音を鳴らす」をずっと繰り返す
         while(true){
             // 処理が終わるまで待つために await をつける

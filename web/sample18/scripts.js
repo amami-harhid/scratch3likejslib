@@ -30,32 +30,23 @@ Pg.preload = async function preload() {
 Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic );
+    await stage.Sound.add( Chill );
 
     cross = new Lib.Sprite("Cross");
     cross.Motion.setY(-Lib.stageHeight/2 * 0.6); 
     await cross.Image.add( Cross01 );
     await cross.Image.add( Cross02 );
+    await cross.Sound.add( Pew );
     cross.Looks.setSize({x:100,y:100});
 }
 
 Pg.setting = async function setting() {
 
-    stage.Event.whenFlag(async function() {
-        // function() の中なので、【this】はstageである。
-        this.Sound.add( Chill ).then(me=>{
-            me.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
-        });
-    });
-    cross.Event.whenFlag(async function(){
-        await this.Sound.add( Pew );
-        await this.Sound.setOption( Lib.SoundOption.VOLUME, 10 );
-        await this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
-    });
-
     stage.Event.whenFlag(async function*() {
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
         // 【this】はProxy(stage)である。
         while(true){
-            await this.Sound.playUntilDone();
+            await this.Sound.playUntilDone(Chill);
             yield;
         };
     });
@@ -74,10 +65,12 @@ Pg.setting = async function setting() {
         };
     });
     cross.Event.whenFlag(async function*(){
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
+        await this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
         while(true){
             // 矢印キーを押しながら、スペースキーを検知させたい
             if(Lib.keyIsDown('Space')){
-                this.Sound.play();
+                this.Sound.play(Pew);
                 const options = {scale:{x:20,y:20}, direction:0}
                 this.C.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
@@ -93,6 +86,23 @@ Pg.setting = async function setting() {
         clone.Looks.nextCostume();
         clone.Looks.show();
     });
+    const TURN_RIGHT_DEGREE= 25;
+    cross.Control.whenCloned( async function*() {
+        const clone = this;
+        await clone.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
+        await clone.Sound.setOption( Lib.SoundOption.PITCH, 20 ); // 低音にする
+        // while の後に処理があるときは await 忘れないようにしましょう
+        while(true){
+            clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
+            if(clone.Sensing.isTouchingEdge()){
+                clone.Sound.play(Pew);
+                break;
+            }
+            yield;
+        };
+        clone.Control.wait(0.5);
+        clone.Control.remove();
+    });
     cross.Control.whenCloned( async function*() {
         const clone = this;
         // while の後に処理があるときは await 忘れないようにしましょう
@@ -103,22 +113,6 @@ Pg.setting = async function setting() {
             }
             yield;
         };
-        clone.Control.remove();
     });
-    const TURN_RIGHT_DEGREE= 25;
-    cross.Control.whenCloned( async function*() {
-        const clone = this;
-        // while の後に処理があるときは await 忘れないようにしましょう
-        clone.Sound.setOption( Lib.SoundOption.VOLUME, 50 );
-        clone.Sound.setOption( Lib.SoundOption.PITCH, 80 );
-        while(true){
-            clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
-            if(clone.Sensing.isTouchingEdge()){
-                clone.Sound.play();
-                break;
-            }
-            yield;
-        };
-        clone.Control.remove();
-    });
+
 }
