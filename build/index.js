@@ -5510,9 +5510,6 @@ var _PlayGround = /*#__PURE__*/function () {
                 this._stage.draw();
               }
             case 8:
-              // NowLoadingを消す。
-              this.mainTmp.remove();
-            case 9:
             case "end":
               return _context4.stop();
           }
@@ -5530,13 +5527,15 @@ var _PlayGround = /*#__PURE__*/function () {
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
+              // NowLoadingを消す。
+              this.mainTmp.remove();
               if (!this.setting) {
-                _context5.next = 3;
+                _context5.next = 4;
                 break;
               }
-              _context5.next = 3;
+              _context5.next = 4;
               return this.setting(this);
-            case 3:
+            case 4:
             case "end":
               return _context5.stop();
           }
