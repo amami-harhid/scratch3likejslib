@@ -5523,17 +5523,18 @@ var _PlayGround = /*#__PURE__*/function () {
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
+              if (!this.setting) {
+                _context5.next = 3;
+                break;
+              }
+              _context5.next = 3;
+              return this.setting(this);
+            case 3:
               // Mainタグから非表示のクラスを除去しフラグとキャンバスを表示する
               main = this.main;
               main.classList.remove(Element.DISPLAY_NONE);
               // NowLoadingを消す。
               this.mainTmp.remove();
-              if (!this.setting) {
-                _context5.next = 6;
-                break;
-              }
-              _context5.next = 6;
-              return this.setting(this);
             case 6:
             case "end":
               return _context5.stop();
