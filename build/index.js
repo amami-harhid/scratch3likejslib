@@ -2493,33 +2493,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     }
     /**
      * 指定した色に触れているかを判定する
-     * @param {string} value #始まりのカラー文字列
+     * @param {string} targetRgb #始まりのカラー文字列
      * @returns {Promise.<boolean>} 色にタッチしたとき true
      */
   }, {
     key: "$isTouchingColor",
     value: (function () {
-      var _$isTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(value) {
-        var rgb, r, g, b, _renderer;
+      var _$isTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(targetRgb) {
+        var _renderer, _targetRgb;
         return _regeneratorRuntime().wrap(function _callee12$(_context12) {
           while (1) switch (_context12.prev = _context12.next) {
             case 0:
-              rgb = Libs["default"].Cast.toRgbColorObject(value);
-              r = rgb.r | 0;
-              g = rgb.g | 0;
-              b = rgb.b | 0;
-              if (!(this.render && this.render.renderer)) {
-                _context12.next = 9;
+              if (!(this.render && this.render.renderer && targetRgb && typeof targetRgb === 'string' && targetRgb.substring(0, 1) === '#')) {
+                _context12.next = 6;
                 break;
               }
               _renderer = this.render.renderer;
-              _context12.next = 8;
-              return _renderer.isTouchingColor(this.drawableID, [r, g, b]);
-            case 8:
+              _targetRgb = Libs["default"].Cast.toRgbColorObject(targetRgb);
+              _context12.next = 5;
+              return _renderer.isTouchingColor(this.drawableID, [_targetRgb.r, _targetRgb.g, _targetRgb.b]);
+            case 5:
               return _context12.abrupt("return", _context12.sent);
-            case 9:
+            case 6:
               return _context12.abrupt("return", false);
-            case 10:
+            case 7:
             case "end":
               return _context12.stop();
           }
@@ -2541,25 +2538,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "$colorIsTouchingColor",
     value: (function () {
       var _$colorIsTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(targetRgb, maskRgb) {
-        var _renderer;
+        var _renderer, _targetRgb, _maskRgb;
         return _regeneratorRuntime().wrap(function _callee13$(_context13) {
           while (1) switch (_context13.prev = _context13.next) {
             case 0:
-              if (!(targetRgb && maskRgb)) {
-                _context13.next = 7;
-                break;
-              }
-              if (!(Array.isArray(targetRgb) && Array.isArray(maskRgb))) {
-                _context13.next = 7;
-                break;
-              }
-              if (!(this.render && this.render.renderer)) {
+              if (!(this.render && this.render.renderer && targetRgb && typeof targetRgb === 'string' && targetRgb.substring(0, 1) === '#' && maskRgb && typeof maskRgb === 'string' && maskRgb.substring(0, 1) === '#')) {
                 _context13.next = 7;
                 break;
               }
               _renderer = this.render.renderer;
+              _targetRgb = Libs["default"].Cast.toRgbColorObject(targetRgb);
+              _maskRgb = Libs["default"].Cast.toRgbColorObject(maskRgb);
               _context13.next = 6;
-              return _renderer.isTouchingColor(this.drawableID, targetRgb, maskRgb);
+              return _renderer.isTouchingColor(this.drawableID, [_targetRgb.r, _targetRgb.g, _targetRgb.b], [_maskRgb.r, _maskRgb.g, _maskRgb.b]);
             case 6:
               return _context13.abrupt("return", _context13.sent);
             case 7:
