@@ -7332,7 +7332,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
   }, {
     key: "$gotoMousePosition",
     value: function $gotoMousePosition() {
-      // 工事中
+      var position = Libs["default"].mousePosition;
+      this.$setXY(position.x, position.y);
     }
   }, {
     key: "$gotoSprite",
