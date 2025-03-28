@@ -2491,6 +2491,90 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var touching = this.$isTouchingTargetToTarget(src, targets);
       return touching;
     }
+    /**
+     * 指定した色に触れているかを判定する
+     * @param {string} value #始まりのカラー文字列
+     * @returns {Promise.<boolean>} 色にタッチしたとき true
+     */
+  }, {
+    key: "$isTouchingColor",
+    value: (function () {
+      var _$isTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(value) {
+        var rgb, r, g, b, _renderer;
+        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+          while (1) switch (_context12.prev = _context12.next) {
+            case 0:
+              rgb = Libs["default"].Cast.toRgbColorObject(value);
+              r = rgb.r | 0;
+              g = rgb.g | 0;
+              b = rgb.b | 0;
+              if (!(this.render && this.render.renderer)) {
+                _context12.next = 9;
+                break;
+              }
+              _renderer = this.render.renderer;
+              _context12.next = 8;
+              return _renderer.isTouchingColor(this.drawableID, [r, g, b]);
+            case 8:
+              return _context12.abrupt("return", _context12.sent);
+            case 9:
+              return _context12.abrupt("return", false);
+            case 10:
+            case "end":
+              return _context12.stop();
+          }
+        }, _callee12, this);
+      }));
+      function $isTouchingColor(_x22) {
+        return _$isTouchingColor.apply(this, arguments);
+      }
+      return $isTouchingColor;
+    }()
+    /**
+     * 自身の色(maskRgb)が指定色(targetRgb)に触れているかを判定する
+     * @param {Array.<number>} targetRgb [r,g,b] 0 - 255
+     * @param {Array.<number>} maskRgb 
+     * @returns 
+     */
+    )
+  }, {
+    key: "$colorIsTouchingColor",
+    value: (function () {
+      var _$colorIsTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(targetRgb, maskRgb) {
+        var _renderer;
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+          while (1) switch (_context13.prev = _context13.next) {
+            case 0:
+              if (!(targetRgb && maskRgb)) {
+                _context13.next = 7;
+                break;
+              }
+              if (!(Array.isArray(targetRgb) && Array.isArray(maskRgb))) {
+                _context13.next = 7;
+                break;
+              }
+              if (!(this.render && this.render.renderer)) {
+                _context13.next = 7;
+                break;
+              }
+              _renderer = this.render.renderer;
+              _context13.next = 6;
+              return _renderer.isTouchingColor(this.drawableID, targetRgb, maskRgb);
+            case 6:
+              return _context13.abrupt("return", _context13.sent);
+            case 7:
+              return _context13.abrupt("return", false);
+            case 8:
+            case "end":
+              return _context13.stop();
+          }
+        }, _callee13, this);
+      }));
+      function $colorIsTouchingColor(_x23, _x24) {
+        return _$colorIsTouchingColor.apply(this, arguments);
+      }
+      return $colorIsTouchingColor;
+    }())
   }, {
     key: "$broadcast",
     value: function $broadcast(messageId) {
@@ -2506,7 +2590,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$broadcastAndWait",
     value: function () {
-      var _$broadcastAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(messageId) {
+      var _$broadcastAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(messageId) {
         var wait,
           runtime,
           eventId,
@@ -2515,38 +2599,38 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           args,
           _key2,
           promises,
-          _args12 = arguments;
-        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-          while (1) switch (_context12.prev = _context12.next) {
+          _args14 = arguments;
+        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+          while (1) switch (_context14.prev = _context14.next) {
             case 0:
               wait = Libs["default"].wait;
               runtime = PlayGround["default"].runtime;
               eventId = "message_".concat(messageId);
               this.modules.set(eventId, []);
               sendTarges = [];
-              for (_len2 = _args12.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = _args12[_key2];
+              for (_len2 = _args14.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                args[_key2 - 1] = _args14[_key2];
               }
               runtime.emit.apply(runtime, [eventId, this.modules, sendTarges].concat(args));
-              _context12.next = 9;
+              _context14.next = 9;
               return wait(10);
             case 9:
               promises = this.modules.get(eventId);
               if (!(promises.length > 0)) {
-                _context12.next = 14;
+                _context14.next = 14;
                 break;
               }
-              _context12.next = 13;
+              _context14.next = 13;
               return Promise.all(promises);
             case 13:
-              return _context12.abrupt("return");
+              return _context14.abrupt("return");
             case 14:
             case "end":
-              return _context12.stop();
+              return _context14.stop();
           }
-        }, _callee12, this);
+        }, _callee14, this);
       }));
-      function $broadcastAndWait(_x22) {
+      function $broadcastAndWait(_x25) {
         return _$broadcastAndWait.apply(this, arguments);
       }
       return $broadcastAndWait;
@@ -2580,7 +2664,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$broadcastAndWaitToTargets",
     value: function () {
-      var _$broadcastAndWaitToTargets = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(messageId, target) {
+      var _$broadcastAndWaitToTargets = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(messageId, target) {
         var runtime,
           wait,
           eventId,
@@ -2590,9 +2674,9 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           args,
           _key4,
           promises,
-          _args13 = arguments;
-        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-          while (1) switch (_context13.prev = _context13.next) {
+          _args15 = arguments;
+        return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+          while (1) switch (_context15.prev = _context15.next) {
             case 0:
               runtime = PlayGround["default"].runtime;
               wait = Libs["default"].wait;
@@ -2612,32 +2696,32 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               }
               if (!(sendTargets.length > 0)) {
-                _context13.next = 16;
+                _context15.next = 16;
                 break;
               }
-              for (_len4 = _args13.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-                args[_key4 - 2] = _args13[_key4];
+              for (_len4 = _args15.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+                args[_key4 - 2] = _args15[_key4];
               }
               runtime.emit.apply(runtime, [eventId, this.modules, _targets].concat(args));
-              _context13.next = 11;
+              _context15.next = 11;
               return wait(10);
             case 11:
               promises = this.modules.get(eventId);
               if (!(promises.length > 0)) {
-                _context13.next = 16;
+                _context15.next = 16;
                 break;
               }
-              _context13.next = 15;
+              _context15.next = 15;
               return Promise.all(promises);
             case 15:
-              return _context13.abrupt("return");
+              return _context15.abrupt("return");
             case 16:
             case "end":
-              return _context13.stop();
+              return _context15.stop();
           }
-        }, _callee13, this);
+        }, _callee15, this);
       }));
-      function $broadcastAndWaitToTargets(_x23, _x24) {
+      function $broadcastAndWaitToTargets(_x26, _x27) {
         return _$broadcastAndWaitToTargets.apply(this, arguments);
       }
       return $broadcastAndWaitToTargets;
@@ -2757,30 +2841,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var obj = proxy.startThreadMessageRecieved.apply(proxy, [func, proxy, false].concat(args));
       obj.originalF = func;
       var promise = new Promise(/*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(resolve) {
-          return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-            while (1) switch (_context14.prev = _context14.next) {
+        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(resolve) {
+          return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+            while (1) switch (_context16.prev = _context16.next) {
               case 0:
                 if (!obj.done) {
-                  _context14.next = 2;
+                  _context16.next = 2;
                   break;
                 }
-                return _context14.abrupt("break", 6);
+                return _context16.abrupt("break", 6);
               case 2:
-                _context14.next = 4;
+                _context16.next = 4;
                 return Utils.wait(0.1);
               case 4:
-                _context14.next = 0;
+                _context16.next = 0;
                 break;
               case 6:
                 resolve();
               case 7:
               case "end":
-                return _context14.stop();
+                return _context16.stop();
             }
-          }, _callee14);
+          }, _callee16);
         }));
-        return function (_x25) {
+        return function (_x28) {
           return _ref4.apply(this, arguments);
         };
       }());
@@ -2808,28 +2892,28 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }
       var me = this;
       setTimeout(/*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(_) {
+        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(_) {
           var _p, wait, f;
-          return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-            while (1) switch (_context15.prev = _context15.next) {
+          return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+            while (1) switch (_context17.prev = _context17.next) {
               case 0:
                 _p = PlayGround["default"];
                 wait = Libs["default"].wait;
                 f = func.bind(me);
-                _context15.next = 5;
+                _context17.next = 5;
                 return f(me);
               case 5:
-                _context15.next = 7;
+                _context17.next = 7;
                 return wait(5);
               case 7:
                 _p._draw();
               case 8:
               case "end":
-                return _context15.stop();
+                return _context17.stop();
             }
-          }, _callee15);
+          }, _callee17);
         }));
-        return function (_x26) {
+        return function (_x29) {
           return _ref5.apply(this, arguments);
         };
       }(), 0);
@@ -2845,39 +2929,39 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenFlag",
     value: function () {
-      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(func) {
+      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19(func) {
         var me, flag, clickFunc;
-        return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-          while (1) switch (_context17.prev = _context17.next) {
+        return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+          while (1) switch (_context19.prev = _context19.next) {
             case 0:
               //const process = Process.default;
               me = this;
               flag = Element.getControlGreenFlag();
               clickFunc = /*#__PURE__*/function () {
-                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(e) {
-                  return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-                    while (1) switch (_context16.prev = _context16.next) {
+                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(e) {
+                  return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+                    while (1) switch (_context18.prev = _context18.next) {
                       case 0:
                         me.hatProc(func);
                         e.stopPropagation();
                       case 2:
                       case "end":
-                        return _context16.stop();
+                        return _context18.stop();
                     }
-                  }, _callee16);
+                  }, _callee18);
                 }));
-                return function clickFunc(_x28) {
+                return function clickFunc(_x31) {
                   return _ref6.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
               flag.addEventListener('click', clickFunc);
             case 4:
             case "end":
-              return _context17.stop();
+              return _context19.stop();
           }
-        }, _callee17, this);
+        }, _callee19, this);
       }));
-      function $whenFlag(_x27) {
+      function $whenFlag(_x30) {
         return _$whenFlag.apply(this, arguments);
       }
       return $whenFlag;
@@ -2944,18 +3028,18 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var entityId = this.id;
       var me = this;
       var eventf = /*#__PURE__*/function () {
-        var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(e) {
+        var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(e) {
           var mouseX, mouseY, _touchDrawableId, threadId, proxy;
-          return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-            while (1) switch (_context18.prev = _context18.next) {
+          return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+            while (1) switch (_context20.prev = _context20.next) {
               case 0:
                 e.stopPropagation();
                 // 緑の旗押されていないときは何もしない。
                 if (!(p.runningGame === false)) {
-                  _context18.next = 3;
+                  _context20.next = 3;
                   break;
                 }
-                return _context18.abrupt("return");
+                return _context20.abrupt("return");
               case 3:
                 threads.removeObjById(entityId); // 前回のクリック分を止める。
                 mouseX = e.offsetX;
@@ -2973,11 +3057,11 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               case 8:
               case "end":
-                return _context18.stop();
+                return _context20.stop();
             }
-          }, _callee18);
+          }, _callee20);
         }));
-        return function eventf(_x29) {
+        return function eventf(_x32) {
           return _ref7.apply(this, arguments);
         };
       }();
@@ -3094,17 +3178,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func2 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
-            return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-              while (1) switch (_context19.prev = _context19.next) {
+          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
+            return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+              while (1) switch (_context21.prev = _context21.next) {
                 case 0:
-                  _context19.next = 2;
+                  _context21.next = 2;
                   return _awaitAsyncGenerator(_func2(_entity));
                 case 2:
                 case "end":
-                  return _context19.stop();
+                  return _context21.stop();
               }
-            }, _callee19);
+            }, _callee21);
           }));
           return function f() {
             return _ref.apply(this, arguments);
@@ -3147,17 +3231,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func3 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
-            return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-              while (1) switch (_context20.prev = _context20.next) {
+          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
+            return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+              while (1) switch (_context22.prev = _context22.next) {
                 case 0:
-                  _context20.next = 2;
+                  _context22.next = 2;
                   return _awaitAsyncGenerator(_func3.apply(void 0, args));
                 case 2:
                 case "end":
-                  return _context20.stop();
+                  return _context22.stop();
               }
-            }, _callee20);
+            }, _callee22);
           }));
           return function f() {
             return _ref2.apply(this, arguments);
@@ -3330,30 +3414,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$speechAndWait",
     value: function () {
-      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(words, properties) {
+      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23(words, properties) {
         var gender,
           locale,
           _properties,
           speech,
-          _args21 = arguments;
-        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
-          while (1) switch (_context21.prev = _context21.next) {
+          _args23 = arguments;
+        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+          while (1) switch (_context23.prev = _context23.next) {
             case 0:
-              gender = _args21.length > 2 && _args21[2] !== undefined ? _args21[2] : 'male';
-              locale = _args21.length > 3 && _args21[3] !== undefined ? _args21[3] : 'ja-JP';
+              gender = _args23.length > 2 && _args23[2] !== undefined ? _args23[2] : 'male';
+              locale = _args23.length > 3 && _args23[3] !== undefined ? _args23[3] : 'ja-JP';
               _properties = properties ? properties : {};
               speech = Speech.getInstance();
               speech.gender = gender;
               speech.locale = locale;
-              _context21.next = 8;
+              _context23.next = 8;
               return speech.speechAndWait(this, words, _properties);
             case 8:
             case "end":
-              return _context21.stop();
+              return _context23.stop();
           }
-        }, _callee21, this);
+        }, _callee23, this);
       }));
-      function $speechAndWait(_x30, _x31) {
+      function $speechAndWait(_x33, _x34) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3374,19 +3458,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "forever",
     value: function () {
-      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(func) {
-        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
-          while (1) switch (_context22.prev = _context22.next) {
+      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(func) {
+        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+          while (1) switch (_context24.prev = _context24.next) {
             case 0:
-              _context22.next = 2;
+              _context24.next = 2;
               return Loop["while"](true, func, this);
             case 2:
             case "end":
-              return _context22.stop();
+              return _context24.stop();
           }
-        }, _callee22, this);
+        }, _callee24, this);
       }));
-      function forever(_x32) {
+      function forever(_x35) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3394,19 +3478,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "while",
     value: function () {
-      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-          while (1) switch (_context23.prev = _context23.next) {
+      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+          while (1) switch (_context25.prev = _context25.next) {
             case 0:
-              _context23.next = 2;
+              _context25.next = 2;
               return Loop["while"](condition, func, this);
             case 2:
             case "end":
-              return _context23.stop();
+              return _context25.stop();
           }
-        }, _callee23, this);
+        }, _callee25, this);
       }));
-      function _while(_x33, _x34) {
+      function _while(_x36, _x37) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3414,19 +3498,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeat",
     value: function () {
-      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(count, func) {
-        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
-          while (1) switch (_context24.prev = _context24.next) {
+      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(count, func) {
+        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+          while (1) switch (_context26.prev = _context26.next) {
             case 0:
-              _context24.next = 2;
+              _context26.next = 2;
               return Loop.repeat(count, func, this);
             case 2:
             case "end":
-              return _context24.stop();
+              return _context26.stop();
           }
-        }, _callee24, this);
+        }, _callee26, this);
       }));
-      function repeat(_x35, _x36) {
+      function repeat(_x38, _x39) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3434,19 +3518,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeatUntil",
     value: function () {
-      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
-          while (1) switch (_context25.prev = _context25.next) {
+      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+          while (1) switch (_context27.prev = _context27.next) {
             case 0:
-              _context25.next = 2;
+              _context27.next = 2;
               return Loop.repeatUntil(condition, func, this);
             case 2:
             case "end":
-              return _context25.stop();
+              return _context27.stop();
           }
-        }, _callee25, this);
+        }, _callee27, this);
       }));
-      function repeatUntil(_x37, _x38) {
+      function repeatUntil(_x40, _x41) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -4309,6 +4393,7 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var Backdrops = __webpack_require__(/*! ./backdrops */ "../lib/backdrops.js");
+var Cast = __webpack_require__(/*! ./util/cast */ "../lib/util/cast.js");
 var Controls = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Controls);
 var Costumes = __webpack_require__(/*! ./costumes */ "../lib/costumes.js");
 var Entity = __webpack_require__(/*! ./entity */ "../lib/entity.js");
@@ -4341,6 +4426,11 @@ var _Libs = /*#__PURE__*/function () {
     key: "Backdrops",
     get: function get() {
       return Backdrops;
+    }
+  }, {
+    key: "Cast",
+    get: function get() {
+      return Cast;
     }
   }, {
     key: "Costumes",
@@ -7799,7 +7889,9 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "isTouchingTargetToTarget": this.$isTouchingTargetToTarget.bind(this),
         "getTouchingTarget": this.$getTouchingTarget.bind(this),
         "isTouchingMultiTargets": this.$ifTouchingMultiTargets.bind(this),
-        "isTouchingTarget": this.$ifTouchingTarget.bind(this)
+        "isTouchingTarget": this.$ifTouchingTarget.bind(this),
+        "isTouchingToColor": this.$isTouchingColor.bind(this),
+        "colorIsTouchingToColor": this.$colorIsTouchingColor.bind(this)
       };
     }
   }, {
@@ -9428,6 +9520,36 @@ var Cast = /*#__PURE__*/function () {
     key: "toString",
     value: function toString(value) {
       return String(value);
+    }
+    /**
+     * Convert an RGB color to HSV format. 
+     * ref: scratch-vm, util/color.js
+     * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+     * @return {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
+     */
+  }, {
+    key: "rgbToHsv",
+    value: function rgbToHsv(rgb) {
+      var r = rgb.r / 255;
+      var g = rgb.g / 255;
+      var b = rgb.b / 255;
+      var x = Math.min(Math.min(r, g), b);
+      var v = Math.max(Math.max(r, g), b);
+
+      // For grays, hue will be arbitrarily reported as zero. Otherwise, calculate
+      var h = 0;
+      var s = 0;
+      if (x !== v) {
+        var f = r === x ? g - b : g === x ? b - r : r - g;
+        var i = r === x ? 3 : g === x ? 5 : 1;
+        h = (i - f / (v - x)) * 60 % 360;
+        s = (v - x) / v;
+      }
+      return {
+        h: h,
+        s: s,
+        v: v
+      };
     }
 
     /**
