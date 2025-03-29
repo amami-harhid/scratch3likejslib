@@ -40,9 +40,9 @@ Pg.prepare = async function () {
     monitors.add(SECONDS_COUNTER);
     monitors.add(BORDER_TOUCHING_COUNTER);
     monitors.get(SECONDS_COUNTER).label = "秒数";
-    monitors.get(SECONDS_COUNTER).setPosition({x:17, y:7});
+//    monitors.get(SECONDS_COUNTER).setPosition({x:17, y:7});
     monitors.get(BORDER_TOUCHING_COUNTER).label = "回数";
-    monitors.get(BORDER_TOUCHING_COUNTER).setPosition({x:5,y:41});
+//    monitors.get(BORDER_TOUCHING_COUNTER).setPosition({x:5,y:41});
 
     monitors.get(SECONDS_COUNTER).value = secondsCounter;
     monitors.get(BORDER_TOUCHING_COUNTER).value = borderTouchingCounter;

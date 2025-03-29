@@ -94,16 +94,16 @@ var Bubble = /*#__PURE__*/function () {
     }
   }, {
     key: "setScale",
-    value: function setScale(x, y) {
-      if (x == 0 || y == 0) {
+    value: function setScale(w, h) {
+      if (w == 0 || h == 0) {
         // ゼロスケールではDrawできないので回避する。
         return;
       }
       // マイナススケールのとき 文字が反転（鏡文字）となるのでそれを回避する。
-      var _x = Math.abs(x);
-      var _y = Math.abs(y);
-      this.scaleX = _x;
-      this.scaleY = _y;
+      var _w = Math.abs(w);
+      var _h = Math.abs(h);
+      this.scaleX = _w;
+      this.scaleY = _h;
     }
   }, {
     key: "createDrawable",
@@ -170,7 +170,7 @@ var Bubble = /*#__PURE__*/function () {
           }
         }, _callee3, this);
       }));
-      function say(_x2) {
+      function say(_x) {
         return _say.apply(this, arguments);
       }
       return say;
@@ -195,25 +195,25 @@ var Bubble = /*#__PURE__*/function () {
           }
         }, _callee4, this);
       }));
-      function think(_x3) {
+      function think(_x2) {
         return _think.apply(this, arguments);
       }
       return think;
     }()
   }, {
     key: "updateScale",
-    value: function updateScale(x, y) {
+    value: function updateScale(w, h) {
       if (this.bubbleState.drawableID != null) {
-        if (x == 0 || y == 0) {
+        if (w == 0 || h == 0) {
           // ゼロスケールではDrawできないので回避する。
           return;
         }
         // マイナススケールのとき 文字が反転（鏡文字）となるのでそれを回避する。
-        var _x = Math.abs(x);
-        var _y = Math.abs(y);
-        this._scale.x = _x;
-        this._scale.y = _y;
-        this.renderer.updateDrawableScale(this.bubbleState.drawableID, [_x, _y]);
+        var _w = Math.abs(w);
+        var _h = Math.abs(h);
+        this._scale.w = _w;
+        this._scale.h = _h;
+        this.renderer.updateDrawableScale(this.bubbleState.drawableID, [_w, _h]);
       }
     }
   }, {
@@ -245,7 +245,7 @@ var Bubble = /*#__PURE__*/function () {
             case 8:
               if (Object.keys(_properties).length > 0) {
                 if ('scale' in _properties) {
-                  this.updateScale(_properties.scale.x, _properties.scale.y);
+                  this.updateScale(_properties.scale.w, _properties.scale.h);
                 }
               }
               this.renderer.updateDrawableSkinId(this.bubbleState.drawableID, this.bubbleState.skinId);
@@ -255,7 +255,7 @@ var Bubble = /*#__PURE__*/function () {
               if (this.bubbleState.skinId) {
                 if (Object.keys(_properties).length > 0) {
                   if ('scale' in _properties) {
-                    this.updateScale(_properties.scale.x, _properties.scale.y);
+                    this.updateScale(_properties.scale.w, _properties.scale.h);
                   }
                 }
                 this.renderer.updateTextSkin(this.bubbleState.skinId, this.bubbleState.type, this.bubbleState.text, this.bubbleState.onSpriteRight);
@@ -288,8 +288,8 @@ var Bubble = /*#__PURE__*/function () {
             _this$renderer$getCur2 = _slicedToArray(_this$renderer$getCur, 2),
             _bubbleWidth = _this$renderer$getCur2[0],
             _bubbleHeight = _this$renderer$getCur2[1];
-          var bubbleWidth = _bubbleWidth * this._scale.x / 100;
-          var bubbleHeight = _bubbleHeight * this._scale.y / 100;
+          var bubbleWidth = _bubbleWidth * this._scale.w / 100;
+          var bubbleHeight = _bubbleHeight * this._scale.h / 100;
           var targetBounds = this.renderer.getBoundsForBubble(this.sprite.drawableID);
           var stageSize = this.renderer.getNativeSize();
           var stageBounds = {
@@ -306,7 +306,7 @@ var Bubble = /*#__PURE__*/function () {
             }
             this.renderer.updateTextSkin(this.bubbleState.skinId, this.bubbleState.type, this.bubbleState.text, this.bubbleState.onSpriteRight);
           } else if (this.bubbleState.onSpriteRight === false && targetBounds.left - bubbleWidth < stageBounds.left && bubbleWidth + targetBounds.right < stageBounds.right) {
-            if (this._scale.x > 0) {
+            if (this._scale.w > 0) {
               this.bubbleState.onSpriteRight = true;
             } else {
               this.bubbleState.onSpriteRight = false;
@@ -1370,43 +1370,6 @@ var _Element = /*#__PURE__*/function () {
       PlayGround["default"].textCanvas = canvas;
       return canvas;
     }
-    /*
-        static createFlag (main) {
-            if (Element.flag) {
-                return Element.flag;
-            }
-            let flag = document.getElementById('start-flag');
-            if( flag ) {
-                main.removeChild(flag);
-            }
-            flag = document.createElement('div');
-            flag.id = 'start-flag';
-            flag.className = 'likeScratch-flag';
-            main.appendChild(flag);
-            //Element.flag = flag;
-            Process.default.flag = flag;
-            //Element.flagPositioning(flag);
-            // looks
-            flag.style.position = 'absolute';
-            flag.innerHTML = '&#9873;'; // 旗マーク
-            flag.classList.add(Element.DISPLAY_NONE); // 作成時は非表示。
-            return flag;
-        }
-        static flagPositioning(flag = Element.flag) {
-    
-            const flagSize = 130;
-            // Convert the center based x coordinate to a left based one.
-            const x = -(flagSize / 2);
-            // Convert the center based y coordinate to a left based one.
-            const y = -(flagSize / 2)  ;
-            // looks
-            flag.style.width = `${flagSize}px`;
-            flag.style.height = `${flagSize}px`;
-            flag.style.left = `${(window.innerWidth / 2) + x}px`;
-            flag.style.top = `${(window.innerHeight / 2) + y}px`;
-    
-        }
-     */
   }, {
     key: "insertCss",
     value: function insertCss() {
@@ -4936,20 +4899,24 @@ var Monitor = /*#__PURE__*/function () {
       // canvas のサイズ変更に合わせて top, left を変更したい。
       //const top = 0;
       //const left = 0;
+      var original_rect = stageMonitorContainer.getBoundingClientRect();
+      console.log(original_rect);
       var scale = {
         x: this._scale / renderRate.x,
         y: this._scale / renderRate.y
       };
-      stageMonitorContainer.style.top = 0; //`${top}px`;// (canvasClientRect.top+50) +"px";
+      var top = original_rect.height * (this.no - 1);
+      stageMonitorContainer.style.top = "".concat(top, "px"); // (canvasClientRect.top+50) +"px";
       stageMonitorContainer.style.left = 0; //`${left}px` ;// (canvasClientRect.left+50) +"px";
       stageMonitorContainer.style.transform = "scale(".concat(scale.x, ", ").concat(scale.y, ")");
-      var original_rect = stageMonitorContainer.getBoundingClientRect();
       var scratch_rect_size = libs.toScratchPosition(original_rect.width, original_rect.height);
       this.original_rect = {
         width: scratch_rect_size.x,
         height: scratch_rect_size.y
       };
       //        console.log(this.original_rect)
+
+      this.resize();
       return stageMonitorContainer;
     }
   }, {
@@ -5060,10 +5027,15 @@ var Monitor = /*#__PURE__*/function () {
   }, {
     key: "resize",
     value: function resize() {
+      // キャンバスの位置( main 左端からの距離 )
+      var canvas = PlayGround["default"].canvas;
+      var offsetLeftOnMain = canvas.offsetLeft;
+      console.log(offsetLeftOnMain);
       var libs = Libs["default"];
       var target = this.stageMonitorContainer;
       var renderRate = libs.renderRate;
       var dataX = parseFloat(target.getAttribute('scratch-x')) || 0;
+      //        const dataX = parseFloat(target.getAttribute('scratch-x')) || offsetLeftOnMain;
       var dataY = parseFloat(target.getAttribute('scratch-y')) || 0;
       var dActualPosition = libs.toActualPosition(dataX, dataY);
       var scaleX = this._scale / renderRate.x;
@@ -5873,10 +5845,6 @@ var _Render = /*#__PURE__*/function () {
       var main = PlayGround["default"].main;
       Element.mainPositioning(main);
       me.stageResize();
-      //            const flag = Process.default.flag;
-      //            if(flag){
-      //                Element.flagPositioning(flag);
-      //            }
     };
     window.addEventListener('resize', resizeWindow);
   }
@@ -5885,7 +5853,7 @@ var _Render = /*#__PURE__*/function () {
     value: function stageResize() {
       var w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _Render.W;
       var h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Render.H;
-      this.renderer.resize(w, h);
+      this.renderer.resize(w, h); // stage(canvas)のサイズ property(width,height)の値をリサイズ
       var _nativeSize = this.renderer.getNativeSize();
       this.stageWidth = _nativeSize[0];
       this.stageHeight = _nativeSize[1];
@@ -6821,7 +6789,6 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
           _options,
           newOptions,
           newSprite,
-          _visible,
           _iterator,
           _step,
           d,
@@ -6830,7 +6797,6 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
           _step2,
           _d2,
           _soundData,
-          _options2,
           _vol,
           _pitch,
           runtime,
@@ -6841,7 +6807,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
             case 0:
               options = _args.length > 0 && _args[0] !== undefined ? _args[0] : {};
               if (!(this.isClone == undefined)) {
-                _context.next = 60;
+                _context.next = 59;
                 break;
               }
               newName = "".concat(this.name, "_").concat(this.clones.length + 1); // クローン時にエフェクトを引き継ぐ。
@@ -6872,7 +6838,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
               newOptions = Object.assign(_options, options);
               newSprite = new this.constructor(newName, newOptions); // デフォでは本体の前に表示されるので、1つ背面へ移動する
               newSprite.$goBackwardLayers(1);
-              _visible = newSprite.$setVisible(false);
+              //const _visible = 
+              newSprite.$setVisible(false);
               this.clones.push(newSprite);
               newSprite.isClone = true;
               _iterator = _createForOfIteratorHelper(this.imageDatas);
@@ -6910,37 +6877,37 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
               _iterator2.s();
             case 32:
               if ((_step2 = _iterator2.n()).done) {
-                _context.next = 46;
+                _context.next = 45;
                 break;
               }
               _d2 = _step2.value;
               _soundData = {};
               _soundData.name = _d2.name;
               _soundData.data = _d2.data;
-              _options2 = _d2.options;
-              _context.next = 40;
+              //const _options = d.options;
+              _context.next = 39;
               return newSprite.$addSound(_soundData);
-            case 40:
+            case 39:
               // options引き継ぐ
               _vol = this.$getSoundVolume();
               _pitch = this.$getSoundPitch();
               newSprite.$setSoundVolume(_vol);
               newSprite.$setSoundPitch(_pitch);
-            case 44:
+            case 43:
               _context.next = 32;
               break;
-            case 46:
-              _context.next = 51;
+            case 45:
+              _context.next = 50;
               break;
-            case 48:
-              _context.prev = 48;
+            case 47:
+              _context.prev = 47;
               _context.t1 = _context["catch"](30);
               _iterator2.e(_context.t1);
-            case 51:
-              _context.prev = 51;
+            case 50:
+              _context.prev = 50;
               _iterator2.f();
-              return _context.finish(51);
-            case 54:
+              return _context.finish(50);
+            case 53:
               newSprite.update(); // update() は不要かもしれない。
               newSprite.originalSprite = this;
 
@@ -6953,11 +6920,11 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
               eventId = "whenClone_".concat(this.name);
               runtime.emit(eventId, newSprite);
               return _context.abrupt("return", newSprite);
-            case 60:
+            case 59:
             case "end":
               return _context.stop();
           }
-        }, _callee, this, [[11, 21, 24, 27], [30, 48, 51, 54]]);
+        }, _callee, this, [[11, 21, 24, 27], [30, 47, 50, 53]]);
       }));
       function $clone() {
         return _$clone.apply(this, arguments);
@@ -6970,14 +6937,14 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       // スプライトを消すとき costumes はnullになるので 例外回避する
       if (target.costumes) {
         target.costumes.setPosition(target.$_position.x, target.$_position.y);
-        target.costumes.setScale(target.$_scale.x, target.$_scale.y);
+        target.costumes.setScale(target.$_scale.w, target.$_scale.h);
         target.costumes.setDirection(target.$_direction);
         target.costumes.update(target.drawableID, this._effect);
       }
       target.$_prev_position.x = target.$_position.x;
       target.$_prev_position.y = target.$_position.y;
-      target.$_prev_scale.x = target.$_scale.x;
-      target.$_prev_scale.y = target.$_scale.y;
+      target.$_prev_scale.w = target.$_scale.w;
+      target.$_prev_scale.h = target.$_scale.h;
       target.$_prev_direction = target.$_direction;
     }
   }, {
@@ -7017,7 +6984,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       // スプライトを消すとき bubbleを参照できない
       if (this.bubble) {
         if (Env.bubbleScaleLinkedToSprite === true) {
-          this.bubble.updateScale(this.$_scale.x, this.$_scale.y);
+          this.bubble.updateScale(this.$_scale.w, this.$_scale.h);
         }
         this.bubble.moveWithSprite();
       }
@@ -7032,14 +6999,14 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     }
   }, {
     key: "$setScale",
-    value: function $setScale(x, y) {
-      if (Utils.isNumber(x)) {
-        _superPropGet(Sprite, "$setScale", this, 3)([x, y]);
-        this.bubble.setScale(x, y);
+    value: function $setScale(w, h) {
+      if (Utils.isNumber(w)) {
+        _superPropGet(Sprite, "$setScale", this, 3)([w, h]);
+        this.bubble.setScale(w, h);
       } else {
-        var obj = x;
-        _superPropGet(Sprite, "$setScale", this, 3)([obj.x, obj.y]);
-        this.bubble.setScale(obj.x, obj.y);
+        var obj = w;
+        _superPropGet(Sprite, "$setScale", this, 3)([obj.w, obj.h]);
+        this.bubble.setScale(obj.w, obj.h);
       }
       this.update();
     }
@@ -7759,11 +7726,16 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       };
     }
   }, {
+    key: "$getCurrentDirection",
+    value: function $getCurrentDirection() {
+      return this.$_direction;
+    }
+  }, {
     key: "$getCurrentSize",
     value: function $getCurrentSize() {
       return {
-        x: this.$_scale.x,
-        y: this.$_scale.y
+        w: this.$_scale.w,
+        h: this.$_scale.h
       };
     }
   }, {
@@ -7776,6 +7748,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     get: function get() {
       return {
         "getCurrentPosition": this.$getCurrentPosition.bind(this),
+        "getCurrentDirection": this.$getCurrentDirection.bind(this),
         "moveSteps": this.$moveSteps.bind(this),
         "moveTo": this.$moveTo.bind(this),
         "ifOnEdgeBounds": this.$ifOnEdgeBounds.bind(this),
