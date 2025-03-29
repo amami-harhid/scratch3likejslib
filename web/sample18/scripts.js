@@ -37,7 +37,7 @@ Pg.prepare = async function prepare() {
     await cross.Image.add( Cross01 );
     await cross.Image.add( Cross02 );
     await cross.Sound.add( Pew );
-    cross.Looks.setSize({x:100,y:100});
+    cross.Looks.setSize({w:100,h:100});
 }
 
 Pg.setting = async function setting() {
@@ -71,7 +71,7 @@ Pg.setting = async function setting() {
             // 矢印キーを押しながら、スペースキーを検知させたい
             if(Lib.keyIsDown('Space')){
                 this.Sound.play(Pew);
-                const options = {scale:{x:20,y:20}, direction:0}
+                const options = {scale:{w:20,h:20}, direction:0}
                 this.C.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
                 //await Libs.waitWhile( ()=>Lib.keyIsDown('Space'));

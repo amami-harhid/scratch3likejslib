@@ -50,7 +50,7 @@ Pg.prepare = async function prepare() {
 
 Pg.setting = async function setting() {
 
-    const BubbleScale = {scale:{x:100,y:100}};
+    const BubbleScale = {scale:{w:100,h:100}};
     stage.Event.whenFlag( async function() {
         // 1秒待つ
         await Lib.wait(1000);

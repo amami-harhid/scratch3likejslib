@@ -43,7 +43,7 @@ Pg.setting = async function setting() {
             this.Motion.ifOnEdgeBounds();
             this.Motion.moveSteps(WALK_STEP);
             if( bubble.exit === true) {
-                Lib.Loop.break();
+                break;
             }
             yield;
         }
@@ -65,15 +65,15 @@ Pg.setting = async function setting() {
         const SCALE = {MIN:50, MAX:150};
         while(true){
             while(true){
-                this.Looks.changeSizeBy({x:-MOVE_STEP, y: -MOVE_STEP});
+                this.Looks.changeSizeBy({w:-MOVE_STEP, h: -MOVE_STEP});
                 const scale = this.Looks.getSize();
-                if(scale.x < SCALE.MIN) break;
+                if(scale.w < SCALE.MIN) break;
                 yield;
             }
             while(true){
-                this.Looks.changeSizeBy({x: +MOVE_STEP, y: +MOVE_STEP});
+                this.Looks.changeSizeBy({w: +MOVE_STEP, h: +MOVE_STEP});
                 const scale = this.Looks.getSize();
-                if(scale.x > SCALE.MAX) break;
+                if(scale.w > SCALE.MAX) break;
                 yield;
             }
             if( bubble.exit === true) {
@@ -116,7 +116,7 @@ Pg.setting = async function setting() {
         }
     });
     cat2.Event.whenFlag( async function*() {
-        let scale = {x: 60, y:60};
+        let scale = {w: 60, h:60};
         while(true){
             const text = bubbleTextArr2[ Math.ceil(Math.random() * bubbleTextArr2.length) - 1 ]
             this.Looks.think(text, {scale:scale});

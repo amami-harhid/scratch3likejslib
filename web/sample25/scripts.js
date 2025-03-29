@@ -8,6 +8,7 @@ const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
 Pg.title = "【Sample25】リンゴの色に触れたときネコが鳴く"
 
+const Jurassic = "Jurassic";
 const Apple = "Apple";
 const Cat01 = "Cat01";
 const Cat02 = "Cat02";
@@ -20,6 +21,7 @@ let cat;
 let apple;
 
 Pg.preload = async function () {
+    this.Image.load('../assets/Jurassic.svg', Jurassic);
     this.Sound.load('../assets/Cat.wav', Mya );
     this.Image.load('../assets/apple.svg', Apple );
     this.Image.load('../assets/cat.svg', Cat01 );
@@ -29,6 +31,7 @@ Pg.preload = async function () {
 }
 Pg.prepare = async function () {
     stage = new Lib.Stage();
+    stage.Image.add( Jurassic  )
     cat = new Lib.Sprite( 'cat' );
 //    await cat.Image.add( Cat01 );
 //    await cat.Image.add( Cat02 );
@@ -45,13 +48,16 @@ Pg.setting = async function () {
     const TargetColor = '#ec1c2c'; // リンゴの赤い色
     const MaskColor = '#d99e82'; // お団子の串の色
     cat.Event.whenFlag(async function*(){
+        this.Looks.show();
         this.Motion.setRotationStyle(Lib.RotationStyle.LEFT_RIGHT);
-        this.Motion.setXY(0,0);
+        this.Motion.setXY(0, 0);
         this.Motion.pointInDirection(90);
         this.Looks.goToFront();
         for(;;){
-//            this.Motion.pointToMouse();
+            //            this.Motion.pointToMouse();
             this.Motion.gotoMousePosition();
+            //const {x, y} = this.Motion.getCurrentPosition();
+            //this.Looks.say(`x=${x}, y=${y}`);
             if(await this.Sensing.colorIsTouchingToColor(TargetColor, MaskColor)){
                 //this.Motion.moveSteps(-5);
                 this.Sound.play(Pew);

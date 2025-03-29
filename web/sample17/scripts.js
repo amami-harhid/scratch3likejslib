@@ -34,7 +34,7 @@ Pg.prepare = async function prepare() {
     cross = new Lib.Sprite("Cross");
     await cross.Image.add( Cross01 );
     await cross.Image.add( Cross02 );
-    cross.Looks.setSize({x:300,y:300});
+    cross.Looks.setSize({w:300,h:300});
 
     butterfly = new Lib.Sprite("Butterfly");
     await butterfly.Image.add( Butterfly01 );
@@ -77,7 +77,7 @@ Pg.setting = async function setting() {
             if ( $cross.Sensing.isMouseTouching() ) {
                 const mousePosition = Lib.mousePosition;
                 butterfly.Motion.gotoXY(mousePosition);
-                const scale = {x: 15, y: 15}
+                const scale = {w: 15, h: 15}
                 butterfly.Looks.setSize(scale);
                 butterfly.Motion.pointInDirection(Lib.randomDirection);
                 await butterfly.Control.clone();

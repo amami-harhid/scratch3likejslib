@@ -1706,8 +1706,8 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       y: 0
     }; // 意味なし
     _this.$_scale = {
-      x: 100,
-      y: 100
+      w: 100,
+      h: 100
     }; // 意味なし
     _this.$_direction = 90; // 意味なし
     _this._visible = true;
@@ -1729,15 +1729,15 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     _this.$_direction = 'direction' in options ? options.direction : 90;
     _this.$_prev_direction = _this.$_direction;
     _this.$_scale = 'scale' in options ? {
-      x: options.scale.x,
-      y: options.scale.y
+      w: options.scale.w,
+      h: options.scale.h
     } : {
-      x: 100,
-      y: 100
+      w: 100,
+      h: 100
     };
     _this.$_prev_scale = {};
-    _this.$_prev_scale.x = _this.$_scale.x;
-    _this.$_prev_scale.y = _this.$_scale.y;
+    _this.$_prev_scale.w = _this.$_scale.w;
+    _this.$_prev_scale.h = _this.$_scale.h;
     _this.life = Infinity;
     _this.modules = new Map();
     _Entity.broadcastReceivedFuncArr = _Entity.broadcastReceivedFuncArr || [];
@@ -1767,23 +1767,23 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     }
   }, {
     key: "$changeSizeBy",
-    value: function $changeSizeBy(changeX, changeY) {
-      if (typeof changeX == 'number') {
-        var _x = changeX;
-        var _y = changeY;
-        if (changeY == undefined) {
-          _y = changeX;
+    value: function $changeSizeBy(changeW, changeH) {
+      if (typeof changeW == 'number') {
+        var _w = changeW;
+        var _h = changeH;
+        if (changeH == undefined) {
+          _h = changeW;
         }
-        var x = this.$_scale.x + _x;
-        var y = this.$_scale.y + _y;
-        this.$setScale(x, y);
+        var w = this.$_scale.w + _w;
+        var h = this.$_scale.h + _h;
+        this.$setScale(w, h);
       } else {
-        var obj = changeX;
-        var _x2 = obj.x;
-        var _y2 = obj.y;
-        var _x3 = this.$_scale.x + _x2;
-        var _y3 = this.$_scale.y + _y2;
-        this.$setScale(_x3, _y3);
+        var obj = changeW;
+        var _w2 = obj.w;
+        var _h2 = obj.h;
+        var _w3 = this.$_scale.w + _w2;
+        var _h3 = this.$_scale.h + _h2;
+        this.$setScale(_w3, _h3);
       }
     }
   }, {
@@ -1934,7 +1934,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee);
       }));
-      function _addImage(_x4, _x5, _x6) {
+      function _addImage(_x2, _x3, _x4) {
         return _addImage2.apply(this, arguments);
       }
       return _addImage;
@@ -1960,7 +1960,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee2, this);
       }));
-      function _loadImage(_x7, _x8, _x9) {
+      function _loadImage(_x5, _x6, _x7) {
         return _loadImage2.apply(this, arguments);
       }
       return _loadImage;
@@ -1985,7 +1985,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee3, this);
       }));
-      function importSound(_x10) {
+      function importSound(_x8) {
         return _importSound.apply(this, arguments);
       }
       return importSound;
@@ -2031,7 +2031,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                     }
                   }, _callee4);
                 }));
-                return function (_x13) {
+                return function (_x11) {
                   return _ref3.apply(this, arguments);
                 };
               }()));
@@ -2041,7 +2041,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee5, this);
       }));
-      function _addSound(_x11, _x12) {
+      function _addSound(_x9, _x10) {
         return _addSound2.apply(this, arguments);
       }
       return _addSound;
@@ -2071,7 +2071,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee6, this);
       }));
-      function _loadSound(_x14, _x15) {
+      function _loadSound(_x12, _x13) {
         return _loadSound2.apply(this, arguments);
       }
       return _loadSound;
@@ -2128,7 +2128,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee7, this);
       }));
-      function $setOption(_x16, _x17) {
+      function $setOption(_x14, _x15) {
         return _$setOption.apply(this, arguments);
       }
       return $setOption;
@@ -2202,7 +2202,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee8, this);
       }));
-      function $startSoundUntilDone(_x18) {
+      function $startSoundUntilDone(_x16) {
         return _$startSoundUntilDone.apply(this, arguments);
       }
       return $startSoundUntilDone;
@@ -2221,18 +2221,18 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     }
   }, {
     key: "$setScale",
-    value: function $setScale(x, y) {
-      if (typeof x == 'number') {
-        this.$_scale.x = x;
-        if (y == undefined) {
-          this.$_scale.y = x;
+    value: function $setScale(w, h) {
+      if (typeof w == 'number') {
+        this.$_scale.w = w;
+        if (h == undefined) {
+          this.$_scale.h = w;
         } else {
-          this.$_scale.y = y;
+          this.$_scale.h = h;
         }
       } else {
-        var obj = x;
-        this.$_scale.x = obj.x;
-        this.$_scale.y = obj.y;
+        var obj = w;
+        this.$_scale.w = obj.w;
+        this.$_scale.h = obj.h;
       }
     }
   }, {
@@ -2297,7 +2297,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee9);
       }));
-      function $waitSeconds(_x19) {
+      function $waitSeconds(_x17) {
         return _$waitSeconds.apply(this, arguments);
       }
       return $waitSeconds;
@@ -2317,7 +2317,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee10);
       }));
-      function $waitUntil(_x20) {
+      function $waitUntil(_x18) {
         return _$waitUntil.apply(this, arguments);
       }
       return $waitUntil;
@@ -2337,7 +2337,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee11);
       }));
-      function $waitWhile(_x21) {
+      function $waitWhile(_x19) {
         return _$waitWhile.apply(this, arguments);
       }
       return $waitWhile;
@@ -2485,7 +2485,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee12, this);
       }));
-      function $isTouchingColor(_x22) {
+      function $isTouchingColor(_x20) {
         return _$isTouchingColor.apply(this, arguments);
       }
       return $isTouchingColor;
@@ -2524,7 +2524,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee13, this);
       }));
-      function $colorIsTouchingColor(_x23, _x24) {
+      function $colorIsTouchingColor(_x21, _x22) {
         return _$colorIsTouchingColor.apply(this, arguments);
       }
       return $colorIsTouchingColor;
@@ -2584,7 +2584,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee14, this);
       }));
-      function $broadcastAndWait(_x25) {
+      function $broadcastAndWait(_x23) {
         return _$broadcastAndWait.apply(this, arguments);
       }
       return $broadcastAndWait;
@@ -2675,7 +2675,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee15, this);
       }));
-      function $broadcastAndWaitToTargets(_x26, _x27) {
+      function $broadcastAndWaitToTargets(_x24, _x25) {
         return _$broadcastAndWaitToTargets.apply(this, arguments);
       }
       return $broadcastAndWaitToTargets;
@@ -2818,7 +2818,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee16);
         }));
-        return function (_x28) {
+        return function (_x26) {
           return _ref4.apply(this, arguments);
         };
       }());
@@ -2867,7 +2867,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee17);
         }));
-        return function (_x29) {
+        return function (_x27) {
           return _ref5.apply(this, arguments);
         };
       }(), 0);
@@ -2904,7 +2904,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                     }
                   }, _callee18);
                 }));
-                return function clickFunc(_x31) {
+                return function clickFunc(_x29) {
                   return _ref6.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
@@ -2915,7 +2915,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee19, this);
       }));
-      function $whenFlag(_x30) {
+      function $whenFlag(_x28) {
         return _$whenFlag.apply(this, arguments);
       }
       return $whenFlag;
@@ -3015,7 +3015,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
             }
           }, _callee20);
         }));
-        return function eventf(_x32) {
+        return function eventf(_x30) {
           return _ref7.apply(this, arguments);
         };
       }();
@@ -3391,7 +3391,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee23, this);
       }));
-      function $speechAndWait(_x33, _x34) {
+      function $speechAndWait(_x31, _x32) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3424,7 +3424,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee24, this);
       }));
-      function forever(_x35) {
+      function forever(_x33) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3444,7 +3444,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee25, this);
       }));
-      function _while(_x36, _x37) {
+      function _while(_x34, _x35) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3464,7 +3464,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee26, this);
       }));
-      function repeat(_x38, _x39) {
+      function repeat(_x36, _x37) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3484,7 +3484,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }
         }, _callee27, this);
       }));
-      function repeatUntil(_x40, _x41) {
+      function repeatUntil(_x38, _x39) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -5030,7 +5030,8 @@ var Monitor = /*#__PURE__*/function () {
       // キャンバスの位置( main 左端からの距離 )
       var canvas = PlayGround["default"].canvas;
       var offsetLeftOnMain = canvas.offsetLeft;
-      console.log(offsetLeftOnMain);
+      //console.log(offsetLeftOnMain);
+
       var libs = Libs["default"];
       var target = this.stageMonitorContainer;
       var renderRate = libs.renderRate;

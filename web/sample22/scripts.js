@@ -29,7 +29,7 @@ Pg.prepare = async function prepare() {
     await stage.Image.add( Jurassic );
     await stage.Sound.add( Chill );
     cat = new Lib.Sprite( "Cat" );
-    cat.Looks.setSize( {x:300,y:300} );//サイズを３倍にしています
+    cat.Looks.setSize( {w:300,h:300} );//サイズを３倍にしています
     await cat.Image.add( Cat );
 }
 
