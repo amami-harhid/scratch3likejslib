@@ -64,8 +64,8 @@ var Bubble = /*#__PURE__*/function () {
     this.playground = PlayGround["default"];
     this.renderer = this.playground.render.renderer;
     this._scale = {
-      x: 100,
-      y: 100
+      w: 100,
+      h: 100
     };
   }
   return _createClass(Bubble, [{
@@ -102,8 +102,8 @@ var Bubble = /*#__PURE__*/function () {
       // マイナススケールのとき 文字が反転（鏡文字）となるのでそれを回避する。
       var _w = Math.abs(w);
       var _h = Math.abs(h);
-      this.scaleX = _w;
-      this.scaleY = _h;
+      this._scale.w = _w;
+      this._scale.h = _h;
     }
   }, {
     key: "createDrawable",
