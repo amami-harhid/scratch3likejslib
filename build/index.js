@@ -4475,7 +4475,7 @@ var _Libs = /*#__PURE__*/function () {
       return FunctionChecker;
     }
   }, {
-    key: "keyboard",
+    key: "Keyboard",
     get: function get() {
       return Keyboard;
     }
