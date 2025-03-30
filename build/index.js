@@ -7561,6 +7561,18 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       }
     }
   }, {
+    key: "$nextBackDrop",
+    value: function $nextBackDrop() {
+      var stage = PlayGround["default"].stage;
+      stage.$nextBackDrop();
+    }
+  }, {
+    key: "$switchBackDrop",
+    value: function $switchBackDrop(backdrop) {
+      var stage = PlayGround["default"].stage;
+      stage.$switchBackDrop(backdrop);
+    }
+  }, {
     key: "$setVisible",
     value: function $setVisible(_visible) {
       if (!this.$isAlive()) return;
@@ -7894,6 +7906,10 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return {
         "nextCostume": this.$nextCostume.bind(this),
         "switchCostume": this.$switchCostume.bind(this),
+        "nextBackdrop": this.$nextBackDrop.bind(this),
+        // Sprite-->Stageへ
+        "switchBackdrop": this.$switchBackDrop.bind(this),
+        // Sprite-->Stageへ
         "say": this.$say.bind(this),
         "sayForSecs": this.$sayForSecs.bind(this),
         "think": this.$think.bind(this),
