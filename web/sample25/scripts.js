@@ -55,7 +55,7 @@ Pg.setting = async function () {
         this.Looks.goToFront();
         for(;;){
             //            this.Motion.pointToMouse();
-            this.Motion.gotoMousePosition();
+            //this.Motion.gotoMousePosition();
             //const {x, y} = this.Motion.getCurrentPosition();
             //this.Looks.say(`x=${x}, y=${y}`);
             if(await this.Sensing.colorIsTouchingToColor(TargetColor, MaskColor)){
@@ -63,7 +63,11 @@ Pg.setting = async function () {
                 this.Sound.play(Pew);
             }else if(await this.Sensing.isTouchingToColor(TargetColor)){
                 //this.Motion.moveSteps(-5);
-                this.Sound.play(Mya);
+                this.Sound.play(Mya);                
+            }
+            if(this.Sensing.isMouseDown()){
+                console.log('マウスダウン検出');
+                break;
             }
             yield;
         }

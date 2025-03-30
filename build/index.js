@@ -4295,7 +4295,7 @@ var Mouse = /*#__PURE__*/function () {
       return this.runtime.getTargetForStage();
     }
 
-    /**
+    /** ( 使うところがない )
      * Mouse DOM event handler.
      * @param  {object} data Data from DOM event.
      */
@@ -4310,28 +4310,14 @@ var Mouse = /*#__PURE__*/function () {
         this._clientY = data.y;
         this._scratchY = Math.round(MathUtil.clamp(-360 * (data.y / data.canvasHeight - 0.5), -180, 180));
       }
-      if (typeof data.isDown !== 'undefined') {
-        var previousDownState = this._isDown;
-        this._isDown = data.isDown;
-
-        // Do not trigger if down state has not changed
-        if (previousDownState === this._isDown) return;
-
-        // Never trigger click hats at the end of a drag
-        if (data.wasDragged) return;
-
-        // Do not activate click hats for clicks outside canvas bounds
-        if (!(data.x > 0 && data.x < data.canvasWidth && data.y > 0 && data.y < data.canvasHeight)) return;
-        var target = this._pickTarget(data.x, data.y);
-        var isNewMouseDown = !previousDownState && this._isDown;
-        var isNewMouseUp = previousDownState && !this._isDown;
-
-        // Draggable targets start click hats on mouse up.
-        // Non-draggable targets start click hats on mouse down.
-        if (target.draggable && isNewMouseUp) {
-          this._activateClickHats(target);
-        } else if (!target.draggable && isNewMouseDown) {
-          this._activateClickHats(target);
+      this._isDown = false;
+      if (data.button && data.buttons) {
+        if (data.buttons > 0) {
+          this._isDown = true;
+        } else {
+          if (data.button == 0 || data.button == 1 || data.button == 2) {
+            this._isDown = true;
+          }
         }
       }
     }
@@ -4603,9 +4589,8 @@ var _Libs = /*#__PURE__*/function () {
   }, {
     key: "mouseIsPressed",
     value: function mouseIsPressed() {
-      var runtime = PlayGround["default"].runtime;
-      var mouse = runtime.ioDevices.mouse;
-      return mouse.getIsDown();
+      var mouse = PlayGround["default"].stage.mouse;
+      return mouse.down;
     }
   }, {
     key: "stageWidth",
