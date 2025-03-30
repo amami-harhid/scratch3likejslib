@@ -3511,6 +3511,40 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }
       return repeatUntil;
     }()
+    /**
+     * キーが押されたとき
+     * @param {*} key 
+     * @returns 
+     */
+  }, {
+    key: "$isKeyDown",
+    value: function $isKeyDown(key) {
+      return Libs["default"].keyIsDown(key);
+    }
+    /**
+     * キーが押されていない
+     * @param {*} key 
+     * @returns 
+     */
+  }, {
+    key: "$isKeyNotDown",
+    value: function $isKeyNotDown(key) {
+      return Libs["default"].keyIsNotDown(key);
+    }
+  }, {
+    key: "$mouseX",
+    get: function get() {
+      var libs = Libs["default"];
+      var mousePosition = libs.mousePosition;
+      return mousePosition.x;
+    }
+  }, {
+    key: "$mouseY",
+    get: function get() {
+      var libs = Libs["default"];
+      var mousePosition = libs.mousePosition;
+      return mousePosition.y;
+    }
   }], [{
     key: "EmitIdMovePromise",
     get: function get() {
@@ -7896,10 +7930,12 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return {
         "askAndWait": this.$askAndWait.bind(this),
         // Entityで 工事中
-        "isKeyDown": null,
-        // Libs.keyIsDown を呼び出すようにEntity工事中。
+        "isKeyDown": this.$isKeyDown.bind(this),
+        "isKeyNotDown": this.$isKeyNotDown.bind(this),
         "isMouseDown": null,
         // Entityで工事中
+        "mouseX": this.$mouseX,
+        "mouseY": this.$mouseY,
         "timer": null,
         // Entityで工事中
         "resetTimer": null,
@@ -8467,14 +8503,12 @@ var Stage = /*#__PURE__*/function (_Entity) {
       return {
         "askAndWait": null,
         // Entityで 工事中
-        "isKeyDown": null,
-        // Libs.keyIsDown を呼び出すようにEntity工事中。
+        "isKeyDown": this.$isKeyDown.bind(this),
+        "isKeyNotDown": this.$isKeyNotDown.bind(this),
         "isMouseDown": null,
         // Entityで工事中
-        "mouseX": null,
-        // Entityで工事中
-        "mouseY": null,
-        // Entityで工事中
+        "mouseX": this.$mouseX,
+        "mouseY": this.$mouseY,
         "timer": null,
         // Entityで工事中
         "resetTimer": null,
