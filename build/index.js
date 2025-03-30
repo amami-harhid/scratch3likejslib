@@ -3553,7 +3553,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       this._timer = performance.now();
     }
   }, {
-    key: "timer",
+    key: "$timer",
     get: function get() {
       return performance.now() - this._timer;
     }
