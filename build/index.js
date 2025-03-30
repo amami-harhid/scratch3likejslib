@@ -1742,6 +1742,8 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     _this.modules = new Map();
     _Entity.broadcastReceivedFuncArr = _Entity.broadcastReceivedFuncArr || [];
     _this._isAlive = true;
+    // タイマー用
+    _this._timer = performance.now();
     return _this;
   }
   _inherits(Entity, _EventEmitter);
@@ -3545,6 +3547,21 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var mousePosition = libs.mousePosition;
       return mousePosition.y;
     }
+  }, {
+    key: "$resetTimer",
+    value: function $resetTimer() {
+      this._timer = performance.now();
+    }
+  }, {
+    key: "timer",
+    get: function get() {
+      return performance.now() - this._timer;
+    }
+  }, {
+    key: "$isMouseDown",
+    value: function $isMouseDown() {
+      return Libs["default"].mouseIsPressed();
+    }
   }], [{
     key: "EmitIdMovePromise",
     get: function get() {
@@ -4453,6 +4470,7 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var Loop = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Loop);
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
+var Mouse = __webpack_require__(/*! ./io/mouse */ "../lib/io/mouse.js");
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
 var Render = __webpack_require__(/*! ./render */ "../lib/render.js");
 //const RotationStyle = require('./rotationStyle');
@@ -4577,6 +4595,15 @@ var _Libs = /*#__PURE__*/function () {
     key: "anyKeyIsDown",
     value: function anyKeyIsDown() {
       return this.keyIsDown();
+    }
+    /**
+     * マウスが押されているとき TRUE
+     * @returns 
+     */
+  }, {
+    key: "mouseIsPressed",
+    value: function mouseIsPressed() {
+      return Mouse.getIsDown();
     }
   }, {
     key: "stageWidth",
@@ -7932,15 +7959,11 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         // Entityで 工事中
         "isKeyDown": this.$isKeyDown.bind(this),
         "isKeyNotDown": this.$isKeyNotDown.bind(this),
-        "isMouseDown": null,
-        // Entityで工事中
+        "isMouseDown": this.$isMouseDown.bind(this),
         "mouseX": this.$mouseX,
         "mouseY": this.$mouseY,
-        "timer": null,
-        // Entityで工事中
-        "resetTimer": null,
-        // Entityで工事中
-
+        "timer": this.$timer,
+        "resetTimer": this.$resetTimer.bind(this),
         "isTouchingEdge": this.$isTouchingEdge.bind(this),
         "isTouchingVirticalEdge": this.isTouchingVirticalEdge.bind(this),
         "isTouchingHorizontalEdge": this.isTouchingHorizontalEdge.bind(this),
@@ -8505,14 +8528,11 @@ var Stage = /*#__PURE__*/function (_Entity) {
         // Entityで 工事中
         "isKeyDown": this.$isKeyDown.bind(this),
         "isKeyNotDown": this.$isKeyNotDown.bind(this),
-        "isMouseDown": null,
-        // Entityで工事中
+        "isMouseDown": this.$isMouseDown.bind(this),
         "mouseX": this.$mouseX,
         "mouseY": this.$mouseY,
-        "timer": null,
-        // Entityで工事中
-        "resetTimer": null,
-        // Entityで工事中
+        "timer": this.$timer,
+        "resetTimer": this.$resetTimer.bind(this),
         "getBackDrop": null,
         // Spriteで工事中
         "isNotMouseTouching": this.isNotMouseTouching.bind(this),
