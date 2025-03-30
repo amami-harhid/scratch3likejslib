@@ -4470,7 +4470,7 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var Loop = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Loop);
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
-var Mouse = __webpack_require__(/*! ./io/mouse */ "../lib/io/mouse.js");
+//const Mouse = require('./io/mouse');
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
 var Render = __webpack_require__(/*! ./render */ "../lib/render.js");
 //const RotationStyle = require('./rotationStyle');
@@ -4603,7 +4603,9 @@ var _Libs = /*#__PURE__*/function () {
   }, {
     key: "mouseIsPressed",
     value: function mouseIsPressed() {
-      return Mouse.getIsDown();
+      var runtime = PlayGround["default"].runtime;
+      var mouse = runtime.ioDevices.mouse;
+      return mouse.getIsDown();
     }
   }, {
     key: "stageWidth",
