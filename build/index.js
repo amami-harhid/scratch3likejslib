@@ -2087,7 +2087,12 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var name = sound.name;
       if (this.sounds == null) return;
       if (this.sounds.soundPlayer.name == name) return;
-      this.sounds["switch"](name);
+      var keys = this.sounds.getSoundKeys();
+      if (keys.includes(name)) {
+        this.sounds["switch"](name);
+      } else {
+        throw '指定したサウンドは定義されていません(' + name + ')';
+      }
     }
   }, {
     key: "$nextSound",
@@ -6364,6 +6369,12 @@ var Sounds = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "getSoundKeys",
+    value: function getSoundKeys() {
+      var _keys = Array.from(this.soundPlayers.keys());
+      return _keys;
+    }
+  }, {
     key: "nextSound",
     value: function nextSound() {
       var me = this;
@@ -9346,6 +9357,7 @@ var Threads = /*#__PURE__*/function () {
                         if (f) {
                           console.error(f.toString());
                         }
+                        throw e;
                       });
                       _context2.next = 15;
                       break;

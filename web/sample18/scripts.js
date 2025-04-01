@@ -81,7 +81,7 @@ Pg.setting = async function setting() {
     });
     cross.Control.whenCloned(async function(){
         const clone = this;
-        const {_,height} = clone.Looks.drawingDimensions();
+        const {height} = clone.Looks.drawingDimensions();
         clone.Motion.changeY( height / 2);
         clone.Looks.nextCostume();
         clone.Looks.show();
