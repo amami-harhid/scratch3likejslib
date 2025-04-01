@@ -72,7 +72,7 @@ Pg.setting = async function setting() {
             if(Lib.keyIsDown('Space')){
                 this.Sound.play(Pew);
                 const options = {scale:{w:20,h:20}, direction:0}
-                this.C.clone(options);
+                this.Control.clone(options);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
                 //await Libs.waitWhile( ()=>Lib.keyIsDown('Space'));
             }

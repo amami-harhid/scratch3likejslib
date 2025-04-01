@@ -1653,11 +1653,14 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-function _awaitAsyncGenerator(e) { return new _OverloadYield(e, 0); }
 function _wrapAsyncGenerator(e) { return function () { return new AsyncGenerator(e.apply(this, arguments)); }; }
 function AsyncGenerator(e) { var r, t; function resume(r, t) { try { var n = e[r](t), o = n.value, u = o instanceof _OverloadYield; Promise.resolve(u ? o.v : o).then(function (t) { if (u) { var i = "return" === r ? "return" : "next"; if (!o.k || t.done) return resume(i, t); t = e[i](t).value; } settle(n.done ? "return" : "normal", t); }, function (e) { resume("throw", e); }); } catch (e) { settle("throw", e); } } function settle(e, n) { switch (e) { case "return": r.resolve({ value: n, done: !0 }); break; case "throw": r.reject(n); break; default: r.resolve({ value: n, done: !1 }); } (r = r.next) ? resume(r.key, r.arg) : t = null; } this._invoke = function (e, n) { return new Promise(function (o, u) { var i = { key: e, arg: n, resolve: o, reject: u, next: null }; t ? t = t.next = i : (r = t = i, resume(e, n)); }); }, "function" != typeof e["return"] && (this["return"] = void 0); }
 AsyncGenerator.prototype["function" == typeof Symbol && Symbol.asyncIterator || "@@asyncIterator"] = function () { return this; }, AsyncGenerator.prototype.next = function (e) { return this._invoke("next", e); }, AsyncGenerator.prototype["throw"] = function (e) { return this._invoke("throw", e); }, AsyncGenerator.prototype["return"] = function (e) { return this._invoke("return", e); };
+function _awaitAsyncGenerator(e) { return new _OverloadYield(e, 0); }
+function _asyncGeneratorDelegate(t) { var e = {}, n = !1; function pump(e, r) { return n = !0, r = new Promise(function (n) { n(t[e](r)); }), { done: !1, value: new _OverloadYield(r, 1) }; } return e["undefined" != typeof Symbol && Symbol.iterator || "@@iterator"] = function () { return this; }, e.next = function (t) { return n ? (n = !1, t) : pump("next", t); }, "function" == typeof t["throw"] && (e["throw"] = function (t) { if (n) throw n = !1, t; return pump("throw", t); }), "function" == typeof t["return"] && (e["return"] = function (t) { return n ? (n = !1, t) : pump("return", t); }), e; }
 function _OverloadYield(e, d) { this.v = e, this.k = d; }
+function _asyncIterator(r) { var n, t, o, e = 2; for ("undefined" != typeof Symbol && (t = Symbol.asyncIterator, o = Symbol.iterator); e--;) { if (t && null != (n = r[t])) return n.call(r); if (o && null != (n = r[o])) return new AsyncFromSyncIterator(n.call(r)); t = "@@asyncIterator", o = "@@iterator"; } throw new TypeError("Object is not async iterable"); }
+function AsyncFromSyncIterator(r) { function AsyncFromSyncIteratorContinuation(r) { if (Object(r) !== r) return Promise.reject(new TypeError(r + " is not an object.")); var n = r.done; return Promise.resolve(r.value).then(function (r) { return { value: r, done: n }; }); } return AsyncFromSyncIterator = function AsyncFromSyncIterator(r) { this.s = r, this.n = r.next; }, AsyncFromSyncIterator.prototype = { s: null, n: null, next: function next() { return AsyncFromSyncIteratorContinuation(this.n.apply(this.s, arguments)); }, "return": function _return(r) { var n = this.s["return"]; return void 0 === n ? Promise.resolve({ value: r, done: !0 }) : AsyncFromSyncIteratorContinuation(n.apply(this.s, arguments)); }, "throw": function _throw(r) { var n = this.s["return"]; return void 0 === n ? Promise.reject(r) : AsyncFromSyncIteratorContinuation(n.apply(this.s, arguments)); } }, new AsyncFromSyncIterator(r); }
 var Canvas = __webpack_require__(/*! ./canvas */ "../lib/canvas.js");
 var _require = __webpack_require__(/*! ./controls */ "../lib/controls.js"),
   Loop = _require.Loop,
@@ -2019,7 +2022,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
               if (this.sounds == null) this.sounds = new Sounds();
               me = this;
               return _context5.abrupt("return", new Promise(/*#__PURE__*/function () {
-                var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resolve) {
+                var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resolve) {
                   return _regeneratorRuntime().wrap(function _callee4$(_context4) {
                     while (1) switch (_context4.prev = _context4.next) {
                       case 0:
@@ -2034,7 +2037,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                   }, _callee4);
                 }));
                 return function (_x11) {
-                  return _ref3.apply(this, arguments);
+                  return _ref4.apply(this, arguments);
                 };
               }()));
             case 8:
@@ -2819,7 +2822,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var obj = proxy.startThreadMessageRecieved.apply(proxy, [func, proxy, false].concat(args));
       obj.originalF = func;
       var promise = new Promise(/*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(resolve) {
+        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(resolve) {
           return _regeneratorRuntime().wrap(function _callee17$(_context17) {
             while (1) switch (_context17.prev = _context17.next) {
               case 0:
@@ -2843,7 +2846,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }, _callee17);
         }));
         return function (_x27) {
-          return _ref4.apply(this, arguments);
+          return _ref5.apply(this, arguments);
         };
       }());
       arr.push(promise);
@@ -2870,7 +2873,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }
       var me = this;
       setTimeout(/*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(_) {
+        var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(_) {
           var _p, wait, f;
           return _regeneratorRuntime().wrap(function _callee18$(_context18) {
             while (1) switch (_context18.prev = _context18.next) {
@@ -2892,7 +2895,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }, _callee18);
         }));
         return function (_x28) {
-          return _ref5.apply(this, arguments);
+          return _ref6.apply(this, arguments);
         };
       }(), 0);
     }
@@ -2927,7 +2930,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
               me = this;
               flag = Element.getControlGreenFlag();
               clickFunc = /*#__PURE__*/function () {
-                var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19(e) {
+                var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19(e) {
                   return _regeneratorRuntime().wrap(function _callee19$(_context19) {
                     while (1) switch (_context19.prev = _context19.next) {
                       case 0:
@@ -2940,7 +2943,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                   }, _callee19);
                 }));
                 return function clickFunc(_x30) {
-                  return _ref6.apply(this, arguments);
+                  return _ref7.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
               flag.addEventListener('click', clickFunc);
@@ -3017,7 +3020,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var entityId = this.id;
       var me = this;
       var eventf = /*#__PURE__*/function () {
-        var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(e) {
+        var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(e) {
           var mouseX, mouseY, _touchDrawableId, threadId, proxy;
           return _regeneratorRuntime().wrap(function _callee21$(_context21) {
             while (1) switch (_context21.prev = _context21.next) {
@@ -3051,7 +3054,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           }, _callee21);
         }));
         return function eventf(_x31) {
-          return _ref7.apply(this, arguments);
+          return _ref8.apply(this, arguments);
         };
       }();
       Canvas.canvas.removeEventListener('click', eventf);
@@ -3163,24 +3166,59 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       obj.doubleRunable = doubleRunable;
       if (functionDeclareType.isGenerator) {
         var _func = func.bind(_entity);
-        obj.f = _func(); // generator()
-      } else {
-        var _func2 = func.bind(_entity);
-        var f = /*#__PURE__*/function () {
+        var _func2 = _func(_entity);
+        var _f = /*#__PURE__*/function () {
           var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
             return _regeneratorRuntime().wrap(function _callee22$(_context22) {
               while (1) switch (_context22.prev = _context22.next) {
                 case 0:
-                  _context22.next = 2;
-                  return _awaitAsyncGenerator(_func2(_entity));
+                  _context22.prev = 0;
+                  return _context22.delegateYield(_asyncGeneratorDelegate(_asyncIterator(_func2), _awaitAsyncGenerator), "t0", 2);
                 case 2:
+                  _context22.next = 8;
+                  break;
+                case 4:
+                  _context22.prev = 4;
+                  _context22.t1 = _context22["catch"](0);
+                  console.log(_context22.t1);
+                  throw _context22.t1;
+                case 8:
                 case "end":
                   return _context22.stop();
               }
-            }, _callee22);
+            }, _callee22, null, [[0, 4]]);
+          }));
+          return function _f() {
+            return _ref.apply(this, arguments);
+          };
+        }();
+        obj.f = _f();
+      } else {
+        var _func3 = func.bind(_entity);
+        var f = /*#__PURE__*/function () {
+          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
+            return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+              while (1) switch (_context23.prev = _context23.next) {
+                case 0:
+                  _context23.prev = 0;
+                  _context23.next = 3;
+                  return _awaitAsyncGenerator(_func3(_entity));
+                case 3:
+                  _context23.next = 9;
+                  break;
+                case 5:
+                  _context23.prev = 5;
+                  _context23.t0 = _context23["catch"](0);
+                  console.log(_context23.t0);
+                  throw _context23.t0;
+                case 9:
+                case "end":
+                  return _context23.stop();
+              }
+            }, _callee23, null, [[0, 5]]);
           }));
           return function f() {
-            return _ref.apply(this, arguments);
+            return _ref2.apply(this, arguments);
           };
         }();
         obj.f = f();
@@ -3218,22 +3256,22 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
         var _func = func.bind(_entity);
         obj.f = _func.apply(void 0, args); // generator()
       } else {
-        var _func3 = func.bind(_entity);
+        var _func4 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
-            return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-              while (1) switch (_context23.prev = _context23.next) {
+          var _ref3 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24() {
+            return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+              while (1) switch (_context24.prev = _context24.next) {
                 case 0:
-                  _context23.next = 2;
-                  return _awaitAsyncGenerator(_func3.apply(void 0, args));
+                  _context24.next = 2;
+                  return _awaitAsyncGenerator(_func4.apply(void 0, args));
                 case 2:
                 case "end":
-                  return _context23.stop();
+                  return _context24.stop();
               }
-            }, _callee23);
+            }, _callee24);
           }));
           return function f() {
-            return _ref2.apply(this, arguments);
+            return _ref3.apply(this, arguments);
           };
         }();
         obj.f = f();
@@ -3403,28 +3441,28 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$speechAndWait",
     value: function () {
-      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(words, properties) {
+      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(words, properties) {
         var gender,
           locale,
           _properties,
           speech,
-          _args24 = arguments;
-        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
-          while (1) switch (_context24.prev = _context24.next) {
+          _args25 = arguments;
+        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+          while (1) switch (_context25.prev = _context25.next) {
             case 0:
-              gender = _args24.length > 2 && _args24[2] !== undefined ? _args24[2] : 'male';
-              locale = _args24.length > 3 && _args24[3] !== undefined ? _args24[3] : 'ja-JP';
+              gender = _args25.length > 2 && _args25[2] !== undefined ? _args25[2] : 'male';
+              locale = _args25.length > 3 && _args25[3] !== undefined ? _args25[3] : 'ja-JP';
               _properties = properties ? properties : {};
               speech = Speech.getInstance();
               speech.gender = gender;
               speech.locale = locale;
-              _context24.next = 8;
+              _context25.next = 8;
               return speech.speechAndWait(this, words, _properties);
             case 8:
             case "end":
-              return _context24.stop();
+              return _context25.stop();
           }
-        }, _callee24, this);
+        }, _callee25, this);
       }));
       function $speechAndWait(_x32, _x33) {
         return _$speechAndWait.apply(this, arguments);
@@ -3447,17 +3485,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "forever",
     value: function () {
-      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(func) {
-        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
-          while (1) switch (_context25.prev = _context25.next) {
+      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(func) {
+        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+          while (1) switch (_context26.prev = _context26.next) {
             case 0:
-              _context25.next = 2;
+              _context26.next = 2;
               return Loop["while"](true, func, this);
             case 2:
             case "end":
-              return _context25.stop();
+              return _context26.stop();
           }
-        }, _callee25, this);
+        }, _callee26, this);
       }));
       function forever(_x34) {
         return _forever.apply(this, arguments);
@@ -3467,17 +3505,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "while",
     value: function () {
-      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
-          while (1) switch (_context26.prev = _context26.next) {
+      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+          while (1) switch (_context27.prev = _context27.next) {
             case 0:
-              _context26.next = 2;
+              _context27.next = 2;
               return Loop["while"](condition, func, this);
             case 2:
             case "end":
-              return _context26.stop();
+              return _context27.stop();
           }
-        }, _callee26, this);
+        }, _callee27, this);
       }));
       function _while(_x35, _x36) {
         return _while2.apply(this, arguments);
@@ -3487,17 +3525,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeat",
     value: function () {
-      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(count, func) {
-        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
-          while (1) switch (_context27.prev = _context27.next) {
+      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(count, func) {
+        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+          while (1) switch (_context28.prev = _context28.next) {
             case 0:
-              _context27.next = 2;
+              _context28.next = 2;
               return Loop.repeat(count, func, this);
             case 2:
             case "end":
-              return _context27.stop();
+              return _context28.stop();
           }
-        }, _callee27, this);
+        }, _callee28, this);
       }));
       function repeat(_x37, _x38) {
         return _repeat.apply(this, arguments);
@@ -3507,17 +3545,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeatUntil",
     value: function () {
-      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
-          while (1) switch (_context28.prev = _context28.next) {
+      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
+          while (1) switch (_context29.prev = _context29.next) {
             case 0:
-              _context28.next = 2;
+              _context29.next = 2;
               return Loop.repeatUntil(condition, func, this);
             case 2:
             case "end":
-              return _context28.stop();
+              return _context29.stop();
           }
-        }, _callee28, this);
+        }, _callee29, this);
       }));
       function repeatUntil(_x39, _x40) {
         return _repeatUntil.apply(this, arguments);
@@ -3744,7 +3782,7 @@ var _ImageLoader = /*#__PURE__*/function () {
                 _context.next = 9;
                 break;
               }
-              throw "ローディングエラー。SVG画像データの指定を確認してください。";
+              throw "ローディングエラー。SVG画像データの指定を確認してください。(" + image + ")";
             case 9:
               parser = SVGParser["default"];
               svgDoc = parser.parseFromString(_text);
@@ -3776,7 +3814,7 @@ var _ImageLoader = /*#__PURE__*/function () {
                 _context.next = 26;
                 break;
               }
-              throw "イメージローディングエラー。画像データの指定を確認してください。";
+              throw "イメージローディングエラー。画像データの指定を確認してください。(" + localUrl + ")";
             case 26:
               return _context.abrupt("return", {
                 name: name,
