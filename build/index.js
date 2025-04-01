@@ -5149,7 +5149,8 @@ var Monitor = /*#__PURE__*/function () {
       var createElement = function createElement(node) {
         return document.createElement(node);
       };
-      var _stageCanvasWrapper = getElementById('stageCanvasWrapper');
+      //const _stageCanvasWrapper = getElementById('stageCanvasWrapper');
+      var canvasDiv = getElementById('canvasDiv');
       var uid = this.id;
       var stageMonitorContainer = createElement('div');
       this.stageMonitorContainer = stageMonitorContainer;
@@ -5158,7 +5159,9 @@ var Monitor = /*#__PURE__*/function () {
       stageMonitorContainer.classList.add('dragTarget');
       stageMonitorContainer.id = "stageMonitorContainer_".concat(uid);
       stageMonitorContainer.setAttribute("style", "touch-action: none;");
-      _stageCanvasWrapper.appendChild(stageMonitorContainer);
+      canvasDiv.appendChild(stageMonitorContainer);
+      //_stageCanvasWrapper.appendChild(stageMonitorContainer);
+
       var defaultMonitor = createElement('div');
       defaultMonitor.id = "defaultMonitor_".concat(uid);
       defaultMonitor.top = "100px";
@@ -5174,7 +5177,8 @@ var Monitor = /*#__PURE__*/function () {
       this.monitorLabel = monitorLabel;
       monitorLabel.classList.add('monitor_label');
       monitorRaw.appendChild(monitorLabel);
-      monitorLabel.innerHTML = "".concat(this._label);
+      //        monitorLabel.innerHTML  = `${this._label}`;
+
       var monitorValue = createElement('div');
       monitorValue.id = "monitorValue_".concat(uid);
       this.monitorValue = monitorValue;
@@ -5199,9 +5203,9 @@ var Monitor = /*#__PURE__*/function () {
         x: this._scale / renderRate.x,
         y: this._scale / renderRate.y
       };
-      var top = original_rect.height * (this.no - 1);
+      var top = original_rect.height;
       stageMonitorContainer.style.top = "".concat(top, "px"); // (canvasClientRect.top+50) +"px";
-      stageMonitorContainer.style.left = 0; //`${left}px` ;// (canvasClientRect.left+50) +"px";
+      stageMonitorContainer.style.left = "10px"; //`${left}px` ;// (canvasClientRect.left+50) +"px";
       stageMonitorContainer.style.transform = "scale(".concat(scale.x, ", ").concat(scale.y, ")");
       var scratch_rect_size = libs.toScratchPosition(original_rect.width, original_rect.height);
       this.original_rect = {
@@ -5209,8 +5213,9 @@ var Monitor = /*#__PURE__*/function () {
         height: scratch_rect_size.y
       };
       //        console.log(this.original_rect)
-
+      console.log("before resize, " + stageMonitorContainer.style.left);
       this.resize();
+      console.log("after resize, " + stageMonitorContainer.style.left);
       return stageMonitorContainer;
     }
   }, {
@@ -5322,21 +5327,25 @@ var Monitor = /*#__PURE__*/function () {
     key: "resize",
     value: function resize() {
       // キャンバスの位置( main 左端からの距離 )
-      var canvas = PlayGround["default"].canvas;
-      var offsetLeftOnMain = canvas.offsetLeft;
+      //const canvas = PlayGround.default.canvas;
+      //const offsetLeftOnMain = canvas.offsetLeft;
       //console.log(offsetLeftOnMain);
 
       var libs = Libs["default"];
       var target = this.stageMonitorContainer;
       var renderRate = libs.renderRate;
-      var dataX = parseFloat(target.getAttribute('scratch-x')) || 0;
+      var dataX = parseFloat(target.getAttribute('scratch-x')) || 10;
       //        const dataX = parseFloat(target.getAttribute('scratch-x')) || offsetLeftOnMain;
-      var dataY = parseFloat(target.getAttribute('scratch-y')) || 0;
+      var dataY = parseFloat(target.getAttribute('scratch-y')) || 10;
       var dActualPosition = libs.toActualPosition(dataX, dataY);
       var scaleX = this._scale / renderRate.x;
       var scaleY = this._scale / renderRate.y;
       target.setAttribute('actualScale-x', scaleX);
       target.setAttribute('actualScale-y', scaleY);
+      console.log("dActualPosition:" + this._label);
+      console.log(dActualPosition);
+      console.log("scaleX, scaleY:" + this._label);
+      console.log(scaleX, scaleY);
       var original_rect = this.original_rect;
       var scaled_rect = {
         width: original_rect.width * scaleX,
@@ -5347,6 +5356,8 @@ var Monitor = /*#__PURE__*/function () {
         y: (scaled_rect.height - original_rect.height) / 2
       };
       var adjustPosition = this._adjustPositionByScale(dActualPosition.x, dActualPosition.y, scaleX, scaleY);
+      console.log("adjustPosition:" + this._label);
+      console.log(adjustPosition);
       target.style.left = "".concat(adjustPosition.x, "px"); // (canvasClientRect.top+50) +"px";
       target.style.top = "".concat(adjustPosition.y, "px"); // (canvasClientRect.left+50) +"px";
       target.style.transform = "scale(".concat(scaleX, ", ").concat(scaleY, ")");
@@ -5376,8 +5387,8 @@ var Monitor = /*#__PURE__*/function () {
   }, {
     key: "label",
     set: function set(_label) {
-      this._label = _label;
-      this.monitorLabel.innerHTML = "".concat(this._label);
+      //this._label = _label;
+      this.monitorLabel.innerHTML = "".concat(_label);
     }
   }, {
     key: "maxSize",

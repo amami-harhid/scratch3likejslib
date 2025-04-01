@@ -19,7 +19,7 @@ let stage;
 let ball;
 let monitors;
 
-const SECONDS_COUNTER = "secondsCounter";
+const SECONDS_COUNTER =         "secondsCounter";
 let secondsCounter = 0;
 const BORDER_TOUCHING_COUNTER = "borderTouchingCounter";
 let borderTouchingCounter = 0;
@@ -39,14 +39,14 @@ Pg.prepare = async function () {
     monitors = new Lib.Monitors();
     monitors.add(SECONDS_COUNTER);
     monitors.add(BORDER_TOUCHING_COUNTER);
+    monitors.add(BORDER_TOUCHING_COUNTER+"2");
     monitors.get(SECONDS_COUNTER).label = "秒数";
-//    monitors.get(SECONDS_COUNTER).setPosition({x:17, y:7});
     monitors.get(BORDER_TOUCHING_COUNTER).label = "回数";
-//    monitors.get(BORDER_TOUCHING_COUNTER).setPosition({x:5,y:41});
+    monitors.get(BORDER_TOUCHING_COUNTER+"2").label = "〇〇";
 
     monitors.get(SECONDS_COUNTER).value = secondsCounter;
     monitors.get(BORDER_TOUCHING_COUNTER).value = borderTouchingCounter;
-
+    monitors.automatic();
 //    monitors.automatic();
 }
 
@@ -83,9 +83,9 @@ Pg.setting = async function () {
         for(;;){
             this.Motion.moveSteps(5);
             this.Motion.ifOnEdgeBounds();
-            if(this.Sensing.isTouchingEdge()){
-                monitors.get(BORDER_TOUCHING_COUNTER).value += 1;
-            }
+            // if(this.Sensing.isTouchingEdge()){
+            //     monitors.get(BORDER_TOUCHING_COUNTER).value += 1;
+            // }
             yield;
         }
     });
