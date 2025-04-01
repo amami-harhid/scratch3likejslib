@@ -381,12 +381,14 @@ var _Canvas = /*#__PURE__*/function () {
       if (_Canvas.canvas) {
         return _Canvas.canvas;
       }
-      var stageCanvasWrapper = _Canvas.getStageCanvasWrapper();
+      //        const stageCanvasWrapper = Canvas.getStageCanvasWrapper();
+
+      var canvasDiv = _Canvas.getLikeScratchCanvas();
       var canvas = document.getElementById('canvas');
       if (canvas == undefined) {
         canvas = document.createElement('canvas');
         canvas.id = 'canvas';
-        stageCanvasWrapper.appendChild(canvas);
+        canvasDiv.appendChild(canvas);
       }
       _Canvas.canvas = canvas;
       _Canvas.createTextCanvas();
@@ -399,9 +401,11 @@ var _Canvas = /*#__PURE__*/function () {
       if (canvasText2D) {
         return;
       }
-      var stageCanvasWrapper = _Canvas.getStageCanvasWrapper();
+
+      //        const stageCanvasWrapper = Canvas.getStageCanvasWrapper();
+      var canvasDiv = _Canvas.getLikeScratchCanvas();
       canvasText2D = document.createElement('canvas');
-      stageCanvasWrapper.appendChild(canvasText2D);
+      canvasDiv.appendChild(canvasText2D);
       canvasText2D.id = CanvasText2dId;
       canvasText2D.className = CanvasText2dClassName;
       canvasText2D.style.position = 'absolute';
@@ -432,6 +436,20 @@ var _Canvas = /*#__PURE__*/function () {
       //stageCanvasWrapper.style.position = 'relative';
       main.appendChild(stageCanvasWrapper);
       return stageCanvasWrapper;
+    }
+  }, {
+    key: "getLikeScratchCanvas",
+    value: function getLikeScratchCanvas() {
+      var canvasDiv = document.getElementById('canvasDiv');
+      if (canvasDiv) {
+        return canvasDiv;
+      }
+      var stageCanvasWrapper = _Canvas.getStageCanvasWrapper();
+      canvasDiv = document.createElement('div');
+      canvasDiv.classList.add('likeScratch-canvas');
+      canvasDiv.id = 'canvasDiv';
+      stageCanvasWrapper.appendChild(canvasDiv);
+      return canvasDiv;
     }
   }]);
 }();
@@ -1203,7 +1221,8 @@ var CSS = {
   scratch3Header: "\n.scratch3Header {\n        position: fixed;\n        background-color: rgb(232, 237, 241);\n        top: 0;\n        left: 0;\n        right: 0;\n        z-index: 5000;\n        width: 100%;\n  }\n.scratch3HeaderMenu {\n    display: flex;\n    margin: auto;\n    justify-content: space-between;\n    flex-shrink: 0;\n    align-items: center;\n    height: 2.0rem;\n    padding-top: 0;\n    padding-bottom: 0;\n}\n.controls_controls-container {\n    display: flex;\n}\n.green-flag_green-flag {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    user-drag: none;\n    cursor: pointer;\n}\n.green-flag_green-flag:hover {\n    background-color: hsla(260, 60%, 60%, 0.15);\n}\n.green-flag_green-flag.running {\n    background-color: hsla(260, 60%, 60%, 0.55);\n    opacity: 0.5;\n    filter:brightness(1.2);\n    transform:none;\n}\n.green-flag_green-flag.not-running {\n    opacity: 1.0;\n}\n\n\n.pause-button {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    user-drag: none;\n    cursor: pointer;\n}\n.stop-all_stop-all_pluqe {\n    width: 2rem;\n    height: 2rem;\n    padding: 0.375rem;\n    border-radius: 0.25rem;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n    cursor: pointer;\n}\n.stop-all_stop-all_pluqe:hover {\n    background-color: hsla(260, 60%, 60%, 0.15);\n}\n.stop-all_stop-all_pluqe.is-not-active {\n    opacity: 0.5;\n    filter:brightness(1.2);\n    transform:none;\n}\n.stop-all_stop-all_pluqe.is-active {\n    opacity: 1.0;\n}\n.title-field {\n    padding-left: 0.65rem;\n    padding-top: 0.375rem;\n    padding-right: 0.375rem;\n    padding-bottom: 0.375rem;\n    font-size: 0.8rem  \n}\n\n",
   canvasCss: "\n.stageCanvasWrapper {\n    position: fixed;\n    top: 2rem;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 5000;\n    background-color: hsla(0, 100%, 100%, 1);\n    padding: 0.1rem;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n}\n.likeScratch-canvas {\n        display: block;\n        border: 1px solid #141414;\n        border-radius: 15px;\n  }  \n",
   textCanvasCss: "\n.likeScratch-text-canvas {\n        pointer-events: none;\n  }\n",
-  mainTmpCss: "\n.nowLoading {\n    background-image: url(https://amami-harhid.github.io/scratch3LikeJs/web/assets/NowLoading.svg);\n    background-repeat: no-repeat;\n    background-position: center;\n    background-color: #f0f0f0;\n}\n"
+  mainTmpCss: "\n.nowLoading {\n    background-image: url(https://amami-harhid.github.io/scratch3LikeJs/web/assets/NowLoading.svg);\n    background-repeat: no-repeat;\n    background-position: center;\n    background-color: #f0f0f0;\n}\n",
+  askCss: "\n.stage_stage-overlays {\n    position: absolute;\n    top: 0.0625rem;\n    left: 0.0625rem;\n    pointer-events: none;\n    width: 100%;\n    height: 100%;\n    z-index: 9999;\n}\n.stage_stage-bottom-wrapper {\n    position: absolute;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-end;\n    top: 0;\n    left: 0;\n    overflow: hidden;\n    pointer-events: none;\n    width:100%;\n    height:100%;\n}\n.stage_question-wrapper {\n    width:100%;\n    pointer-events: auto;\n    z-index:99999;\n}\n.question_question-container {\n    margin: 0.5rem;\n    border: 1px solid hsla(0, 0%, 0%, 0.15);\n    border-radius: 0.5rem;\n    border-width: 2px;\n    padding: 1rem;\n    background: white;\n}\n.question_question-input {\n    display: flex;\n    position: relative;\n    width:100%;\n}\n.question_question-input > input {\n    padding: 0 2rem 0 .75rem;\n    width:100%;\n    font-weight: normal;\n}\n.question_question-input > input:focus {\n    box-shadow: 0px 0px 0px 3px hsla(260, 60%, 60%, 0.35);\n}\n.input_input-form {\n    height: 2rem;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 1.2rem;\n    color: hsla(225, 15%, 40%, 1);\n    border-width: 1px;\n    border-style: solid;\n    border-color: hsla(0, 0%, 0%, 0.15);\n    border-radius: 2rem;\n    outline: none;\n    cursor: text;\n    transition: 0.25s ease-out;\n    box-shadow: none;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n    min-width: 0;\n    width:100%;\n}\n.input_input-form : hover {\n    border-color : hsla( 260, 60%, 60%, 1);\n}\n.question_question-submit-button{\n    position: absolute;\n    top: calc(0.5rem / 2);\n    right: calc(0.5rem /2);\n    width: calc(2rem - 0.5rem);\n    height: calc(2rem - 0.5rem);\n    border: none;\n    border-radius: 100%;\n    color: white;\n    background: hsla(260, 60%, 60%, 1);\n}\n.question_question-submit-button-icon {\n    width: calc(2rem - 0.5rem);\n    height: calc(2rem - 0.5rem);\n    position: relative;\n    right: -7px;\n    left: -7px;\n}    \n    "
 };
 module.exports = CSS;
 
@@ -1374,7 +1393,7 @@ var _Element = /*#__PURE__*/function () {
     key: "insertCss",
     value: function insertCss() {
       var style = document.createElement('style');
-      style.innerHTML = "\n            ".concat(CSS.documentCss, "\n\n\n            ").concat(CSS.flagCss, "\n\n\n            ").concat(CSS.scratch3Header, "\n\n\n            ").concat(CSS.canvasCss, "\n\n\n            ").concat(CSS.textCanvasCss, "\n\n\n            ").concat(CSS.mainTmpCss, "\n\n\n        ");
+      style.innerHTML = "\n            ".concat(CSS.documentCss, "\n\n\n            ").concat(CSS.flagCss, "\n\n\n            ").concat(CSS.scratch3Header, "\n\n\n            ").concat(CSS.canvasCss, "\n\n\n            ").concat(CSS.textCanvasCss, "\n\n\n            ").concat(CSS.mainTmpCss, "\n\n\n            ").concat(CSS.askCss, "\n\n\n        ");
       document.getElementsByTagName('head')[0].appendChild(style);
     }
   }, {
@@ -2464,28 +2483,6 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var touching = this.$isTouchingTargetToTarget(src, targets);
       return touching;
     }
-  }, {
-    key: "$askAndWait",
-    value: function () {
-      var _$askAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(question) {
-        var answer;
-        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
-          while (1) switch (_context12.prev = _context12.next) {
-            case 0:
-              // 工事中
-              answer = "\u305F\u3060\u3044\u307E\u8CEA\u554F\u300E".concat(question, "\u300F\u306B\u306F\u7B54\u3048\u3089\u308C\u307E\u305B\u3093");
-              return _context12.abrupt("return", answer);
-            case 2:
-            case "end":
-              return _context12.stop();
-          }
-        }, _callee12);
-      }));
-      function $askAndWait(_x20) {
-        return _$askAndWait.apply(this, arguments);
-      }
-      return $askAndWait;
-    }()
     /**
      * 指定した色に触れているかを判定する
      * @param {string} targetRgb #始まりのカラー文字列
@@ -2494,30 +2491,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$isTouchingColor",
     value: (function () {
-      var _$isTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(targetRgb) {
+      var _$isTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(targetRgb) {
         var _renderer, _targetRgb;
-        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
-          while (1) switch (_context13.prev = _context13.next) {
+        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+          while (1) switch (_context12.prev = _context12.next) {
             case 0:
               if (!(this.render && this.render.renderer && targetRgb && typeof targetRgb === 'string' && targetRgb.substring(0, 1) === '#')) {
-                _context13.next = 6;
+                _context12.next = 6;
                 break;
               }
               _renderer = this.render.renderer;
               _targetRgb = Libs["default"].Cast.toRgbColorObject(targetRgb);
-              _context13.next = 5;
+              _context12.next = 5;
               return _renderer.isTouchingColor(this.drawableID, [_targetRgb.r, _targetRgb.g, _targetRgb.b]);
             case 5:
-              return _context13.abrupt("return", _context13.sent);
+              return _context12.abrupt("return", _context12.sent);
             case 6:
-              return _context13.abrupt("return", false);
+              return _context12.abrupt("return", false);
             case 7:
             case "end":
-              return _context13.stop();
+              return _context12.stop();
           }
-        }, _callee13, this);
+        }, _callee12, this);
       }));
-      function $isTouchingColor(_x21) {
+      function $isTouchingColor(_x20) {
         return _$isTouchingColor.apply(this, arguments);
       }
       return $isTouchingColor;
@@ -2532,31 +2529,31 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$colorIsTouchingColor",
     value: (function () {
-      var _$colorIsTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(targetRgb, maskRgb) {
+      var _$colorIsTouchingColor = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee13(targetRgb, maskRgb) {
         var _renderer, _targetRgb, _maskRgb;
-        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
-          while (1) switch (_context14.prev = _context14.next) {
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+          while (1) switch (_context13.prev = _context13.next) {
             case 0:
               if (!(this.render && this.render.renderer && targetRgb && typeof targetRgb === 'string' && targetRgb.substring(0, 1) === '#' && maskRgb && typeof maskRgb === 'string' && maskRgb.substring(0, 1) === '#')) {
-                _context14.next = 7;
+                _context13.next = 7;
                 break;
               }
               _renderer = this.render.renderer;
               _targetRgb = Libs["default"].Cast.toRgbColorObject(targetRgb);
               _maskRgb = Libs["default"].Cast.toRgbColorObject(maskRgb);
-              _context14.next = 6;
+              _context13.next = 6;
               return _renderer.isTouchingColor(this.drawableID, [_targetRgb.r, _targetRgb.g, _targetRgb.b], [_maskRgb.r, _maskRgb.g, _maskRgb.b]);
             case 6:
-              return _context14.abrupt("return", _context14.sent);
+              return _context13.abrupt("return", _context13.sent);
             case 7:
-              return _context14.abrupt("return", false);
+              return _context13.abrupt("return", false);
             case 8:
             case "end":
-              return _context14.stop();
+              return _context13.stop();
           }
-        }, _callee14, this);
+        }, _callee13, this);
       }));
-      function $colorIsTouchingColor(_x22, _x23) {
+      function $colorIsTouchingColor(_x21, _x22) {
         return _$colorIsTouchingColor.apply(this, arguments);
       }
       return $colorIsTouchingColor;
@@ -2576,7 +2573,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$broadcastAndWait",
     value: function () {
-      var _$broadcastAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(messageId) {
+      var _$broadcastAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee14(messageId) {
         var wait,
           runtime,
           eventId,
@@ -2585,38 +2582,38 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           args,
           _key2,
           promises,
-          _args15 = arguments;
-        return _regeneratorRuntime().wrap(function _callee15$(_context15) {
-          while (1) switch (_context15.prev = _context15.next) {
+          _args14 = arguments;
+        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+          while (1) switch (_context14.prev = _context14.next) {
             case 0:
               wait = Libs["default"].wait;
               runtime = PlayGround["default"].runtime;
               eventId = "message_".concat(messageId);
               this.modules.set(eventId, []);
               sendTarges = [];
-              for (_len2 = _args15.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = _args15[_key2];
+              for (_len2 = _args14.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                args[_key2 - 1] = _args14[_key2];
               }
               runtime.emit.apply(runtime, [eventId, this.modules, sendTarges].concat(args));
-              _context15.next = 9;
+              _context14.next = 9;
               return wait(10);
             case 9:
               promises = this.modules.get(eventId);
               if (!(promises.length > 0)) {
-                _context15.next = 14;
+                _context14.next = 14;
                 break;
               }
-              _context15.next = 13;
+              _context14.next = 13;
               return Promise.all(promises);
             case 13:
-              return _context15.abrupt("return");
+              return _context14.abrupt("return");
             case 14:
             case "end":
-              return _context15.stop();
+              return _context14.stop();
           }
-        }, _callee15, this);
+        }, _callee14, this);
       }));
-      function $broadcastAndWait(_x24) {
+      function $broadcastAndWait(_x23) {
         return _$broadcastAndWait.apply(this, arguments);
       }
       return $broadcastAndWait;
@@ -2650,7 +2647,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$broadcastAndWaitToTargets",
     value: function () {
-      var _$broadcastAndWaitToTargets = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(messageId, target) {
+      var _$broadcastAndWaitToTargets = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee15(messageId, target) {
         var runtime,
           wait,
           eventId,
@@ -2660,9 +2657,9 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           args,
           _key4,
           promises,
-          _args16 = arguments;
-        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-          while (1) switch (_context16.prev = _context16.next) {
+          _args15 = arguments;
+        return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+          while (1) switch (_context15.prev = _context15.next) {
             case 0:
               runtime = PlayGround["default"].runtime;
               wait = Libs["default"].wait;
@@ -2682,32 +2679,32 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               }
               if (!(sendTargets.length > 0)) {
-                _context16.next = 16;
+                _context15.next = 16;
                 break;
               }
-              for (_len4 = _args16.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-                args[_key4 - 2] = _args16[_key4];
+              for (_len4 = _args15.length, args = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+                args[_key4 - 2] = _args15[_key4];
               }
               runtime.emit.apply(runtime, [eventId, this.modules, _targets].concat(args));
-              _context16.next = 11;
+              _context15.next = 11;
               return wait(10);
             case 11:
               promises = this.modules.get(eventId);
               if (!(promises.length > 0)) {
-                _context16.next = 16;
+                _context15.next = 16;
                 break;
               }
-              _context16.next = 15;
+              _context15.next = 15;
               return Promise.all(promises);
             case 15:
-              return _context16.abrupt("return");
+              return _context15.abrupt("return");
             case 16:
             case "end":
-              return _context16.stop();
+              return _context15.stop();
           }
-        }, _callee16, this);
+        }, _callee15, this);
       }));
-      function $broadcastAndWaitToTargets(_x25, _x26) {
+      function $broadcastAndWaitToTargets(_x24, _x25) {
         return _$broadcastAndWaitToTargets.apply(this, arguments);
       }
       return $broadcastAndWaitToTargets;
@@ -2827,30 +2824,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var obj = proxy.startThreadMessageRecieved.apply(proxy, [func, proxy, false].concat(args));
       obj.originalF = func;
       var promise = new Promise(/*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(resolve) {
-          return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-            while (1) switch (_context17.prev = _context17.next) {
+        var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee16(resolve) {
+          return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+            while (1) switch (_context16.prev = _context16.next) {
               case 0:
                 if (!obj.done) {
-                  _context17.next = 2;
+                  _context16.next = 2;
                   break;
                 }
-                return _context17.abrupt("break", 6);
+                return _context16.abrupt("break", 6);
               case 2:
-                _context17.next = 4;
+                _context16.next = 4;
                 return Utils.wait(0.1);
               case 4:
-                _context17.next = 0;
+                _context16.next = 0;
                 break;
               case 6:
                 resolve();
               case 7:
               case "end":
-                return _context17.stop();
+                return _context16.stop();
             }
-          }, _callee17);
+          }, _callee16);
         }));
-        return function (_x27) {
+        return function (_x26) {
           return _ref5.apply(this, arguments);
         };
       }());
@@ -2878,28 +2875,28 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }
       var me = this;
       setTimeout(/*#__PURE__*/function () {
-        var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(_) {
+        var _ref6 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee17(_) {
           var _p, wait, f;
-          return _regeneratorRuntime().wrap(function _callee18$(_context18) {
-            while (1) switch (_context18.prev = _context18.next) {
+          return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+            while (1) switch (_context17.prev = _context17.next) {
               case 0:
                 _p = PlayGround["default"];
                 wait = Libs["default"].wait;
                 f = func.bind(me);
-                _context18.next = 5;
+                _context17.next = 5;
                 return f(me);
               case 5:
-                _context18.next = 7;
+                _context17.next = 7;
                 return wait(5);
               case 7:
                 _p._draw();
               case 8:
               case "end":
-                return _context18.stop();
+                return _context17.stop();
             }
-          }, _callee18);
+          }, _callee17);
         }));
-        return function (_x28) {
+        return function (_x27) {
           return _ref6.apply(this, arguments);
         };
       }(), 0);
@@ -2926,39 +2923,39 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenFlag",
     value: function () {
-      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(func) {
+      var _$whenFlag = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19(func) {
         var me, flag, clickFunc;
-        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
-          while (1) switch (_context20.prev = _context20.next) {
+        return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+          while (1) switch (_context19.prev = _context19.next) {
             case 0:
               //const process = Process.default;
               me = this;
               flag = Element.getControlGreenFlag();
               clickFunc = /*#__PURE__*/function () {
-                var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee19(e) {
-                  return _regeneratorRuntime().wrap(function _callee19$(_context19) {
-                    while (1) switch (_context19.prev = _context19.next) {
+                var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee18(e) {
+                  return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+                    while (1) switch (_context18.prev = _context18.next) {
                       case 0:
                         me.hatProc(func);
                         e.stopPropagation();
                       case 2:
                       case "end":
-                        return _context19.stop();
+                        return _context18.stop();
                     }
-                  }, _callee19);
+                  }, _callee18);
                 }));
-                return function clickFunc(_x30) {
+                return function clickFunc(_x29) {
                   return _ref7.apply(this, arguments);
                 };
               }(); //        flag.removeEventListener('click', clickFunc);
               flag.addEventListener('click', clickFunc);
             case 4:
             case "end":
-              return _context20.stop();
+              return _context19.stop();
           }
-        }, _callee20, this);
+        }, _callee19, this);
       }));
-      function $whenFlag(_x29) {
+      function $whenFlag(_x28) {
         return _$whenFlag.apply(this, arguments);
       }
       return $whenFlag;
@@ -3025,18 +3022,18 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var entityId = this.id;
       var me = this;
       var eventf = /*#__PURE__*/function () {
-        var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21(e) {
+        var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(e) {
           var mouseX, mouseY, _touchDrawableId, threadId, proxy;
-          return _regeneratorRuntime().wrap(function _callee21$(_context21) {
-            while (1) switch (_context21.prev = _context21.next) {
+          return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+            while (1) switch (_context20.prev = _context20.next) {
               case 0:
                 e.stopPropagation();
                 // 緑の旗押されていないときは何もしない。
                 if (!(p.runningGame === false)) {
-                  _context21.next = 3;
+                  _context20.next = 3;
                   break;
                 }
-                return _context21.abrupt("return");
+                return _context20.abrupt("return");
               case 3:
                 threads.removeObjById(entityId); // 前回のクリック分を止める。
                 mouseX = e.offsetX;
@@ -3054,11 +3051,11 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
               case 8:
               case "end":
-                return _context21.stop();
+                return _context20.stop();
             }
-          }, _callee21);
+          }, _callee20);
         }));
-        return function eventf(_x31) {
+        return function eventf(_x30) {
           return _ref8.apply(this, arguments);
         };
       }();
@@ -3173,25 +3170,25 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
         var _func = func.bind(_entity);
         var _func2 = _func(_entity);
         var _f = /*#__PURE__*/function () {
-          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
-            return _regeneratorRuntime().wrap(function _callee22$(_context22) {
-              while (1) switch (_context22.prev = _context22.next) {
+          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
+            return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+              while (1) switch (_context21.prev = _context21.next) {
                 case 0:
-                  _context22.prev = 0;
-                  return _context22.delegateYield(_asyncGeneratorDelegate(_asyncIterator(_func2), _awaitAsyncGenerator), "t0", 2);
+                  _context21.prev = 0;
+                  return _context21.delegateYield(_asyncGeneratorDelegate(_asyncIterator(_func2), _awaitAsyncGenerator), "t0", 2);
                 case 2:
-                  _context22.next = 8;
+                  _context21.next = 8;
                   break;
                 case 4:
-                  _context22.prev = 4;
-                  _context22.t1 = _context22["catch"](0);
-                  console.log(_context22.t1);
-                  throw _context22.t1;
+                  _context21.prev = 4;
+                  _context21.t1 = _context21["catch"](0);
+                  console.log(_context21.t1);
+                  throw _context21.t1;
                 case 8:
                 case "end":
-                  return _context22.stop();
+                  return _context21.stop();
               }
-            }, _callee22, null, [[0, 4]]);
+            }, _callee21, null, [[0, 4]]);
           }));
           return function _f() {
             return _ref.apply(this, arguments);
@@ -3201,26 +3198,26 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func3 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
-            return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-              while (1) switch (_context23.prev = _context23.next) {
+          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
+            return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+              while (1) switch (_context22.prev = _context22.next) {
                 case 0:
-                  _context23.prev = 0;
-                  _context23.next = 3;
+                  _context22.prev = 0;
+                  _context22.next = 3;
                   return _awaitAsyncGenerator(_func3(_entity));
                 case 3:
-                  _context23.next = 9;
+                  _context22.next = 9;
                   break;
                 case 5:
-                  _context23.prev = 5;
-                  _context23.t0 = _context23["catch"](0);
-                  console.log(_context23.t0);
-                  throw _context23.t0;
+                  _context22.prev = 5;
+                  _context22.t0 = _context22["catch"](0);
+                  console.log(_context22.t0);
+                  throw _context22.t0;
                 case 9:
                 case "end":
-                  return _context23.stop();
+                  return _context22.stop();
               }
-            }, _callee23, null, [[0, 5]]);
+            }, _callee22, null, [[0, 5]]);
           }));
           return function f() {
             return _ref2.apply(this, arguments);
@@ -3263,17 +3260,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func4 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref3 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24() {
-            return _regeneratorRuntime().wrap(function _callee24$(_context24) {
-              while (1) switch (_context24.prev = _context24.next) {
+          var _ref3 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
+            return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+              while (1) switch (_context23.prev = _context23.next) {
                 case 0:
-                  _context24.next = 2;
+                  _context23.next = 2;
                   return _awaitAsyncGenerator(_func4.apply(void 0, args));
                 case 2:
                 case "end":
-                  return _context24.stop();
+                  return _context23.stop();
               }
-            }, _callee24);
+            }, _callee23);
           }));
           return function f() {
             return _ref3.apply(this, arguments);
@@ -3446,30 +3443,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$speechAndWait",
     value: function () {
-      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(words, properties) {
+      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24(words, properties) {
         var gender,
           locale,
           _properties,
           speech,
-          _args25 = arguments;
-        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
-          while (1) switch (_context25.prev = _context25.next) {
+          _args24 = arguments;
+        return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+          while (1) switch (_context24.prev = _context24.next) {
             case 0:
-              gender = _args25.length > 2 && _args25[2] !== undefined ? _args25[2] : 'male';
-              locale = _args25.length > 3 && _args25[3] !== undefined ? _args25[3] : 'ja-JP';
+              gender = _args24.length > 2 && _args24[2] !== undefined ? _args24[2] : 'male';
+              locale = _args24.length > 3 && _args24[3] !== undefined ? _args24[3] : 'ja-JP';
               _properties = properties ? properties : {};
               speech = Speech.getInstance();
               speech.gender = gender;
               speech.locale = locale;
-              _context25.next = 8;
+              _context24.next = 8;
               return speech.speechAndWait(this, words, _properties);
             case 8:
             case "end":
-              return _context25.stop();
+              return _context24.stop();
           }
-        }, _callee25, this);
+        }, _callee24, this);
       }));
-      function $speechAndWait(_x32, _x33) {
+      function $speechAndWait(_x31, _x32) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3490,19 +3487,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "forever",
     value: function () {
-      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(func) {
-        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
-          while (1) switch (_context26.prev = _context26.next) {
+      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25(func) {
+        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+          while (1) switch (_context25.prev = _context25.next) {
             case 0:
-              _context26.next = 2;
+              _context25.next = 2;
               return Loop["while"](true, func, this);
             case 2:
             case "end":
-              return _context26.stop();
+              return _context25.stop();
           }
-        }, _callee26, this);
+        }, _callee25, this);
       }));
-      function forever(_x34) {
+      function forever(_x33) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3510,19 +3507,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "while",
     value: function () {
-      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
-          while (1) switch (_context27.prev = _context27.next) {
+      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+          while (1) switch (_context26.prev = _context26.next) {
             case 0:
-              _context27.next = 2;
+              _context26.next = 2;
               return Loop["while"](condition, func, this);
             case 2:
             case "end":
-              return _context27.stop();
+              return _context26.stop();
           }
-        }, _callee27, this);
+        }, _callee26, this);
       }));
-      function _while(_x35, _x36) {
+      function _while(_x34, _x35) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3530,19 +3527,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeat",
     value: function () {
-      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(count, func) {
-        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
-          while (1) switch (_context28.prev = _context28.next) {
+      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(count, func) {
+        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+          while (1) switch (_context27.prev = _context27.next) {
             case 0:
-              _context28.next = 2;
+              _context27.next = 2;
               return Loop.repeat(count, func, this);
             case 2:
             case "end":
-              return _context28.stop();
+              return _context27.stop();
           }
-        }, _callee28, this);
+        }, _callee27, this);
       }));
-      function repeat(_x37, _x38) {
+      function repeat(_x36, _x37) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3550,19 +3547,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeatUntil",
     value: function () {
-      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
-          while (1) switch (_context29.prev = _context29.next) {
+      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+          while (1) switch (_context28.prev = _context28.next) {
             case 0:
-              _context29.next = 2;
+              _context28.next = 2;
               return Loop.repeatUntil(condition, func, this);
             case 2:
             case "end":
-              return _context29.stop();
+              return _context28.stop();
           }
-        }, _callee29, this);
+        }, _callee28, this);
       }));
-      function repeatUntil(_x39, _x40) {
+      function repeatUntil(_x38, _x39) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -4095,9 +4092,11 @@ var Keyboard = /*#__PURE__*/function () {
         key: e.key
       };
       me.postData(data);
-      if (data.key == ' ') {
-        e.preventDefault();
-        e.stopPropagation();
+      if (me.spaceStopPropagation === true) {
+        if (data.key == ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
       }
     });
     document.addEventListener('keyup', function (e) {
@@ -4106,11 +4105,14 @@ var Keyboard = /*#__PURE__*/function () {
         key: e.key
       };
       me.postData(data);
-      if (data.key == ' ') {
-        e.preventDefault();
-        e.stopPropagation();
+      if (me.spaceStopPropagation === true) {
+        if (data.key == ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+        }
       }
     });
+    this.spaceStopPropagation = true;
   }
 
   /**
@@ -4473,6 +4475,138 @@ var MouseWheel = /*#__PURE__*/function () {
   }]);
 }();
 module.exports = MouseWheel;
+
+/***/ }),
+
+/***/ "../lib/io/questionBoxElement.js":
+/*!***************************************!*\
+  !*** ../lib/io/questionBoxElement.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   QuestionElement: () => (/* binding */ QuestionElement)
+/* harmony export */ });
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var playGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
+var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
+var stageStageOverlays = 'stage_stage-overlays';
+var QuestionElement = /*#__PURE__*/function (_EventEmitter) {
+  function QuestionElement() {
+    _classCallCheck(this, QuestionElement);
+    return _callSuper(this, QuestionElement);
+  }
+  _inherits(QuestionElement, _EventEmitter);
+  return _createClass(QuestionElement, [{
+    key: "ask",
+    value: function () {
+      var _ask = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var runtime, keyboard, canvasDiv, stage_stage_overlays, stage_stage_bottom_wrapper, stage_question_wrapper, div, div2, div3, input, button, img, inputText, inputChange, me, buttonClick;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              runtime = playGround["default"].runtime;
+              keyboard = runtime.ioDevices.keyboard;
+              keyboard.spaceStopPropagation = false;
+              //const main = document.getElementById('main');
+              canvasDiv = document.getElementById('canvasDiv');
+              stage_stage_overlays = document.createElement('div');
+              stage_stage_overlays.id = stageStageOverlays;
+              stage_stage_overlays.classList.add(stageStageOverlays);
+              canvasDiv.appendChild(stage_stage_overlays);
+              stage_stage_bottom_wrapper = document.createElement('div');
+              stage_stage_bottom_wrapper.classList.add('stage_stage-bottom-wrapper');
+              //stage_stage_bottom_wrapper.style.width = "90%";
+              //stage_stage_bottom_wrapper.style.height = "90%";
+
+              stage_stage_overlays.appendChild(stage_stage_bottom_wrapper);
+              stage_question_wrapper = document.createElement('div');
+              stage_question_wrapper.style.position = 'absolute';
+              stage_question_wrapper.classList.add("stage_question-wrapper");
+              stage_stage_bottom_wrapper.appendChild(stage_question_wrapper);
+              div = document.createElement('div');
+              stage_question_wrapper.appendChild(div);
+              div2 = document.createElement('div');
+              div2.classList.add("question_question-container");
+              div.appendChild(div2);
+              div3 = document.createElement('div');
+              div3.classList.add('question_question-input');
+              div2.appendChild(div3);
+              input = document.createElement('input');
+              input.classList.add('input_input-form');
+              input.setAttribute('type', 'text');
+              input.setAttribute('spellcheck', false);
+              div3.appendChild(input);
+              button = document.createElement('button');
+              button.classList.add('question_question-submit-button');
+              img = document.createElement('img');
+              img.classList.add('question_question-submit-button-icon');
+              img.draggable = false;
+              img.src = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUxLjIgKDU3NTE5KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5HZW5lcmFsL0NoZWNrPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTcuODYxNDQwNTksMTUuNDAyODc3NiBDNy40MzUyNjg1OSwxNS40MDI4Nzc2IDcuMDA5MDk2NTgsMTUuMjM5NzMzNiA2LjY4NDQ3MzM4LDE0LjkxNTExMDQgTDMuNDg4MTgzMzYsMTEuNzE4ODIwNCBDMi44MzcyNzIyMSwxMS4wNjc5MDkzIDIuODM3MjcyMjEsMTAuMDE1Nzk3MSAzLjQ4ODE4MzM2LDkuMzY0ODg2IEM0LjEzOTA5NDUsOC43MTM5NzQ4NSA1LjE5MTIwNjY0LDguNzEzOTc0ODUgNS44NDIxMTc3OCw5LjM2NDg4NiBMNy44NjE0NDA1OSwxMS4zODQyMDg4IEwxNC4xNTkxMzA4LDUuMDg4MTgzMzYgQzE0LjgwODM3NzIsNC40MzcyNzIyMSAxNS44NjIxNTQsNC40MzcyNzIyMSAxNi41MTMwNjUyLDUuMDg4MTgzMzYgQzE3LjE2MjMxMTYsNS43Mzc0Mjk3NyAxNy4xNjIzMTE2LDYuNzkxMjA2NjQgMTYuNTEzMDY1Miw3LjQ0MjExNzc4IEw5LjAzODQwNzgsMTQuOTE1MTEwNCBDOC43MTM3ODQ2LDE1LjIzOTczMzYgOC4yODc2MTI1OSwxNS40MDI4Nzc2IDcuODYxNDQwNTksMTUuNDAyODc3NiIgaWQ9InBhdGgtMSI+PC9wYXRoPgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkdlbmVyYWwvQ2hlY2siIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICA8L21hc2s+CiAgICAgICAgPHVzZSBpZD0iQ2hlY2siIGZpbGw9IiM1NzVFNzUiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgIDxnIGlkPSJDb2xvci9XaGl0ZSIgbWFzaz0idXJsKCNtYXNrLTIpIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHJlY3QgaWQ9IkNvbG9yIiB4PSIwIiB5PSIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
+              button.appendChild(img);
+              div3.appendChild(button);
+              inputText = '';
+              inputChange = function inputChange(e) {
+                inputText = e.currentTarget.value;
+                //input.setAttribute('value', inputText);
+              };
+              me = this;
+              input.addEventListener('input', inputChange);
+              input.addEventListener('keypress', function (e) {
+                if (e.key == 'Enter') {
+                  me.emit('textInput');
+                  return;
+                }
+              });
+              buttonClick = function buttonClick() {
+                me.emit('textInput');
+              };
+              button.addEventListener('click', buttonClick);
+              input.focus();
+              return _context.abrupt("return", new Promise(function (resolve) {
+                me.once('textInput', function () {
+                  keyboard.spaceStopPropagation = true;
+                  resolve(inputText);
+                });
+              }));
+            case 45:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this);
+      }));
+      function ask() {
+        return _ask.apply(this, arguments);
+      }
+      return ask;
+    }()
+  }, {
+    key: "removeAsk",
+    value: function removeAsk() {
+      var _stageStageOverlays = document.getElementById(stageStageOverlays);
+      if (_stageStageOverlays) {
+        _stageStageOverlays.remove();
+      }
+    }
+  }]);
+}(EventEmitter);
+
 
 /***/ }),
 
@@ -5128,7 +5262,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -6863,6 +6997,8 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
+var _require2 = __webpack_require__(/*! ./io/questionBoxElement */ "../lib/io/questionBoxElement.js"),
+  QuestionElement = _require2.QuestionElement;
 var StageLayering = __webpack_require__(/*! ./stageLayering */ "../lib/stageLayering.js");
 var Utils = __webpack_require__(/*! ./utils */ "../lib/utils.js");
 var _Sprite = /*#__PURE__*/function (_Entity) {
@@ -6943,8 +7079,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-              v.hatProc(func);
-          });
+             v.hatProc(func);
+         });
     }
     */
   }, {
@@ -7917,6 +8053,52 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         h: this.$_scale.h
       };
     }
+  }, {
+    key: "$askAndWait",
+    value: function () {
+      var _$askAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(text) {
+        var question, me;
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+          while (1) switch (_context8.prev = _context8.next) {
+            case 0:
+              this.$say(text);
+              question = new QuestionElement();
+              me = this;
+              return _context8.abrupt("return", new Promise(/*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(resolve) {
+                  var answer;
+                  return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                    while (1) switch (_context7.prev = _context7.next) {
+                      case 0:
+                        _context7.next = 2;
+                        return question.ask();
+                      case 2:
+                        answer = _context7.sent;
+                        me.$say('');
+                        question.removeAsk();
+                        console.log(answer);
+                        resolve(answer);
+                      case 7:
+                      case "end":
+                        return _context7.stop();
+                    }
+                  }, _callee7);
+                }));
+                return function (_x10) {
+                  return _ref2.apply(this, arguments);
+                };
+              }()));
+            case 4:
+            case "end":
+              return _context8.stop();
+          }
+        }, _callee8, this);
+      }));
+      function $askAndWait(_x9) {
+        return _$askAndWait.apply(this, arguments);
+      }
+      return $askAndWait;
+    }()
   }, {
     key: "M",
     get: function get() {
@@ -10832,6 +11014,7 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
+  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -11034,7 +11217,6 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
-  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -11178,7 +11360,6 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
-    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -11233,7 +11414,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -11413,16 +11594,6 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
-  }
-  parseClassAccessorProperty(node) {
-    const accessorPropertyNode = super.parseClassAccessorProperty(node);
-    {
-      if (!this.getPluginOption("estree", "classFeatures")) {
-        return accessorPropertyNode;
-      }
-    }
-    accessorPropertyNode.type = "AccessorProperty";
-    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -13129,7 +13300,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 2048)) return false;
+        if (!(this.optionFlags & 1024)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -13170,7 +13341,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -13286,7 +13457,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -13309,12 +13480,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 4096 ? [] : null;
+    const comments = this.optionFlags & 2048 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -13361,7 +13532,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -13372,7 +13543,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -14080,7 +14251,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 2048)) throw error;
+    if (!(this.optionFlags & 1024)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -14538,9 +14709,6 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
-    if (this.optionFlags & 32) {
-      paramFlags |= 1;
-    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -14567,7 +14735,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -14655,8 +14823,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
-    if (this.optionFlags & 4096) {
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 2048) {
       this.processComment(node);
     }
     return node;
@@ -14664,12 +14832,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 128) node.range[0] = startLoc.index;
+    if (this.optionFlags & 64) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -21219,7 +21387,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -21255,11 +21423,9 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    const isYield = this.isContextual(108);
-    if (isYield) {
+    if (this.isContextual(108)) {
       if (this.prodParam.hasYield) {
-        this.next();
-        let left = this.parseYield(startLoc);
+        let left = this.parseYield();
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -21310,16 +21476,6 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
-    }
-    if (isYield) {
-      const {
-        type
-      } = this.state;
-      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
-        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
-        return this.parseYield(startLoc);
-      }
     }
     return left;
   }
@@ -21497,7 +21653,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+      if (startsExpr && !this.isAmbiguousAwait()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -21736,7 +21892,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 512) {
+          if (this.optionFlags & 256) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -22041,7 +22197,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 512)) {
+      if (!(this.optionFlags & 256)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -22161,7 +22317,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 1024)) {
+    if (!(this.optionFlags & 512)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -22717,7 +22873,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousPrefixOrIdentifier()) {
+      if (this.isAmbiguousAwait()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -22728,16 +22884,17 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousPrefixOrIdentifier() {
+  isAmbiguousAwait() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield(startLoc) {
-    const node = this.startNodeAt(startLoc);
+  parseYield() {
+    const node = this.startNode();
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
+    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -23039,7 +23196,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -23049,7 +23206,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -24739,7 +24896,6 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
-        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -24853,34 +25009,31 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 64;
+      optionFlags |= 32;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.allowYieldOutsideFunction) {
-      optionFlags |= 32;
-    }
     if (options.ranges) {
-      optionFlags |= 128;
+      optionFlags |= 64;
     }
     if (options.tokens) {
-      optionFlags |= 256;
+      optionFlags |= 128;
     }
     if (options.createImportExpressions) {
-      optionFlags |= 512;
+      optionFlags |= 256;
     }
     if (options.createParenthesizedExpressions) {
-      optionFlags |= 1024;
+      optionFlags |= 512;
     }
     if (options.errorRecovery) {
-      optionFlags |= 2048;
+      optionFlags |= 1024;
     }
     if (options.attachComment) {
-      optionFlags |= 4096;
+      optionFlags |= 2048;
     }
     if (options.annexB) {
-      optionFlags |= 8192;
+      optionFlags |= 4096;
     }
     this.optionFlags = optionFlags;
   }
