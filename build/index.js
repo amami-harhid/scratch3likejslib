@@ -2897,6 +2897,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }(), 0);
     }
   }, {
+    key: "$whenBackdropSwitches",
+    value: function $whenBackdropSwitches(backdropName, func) {
+      // Stage#nextBackDrop(), Stage#switchBackDrop() にて
+      // 変更前のbackdropName と 変更後のbackdropName を比較し
+      // 異なる場合、変更後のbackdropNameを使ったメッセージID で emit する
+      // ここでは on でメッセージを受け取るが、
+      // Entity#whenBroadcastReceived() と同様の処理にする
+      var messageId = "BackdropSwitches_".concat(backdropName);
+      this.$whenBroadcastReceived(messageId, func);
+    }
+  }, {
     key: "getProxyForHat",
     value: function getProxyForHat() {
       var proxy = EntityProxyExt.getProxy(this, function (_) {
@@ -7999,7 +8010,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         //            "whenTargetMouseTouched": this.$whenTouchingTarget.bind(this),
         "whenClicked": this.$whenClicked.bind(this),
         /** 背景が〇〇に変わったとき */
-        "whenBackdropSwitchsTo": null // Entityで工事中
+        "whenBackdropSwitches": this.$whenBackdropSwitches.bind(this)
       };
     }
   }, {
@@ -8436,13 +8447,26 @@ var Stage = /*#__PURE__*/function (_Entity) {
       return iterator.toArray();
     }
   }, {
+    key: "$emitWhenBackdropChange",
+    value: function $emitWhenBackdropChange(backdropName, newBackdropName) {
+      if (backdropName === newBackdropName) {
+        var EmitId = "BackdropSwitches_".concat(newBackdropName);
+        var runtime = PlayGround["default"].runtime;
+        var eventId = "message_".concat(EmitId);
+        runtime.emit(eventId);
+      }
+    }
+  }, {
     key: "$nextBackDrop",
     value: function $nextBackDrop() {
       if (!this.isAlive()) return;
       if (this.backdrops) {
+        var name_before = this.backdrops.currentSkinName();
         this.backdrops.nextCostume();
+        var name_after = this.backdrops.currentSkinName();
+        this.$emitWhenBackdropChange(name_before, name_after);
       }
-      this.ifOnEdgeBounds();
+      //this.ifOnEdgeBounds();
     }
   }, {
     key: "$switchBackDrop",
@@ -8451,10 +8475,20 @@ var Stage = /*#__PURE__*/function (_Entity) {
       if (val) {
         if (typeof val === 'string') {
           var _name = val;
-          if (this.backdrops) this.backdrops.switchCostumeByName(_name);
+          if (this.backdrops) {
+            var name_before = this.backdrops.currentSkinName();
+            this.backdrops.switchCostumeByName(_name);
+            var name_after = this.backdrops.currentSkinName();
+            this.$emitWhenBackdropChange(name_before, name_after);
+          }
         } else if (Number.isInteger(val)) {
           var _idx = val;
-          if (this.backdrops) this.backdrops.switchCostumeByNumber(_idx);
+          if (this.backdrops) {
+            var _name_before = this.backdrops.currentSkinName();
+            this.backdrops.switchCostumeByNumber(_idx);
+            var _name_after = this.backdrops.currentSkinName();
+            this.$emitWhenBackdropChange(_name_before, _name_after);
+          }
         }
       }
     }
@@ -8563,7 +8597,8 @@ var Stage = /*#__PURE__*/function (_Entity) {
         //"whenMouseTouched": this.$whenMouseTouched.bind(this),
         //"whenTargetMouseTouched": this.$whenTouchingTarget.bind(this),
         "whenCloned": this.$whenCloned.bind(this),
-        "whenClicked": this.$whenClicked.bind(this)
+        "whenClicked": this.$whenClicked.bind(this),
+        "whenBackdropSwitches": this.$whenBackdropSwitches.bind(this)
       };
     }
   }, {
