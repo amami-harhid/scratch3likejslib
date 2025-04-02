@@ -33,7 +33,6 @@ Pg.setting = async function () {
 
     stage.Event.whenFlag( async function*(){ 
         this.Event.broadcast('START');
-        
     });
 
     /**
@@ -60,15 +59,28 @@ STAGE難易度を入力してね
         console.log(answer);
     });
 
-    cat.Event.whenFlag(async function(){
+    cat.Event.whenFlag(async function*(){
         await this.Control.wait(20);
         this.Looks.say('');
         console.log('SAY')
+        for(;;){
+            console.log(`mouseX=${this.Sensing.Mouse.x}, mouseY=${this.Sensing.Mouse.y}`);
+            yield;
+        }
+
     })
     cat.Event.whenClicked(async function(){
         console.log('cat click1');
-        await this.Control.wait(5);
-        this.Looks.say("こんにちは")
+        await this.Control.wait(1);
+//        this.Looks.say("こんにちは")
+        this.Motion.gotoXY(100,100);
+        console.log(`x=${this.Motion.Position.x}, y=${this.Motion.Position.y}`);
+        await this.Control.wait(1);
+        this.Motion.Position.x = 50;
+        console.log(`x=${this.Motion.Position.x}, y=${this.Motion.Position.y}`);
+        await this.Control.wait(1);
+        this.Motion.gotoXY(150,150);
+        console.log(`x=${this.Motion.Position.x}, y=${this.Motion.Position.y}`);
     });
     cat.Event.whenClicked(async function*(){
         console.log('cat click2');        let answer ;
