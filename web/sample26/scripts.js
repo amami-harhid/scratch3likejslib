@@ -29,9 +29,21 @@ Pg.prepare = async function () {
 
 Pg.setting = async function () {
 
-    cat.Event.whenFlag(async function*(){
+    stage.Event.whenClicked(async function() {
+        const question = `
+STAGE難易度を入力してね
+(1 - 3)`;
+        console.log(question);
+        const answer = await this.Sensing.askAndWait(question);
+        console.log(answer);
     });
 
+    cat.Event.whenFlag(async function*(){
+    });
+    cat.Event.whenClicked(async function(){
+        await this.Control.wait(5);
+        this.Looks.say("こんにちは")
+    });
     cat.Event.whenClicked(async function*(){
         let answer ;
         for(;;){
