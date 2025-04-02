@@ -69,7 +69,7 @@ STAGE難易度を入力してね
         }
 
     })
-    cat.Event.whenClicked(async function(){
+    cat.Event.whenClicked(async function*(){
         console.log('cat click1');
         await this.Control.wait(1);
 //        this.Looks.say("こんにちは")
@@ -81,6 +81,15 @@ STAGE難易度を入力してね
         await this.Control.wait(1);
         this.Motion.gotoXY(150,150);
         console.log(`x=${this.Motion.Position.x}, y=${this.Motion.Position.y}`);
+        await this.Control.wait(1);
+        this.Motion.gotoXY(0,0);
+        let degree = 90;
+        for(;;){
+            degree += 1;
+            this.Motion.Direction.degree -= 1;
+            //this.Motion.pointInDerection(degree);
+            yield;
+        }
     });
     cat.Event.whenClicked(async function*(){
         console.log('cat click2');        let answer ;

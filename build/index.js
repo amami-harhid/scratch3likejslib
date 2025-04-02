@@ -5438,7 +5438,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -7257,8 +7257,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-              v.hatProc(func);
-          });
+             v.hatProc(func);
+         });
     }
     */
   }, {
@@ -7902,14 +7902,14 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       if (_d < 0) {
         var _direction = _d % 360;
         if (_direction < -180) {
-          _direction = 180 + _direction;
+          _direction = 360 + _direction;
         }
         this.$_direction = _direction;
       } else {
         // _derection 0 以上 
         var _direction2 = _d % 360;
         if (_direction2 > 180) {
-          _direction2 = 180 - _direction2;
+          _direction2 = _direction2 - 360;
         }
         this.$_direction = _direction2;
       }
@@ -11296,6 +11296,7 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
+  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -11498,7 +11499,6 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
-  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -11642,7 +11642,6 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
-    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -11697,7 +11696,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -11877,16 +11876,6 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
-  }
-  parseClassAccessorProperty(node) {
-    const accessorPropertyNode = super.parseClassAccessorProperty(node);
-    {
-      if (!this.getPluginOption("estree", "classFeatures")) {
-        return accessorPropertyNode;
-      }
-    }
-    accessorPropertyNode.type = "AccessorProperty";
-    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -13593,7 +13582,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 2048)) return false;
+        if (!(this.optionFlags & 1024)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -13634,7 +13623,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -13750,7 +13739,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -13773,12 +13762,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 4096 ? [] : null;
+    const comments = this.optionFlags & 2048 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -13825,7 +13814,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -13836,7 +13825,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -14544,7 +14533,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 2048)) throw error;
+    if (!(this.optionFlags & 1024)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -15002,9 +14991,6 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
-    if (this.optionFlags & 32) {
-      paramFlags |= 1;
-    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -15031,7 +15017,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -15119,8 +15105,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
-    if (this.optionFlags & 4096) {
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 2048) {
       this.processComment(node);
     }
     return node;
@@ -15128,12 +15114,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 128) node.range[0] = startLoc.index;
+    if (this.optionFlags & 64) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -21683,7 +21669,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -21719,11 +21705,9 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    const isYield = this.isContextual(108);
-    if (isYield) {
+    if (this.isContextual(108)) {
       if (this.prodParam.hasYield) {
-        this.next();
-        let left = this.parseYield(startLoc);
+        let left = this.parseYield();
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -21774,16 +21758,6 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
-    }
-    if (isYield) {
-      const {
-        type
-      } = this.state;
-      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
-        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
-        return this.parseYield(startLoc);
-      }
     }
     return left;
   }
@@ -21961,7 +21935,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+      if (startsExpr && !this.isAmbiguousAwait()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -22200,7 +22174,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 512) {
+          if (this.optionFlags & 256) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -22505,7 +22479,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 512)) {
+      if (!(this.optionFlags & 256)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -22625,7 +22599,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 1024)) {
+    if (!(this.optionFlags & 512)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -23181,7 +23155,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousPrefixOrIdentifier()) {
+      if (this.isAmbiguousAwait()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -23192,16 +23166,17 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousPrefixOrIdentifier() {
+  isAmbiguousAwait() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield(startLoc) {
-    const node = this.startNodeAt(startLoc);
+  parseYield() {
+    const node = this.startNode();
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
+    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -23503,7 +23478,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -23513,7 +23488,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -25203,7 +25178,6 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
-        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -25317,34 +25291,31 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 64;
+      optionFlags |= 32;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.allowYieldOutsideFunction) {
-      optionFlags |= 32;
-    }
     if (options.ranges) {
-      optionFlags |= 128;
+      optionFlags |= 64;
     }
     if (options.tokens) {
-      optionFlags |= 256;
+      optionFlags |= 128;
     }
     if (options.createImportExpressions) {
-      optionFlags |= 512;
+      optionFlags |= 256;
     }
     if (options.createParenthesizedExpressions) {
-      optionFlags |= 1024;
+      optionFlags |= 512;
     }
     if (options.errorRecovery) {
-      optionFlags |= 2048;
+      optionFlags |= 1024;
     }
     if (options.attachComment) {
-      optionFlags |= 4096;
+      optionFlags |= 2048;
     }
     if (options.annexB) {
-      optionFlags |= 8192;
+      optionFlags |= 4096;
     }
     this.optionFlags = optionFlags;
   }
