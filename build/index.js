@@ -3024,7 +3024,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       // 同じオブジェクトで前回クリックされているとき
       // 前回のクリックで起動したものを止める。
       var p = PlayGround["default"];
-      var entityId = this.id;
+      var entityId = this.id + '_clicked';
       var me = this;
       var eventf = /*#__PURE__*/function () {
         var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee20(e) {
@@ -3167,7 +3167,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var _entity = entity;
       var threadId = _entity.threadId;
       var obj = threads.createObj();
-      obj.entityId = _entity.id;
+      obj.entityId = _entity.id + (doubleRunable === false) ? '_clicked' : '';
       obj.threadId = threadId; //this.id;
       obj.entity = _entity;
       obj.doubleRunable = doubleRunable;

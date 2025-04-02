@@ -6,22 +6,24 @@
 import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
-Pg.title = "【Sample26】リンゴの色に触れたときネコが鳴く"
+Pg.title = "【Sample26】質問をする"
 
 const Jurassic = "Jurassic";
 const Cat01 = "Cat01";
-
+const Chill = "Chill";
 let stage;
 let cat;
 
 Pg.preload = async function () {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Sound.load('../assets/Chill.wav', Chill);
     this.Image.load('../assets/cat.svg', Cat01 );
 }
 Pg.prepare = async function () {
 //    moveCanvas();
     stage = new Lib.Stage();
-    stage.Image.add( Jurassic  )
+    await stage.Image.add( Jurassic  );
+    await stage.Sound.add( Chill );
     cat = new Lib.Sprite( 'cat' );
     await cat.Image.add( Cat01 );
 
@@ -29,6 +31,26 @@ Pg.prepare = async function () {
 
 Pg.setting = async function () {
 
+    stage.Event.whenFlag( async function*(){ 
+        this.Event.broadcast('START');
+        
+    });
+
+    /**
+     * メッセージ(START)を受け取ったときの動き
+     */
+    stage.Event.whenBroadcastReceived('START', async function*(){
+        console.log('START');
+        // 音量 20
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 20 );
+        // 「終わるまで音を鳴らす」をずっと繰り返す
+        while(true){
+            // 処理が終わるまで待つために await をつける
+            await this.Sound.playUntilDone();
+            yield;
+        }
+    })
+    // stage click で broadcast 内のループが止まる？？
     stage.Event.whenClicked(async function() {
         const question = `
 STAGE難易度を入力してね
@@ -38,14 +60,18 @@ STAGE難易度を入力してね
         console.log(answer);
     });
 
-    cat.Event.whenFlag(async function*(){
-    });
+    cat.Event.whenFlag(async function(){
+        await this.Control.wait(20);
+        this.Looks.say('');
+        console.log('SAY')
+    })
     cat.Event.whenClicked(async function(){
+        console.log('cat click1');
         await this.Control.wait(5);
         this.Looks.say("こんにちは")
     });
     cat.Event.whenClicked(async function*(){
-        let answer ;
+        console.log('cat click2');        let answer ;
         for(;;){
             const question = `
 難易度を入力してね
