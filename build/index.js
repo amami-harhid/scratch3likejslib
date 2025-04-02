@@ -1521,7 +1521,7 @@ var _Element = /*#__PURE__*/function () {
                                 }
                               }
                             }
-                            // QuestionBox を消す
+                            // Sprite-QuestionBox を消す
                           } catch (err) {
                             _iterator.e(err);
                           } finally {
@@ -1538,12 +1538,13 @@ var _Element = /*#__PURE__*/function () {
                           } finally {
                             _iterator2.f();
                           }
-                          QuestionBoxElement["default"].removeAsk(playground.stage);
                         }
+                        // Stage-QuestionBox を消す
+                        QuestionBoxElement["default"].removeAsk(playground.stage);
                         playground._draw();
                         playground.runtime.emit('PAUSING_GAME'); // ON は processの中にある
                         //process._init();
-                      case 13:
+                      case 14:
                       case "end":
                         return _context3.stop();
                     }
