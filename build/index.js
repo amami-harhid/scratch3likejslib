@@ -8298,7 +8298,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
   }, {
     key: "Position",
     get: function get() {
-      console.log(this);
+      //console.log(this);
       var me = this;
       var position = {
         "x": 0,
