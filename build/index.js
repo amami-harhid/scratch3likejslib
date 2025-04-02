@@ -8323,10 +8323,28 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return position;
     }
   }, {
+    key: "Direction",
+    get: function get() {
+      var me = this;
+      var direction = {
+        "degree": 0
+      };
+      Object.defineProperty(direction, "degree", {
+        get: function get() {
+          return me.$getCurrentDirection();
+        },
+        set: function set(degree) {
+          me.$pointInDerection(degree);
+        }
+      });
+      return direction;
+    }
+  }, {
     key: "Motion",
     get: function get() {
       return {
         "Position": this.Position,
+        "Direction": this.Direction,
         "getCurrentPosition": this.$getCurrentPosition.bind(this),
         "getCurrentDirection": this.$getCurrentDirection.bind(this),
         "moveSteps": this.$moveSteps.bind(this),
