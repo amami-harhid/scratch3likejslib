@@ -4509,19 +4509,47 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-var playGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
 var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
+var playGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
 var Utils = __webpack_require__(/*! ../libs */ "../lib/libs.js");
-var stageStageOverlays = 'stage_stage-overlays';
+
+/** div include canvas */
+var CanvasDiv = 'canvasDiv';
+/** stageOverLays */
+var StageOverlays = 'stage_stage-overlays';
+/** class of stage bottom div */
+var StageBottomWrapper = 'stage_stage-bottom-wrapper';
+/** class of question div wrapper */
+var StageQuestionWrapper = 'stage_question-wrapper';
+/** class of question container */
+var QuestionContainer = 'question_question-container';
+/** class of question label (stage) */
+var QuestionLabel = 'question_question-label';
+/** class of Question input div */
+var QuestionInput = 'question_question-input';
+/** class of input tag */
+var InputForm = 'input_input-form';
+/** class of Question button */
+var QuestionSubmitButton = 'question_question-submit-button';
+/** class of Question Button Icon */
+var QuestionSubmitButtonIcon = 'question_question-submit-button-icon';
+/** Button svg text */
+var ButtonIconSrc = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUxLjIgKDU3NTE5KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5HZW5lcmFsL0NoZWNrPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTcuODYxNDQwNTksMTUuNDAyODc3NiBDNy40MzUyNjg1OSwxNS40MDI4Nzc2IDcuMDA5MDk2NTgsMTUuMjM5NzMzNiA2LjY4NDQ3MzM4LDE0LjkxNTExMDQgTDMuNDg4MTgzMzYsMTEuNzE4ODIwNCBDMi44MzcyNzIyMSwxMS4wNjc5MDkzIDIuODM3MjcyMjEsMTAuMDE1Nzk3MSAzLjQ4ODE4MzM2LDkuMzY0ODg2IEM0LjEzOTA5NDUsOC43MTM5NzQ4NSA1LjE5MTIwNjY0LDguNzEzOTc0ODUgNS44NDIxMTc3OCw5LjM2NDg4NiBMNy44NjE0NDA1OSwxMS4zODQyMDg4IEwxNC4xNTkxMzA4LDUuMDg4MTgzMzYgQzE0LjgwODM3NzIsNC40MzcyNzIyMSAxNS44NjIxNTQsNC40MzcyNzIyMSAxNi41MTMwNjUyLDUuMDg4MTgzMzYgQzE3LjE2MjMxMTYsNS43Mzc0Mjk3NyAxNy4xNjIzMTE2LDYuNzkxMjA2NjQgMTYuNTEzMDY1Miw3LjQ0MjExNzc4IEw5LjAzODQwNzgsMTQuOTE1MTEwNCBDOC43MTM3ODQ2LDE1LjIzOTczMzYgOC4yODc2MTI1OSwxNS40MDI4Nzc2IDcuODYxNDQwNTksMTUuNDAyODc3NiIgaWQ9InBhdGgtMSI+PC9wYXRoPgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkdlbmVyYWwvQ2hlY2siIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICA8L21hc2s+CiAgICAgICAgPHVzZSBpZD0iQ2hlY2siIGZpbGw9IiM1NzVFNzUiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgIDxnIGlkPSJDb2xvci9XaGl0ZSIgbWFzaz0idXJsKCNtYXNrLTIpIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHJlY3QgaWQ9IkNvbG9yIiB4PSIwIiB5PSIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
+/** emitId (input complete) */
+var TextInputComplete = 'textInputComplete';
 var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
   function QuestionBoxElement() {
     _classCallCheck(this, QuestionBoxElement);
     return _callSuper(this, QuestionBoxElement);
   }
+  /**
+   * DOM(StageStageOverlays)が存在しなくなるまで待つ
+   * @returns Promise<void>
+   */
   _inherits(QuestionBoxElement, _EventEmitter);
   return _createClass(QuestionBoxElement, [{
     key: "askWait",
-    value: function () {
+    value: (function () {
       var _askWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
@@ -4532,7 +4560,7 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
                     while (1) switch (_context.prev = _context.next) {
                       case 0:
-                        stage_stage_overlays = document.getElementById(stageStageOverlays);
+                        stage_stage_overlays = document.getElementById(StageOverlays);
                       case 1:
                         if (!(stage_stage_overlays == undefined)) {
                           _context.next = 3;
@@ -4543,7 +4571,7 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
                         _context.next = 5;
                         return Utils["default"].wait(0.033);
                       case 5:
-                        stage_stage_overlays = document.getElementById(stageStageOverlays);
+                        stage_stage_overlays = document.getElementById(StageOverlays);
                       case 6:
                         _context.next = 1;
                         break;
@@ -4570,6 +4598,12 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
       }
       return askWait;
     }()
+    /**
+     * entity がStageなのかを判定する
+     * @param {*} entity 
+     * @returns Stageの場合 True
+     */
+    )
   }, {
     key: "isStage",
     value: function isStage(entity) {
@@ -4578,6 +4612,11 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
       }
       return false;
     }
+    /**
+     * entity がSpriteなのかを判定する
+     * @param {*} entity 
+     * @returns Spriteの場合 True
+     */
   }, {
     key: "isSprite",
     value: function isSprite(entity) {
@@ -4590,95 +4629,91 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
     key: "ask",
     value: function () {
       var _ask = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(entity, text) {
-        var _this = this;
-        var runtime, keyboard, canvasDiv, stage_stage_overlays, stage_stage_bottom_wrapper, stage_question_wrapper, div, questionContainer, questionLabel, questionInputDiv, input, button, img, inputText, inputChange, me, buttonClick;
+        var canvasDiv, stage_overlays, stage_stage_bottom_wrapper, stage_question_wrapper, div, questionContainer, questionLabel, questionInputDiv, input, button, img, runtime, keyboard, inputText, inputChange, me, keyPress, buttonClick;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              runtime = playGround["default"].runtime;
-              _context3.next = 3;
+              _context3.next = 2;
               return this.askWait();
-            case 3:
-              keyboard = runtime.ioDevices.keyboard;
-              keyboard.spaceStopPropagation = false;
-              //const main = document.getElementById('main');
-              canvasDiv = document.getElementById('canvasDiv');
-              stage_stage_overlays = document.createElement('div');
-              stage_stage_overlays.id = stageStageOverlays;
-              stage_stage_overlays.classList.add(stageStageOverlays);
-              canvasDiv.appendChild(stage_stage_overlays);
+            case 2:
+              canvasDiv = document.getElementById(CanvasDiv);
+              stage_overlays = document.createElement('div');
+              stage_overlays.id = StageOverlays;
+              stage_overlays.classList.add(StageOverlays);
+              canvasDiv.appendChild(stage_overlays);
               stage_stage_bottom_wrapper = document.createElement('div');
-              stage_stage_bottom_wrapper.classList.add('stage_stage-bottom-wrapper');
-              //stage_stage_bottom_wrapper.style.width = "90%";
-              //stage_stage_bottom_wrapper.style.height = "90%";
-
-              stage_stage_overlays.appendChild(stage_stage_bottom_wrapper);
+              stage_stage_bottom_wrapper.classList.add(StageBottomWrapper);
+              stage_overlays.appendChild(stage_stage_bottom_wrapper);
               stage_question_wrapper = document.createElement('div');
               stage_question_wrapper.style.position = 'absolute';
-              stage_question_wrapper.classList.add("stage_question-wrapper");
+              stage_question_wrapper.classList.add(StageQuestionWrapper);
               stage_stage_bottom_wrapper.appendChild(stage_question_wrapper);
               div = document.createElement('div');
               stage_question_wrapper.appendChild(div);
               questionContainer = document.createElement('div');
-              questionContainer.classList.add("question_question-container");
+              questionContainer.classList.add(QuestionContainer);
               div.appendChild(questionContainer);
               if (entity) {
                 if (this.isStage(entity)) {
+                  // ステージの場合
                   questionLabel = document.createElement('div');
-                  questionLabel.classList.add('question_question-label');
+                  questionLabel.classList.add(QuestionLabel);
                   questionLabel.innerHTML = text;
                   questionContainer.appendChild(questionLabel);
                 } else if (this.isSprite(entity)) {
+                  // スプライトの場合
                   entity.Looks.say(text);
                 }
               }
               questionInputDiv = document.createElement('div');
-              questionInputDiv.classList.add('question_question-input');
+              questionInputDiv.classList.add(QuestionInput);
               questionContainer.appendChild(questionInputDiv);
               input = document.createElement('input');
-              input.classList.add('input_input-form');
+              input.classList.add(InputForm);
               input.setAttribute('type', 'text');
               input.setAttribute('spellcheck', false);
               questionInputDiv.appendChild(input);
               button = document.createElement('button');
-              button.classList.add('question_question-submit-button');
+              button.classList.add(QuestionSubmitButton);
               img = document.createElement('img');
-              img.classList.add('question_question-submit-button-icon');
+              img.classList.add(QuestionSubmitButtonIcon);
               img.draggable = false;
-              img.src = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUxLjIgKDU3NTE5KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5HZW5lcmFsL0NoZWNrPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTcuODYxNDQwNTksMTUuNDAyODc3NiBDNy40MzUyNjg1OSwxNS40MDI4Nzc2IDcuMDA5MDk2NTgsMTUuMjM5NzMzNiA2LjY4NDQ3MzM4LDE0LjkxNTExMDQgTDMuNDg4MTgzMzYsMTEuNzE4ODIwNCBDMi44MzcyNzIyMSwxMS4wNjc5MDkzIDIuODM3MjcyMjEsMTAuMDE1Nzk3MSAzLjQ4ODE4MzM2LDkuMzY0ODg2IEM0LjEzOTA5NDUsOC43MTM5NzQ4NSA1LjE5MTIwNjY0LDguNzEzOTc0ODUgNS44NDIxMTc3OCw5LjM2NDg4NiBMNy44NjE0NDA1OSwxMS4zODQyMDg4IEwxNC4xNTkxMzA4LDUuMDg4MTgzMzYgQzE0LjgwODM3NzIsNC40MzcyNzIyMSAxNS44NjIxNTQsNC40MzcyNzIyMSAxNi41MTMwNjUyLDUuMDg4MTgzMzYgQzE3LjE2MjMxMTYsNS43Mzc0Mjk3NyAxNy4xNjIzMTE2LDYuNzkxMjA2NjQgMTYuNTEzMDY1Miw3LjQ0MjExNzc4IEw5LjAzODQwNzgsMTQuOTE1MTEwNCBDOC43MTM3ODQ2LDE1LjIzOTczMzYgOC4yODc2MTI1OSwxNS40MDI4Nzc2IDcuODYxNDQwNTksMTUuNDAyODc3NiIgaWQ9InBhdGgtMSI+PC9wYXRoPgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkdlbmVyYWwvQ2hlY2siIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICA8L21hc2s+CiAgICAgICAgPHVzZSBpZD0iQ2hlY2siIGZpbGw9IiM1NzVFNzUiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgIDxnIGlkPSJDb2xvci9XaGl0ZSIgbWFzaz0idXJsKCNtYXNrLTIpIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHJlY3QgaWQ9IkNvbG9yIiB4PSIwIiB5PSIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
+              img.src = ButtonIconSrc;
               button.appendChild(img);
               questionInputDiv.appendChild(button);
+              runtime = playGround["default"].runtime;
+              keyboard = runtime.ioDevices.keyboard; // 半角スペースの入力を許可する
+              keyboard.spaceStopPropagation = false;
               inputText = '';
               inputChange = function inputChange(e) {
                 inputText = e.currentTarget.value;
-                //input.setAttribute('value', inputText);
               };
               me = this;
               input.addEventListener('input', inputChange);
-              input.addEventListener('keypress', function (e) {
+              keyPress = function keyPress(e) {
                 if (e.key == 'Enter') {
-                  me.emit('textInput');
+                  me.emit(TextInputComplete);
                   return;
                 }
-              });
+              };
+              input.addEventListener('keypress', keyPress);
               buttonClick = function buttonClick() {
-                me.emit('textInput');
+                // buttonクリックしたとき 
+                me.emit(TextInputComplete);
               };
               button.addEventListener('click', buttonClick);
               input.focus();
               return _context3.abrupt("return", new Promise(function (resolve) {
-                me.once('textInput', function () {
+                me.once(TextInputComplete, function () {
+                  // 質問の枠を消す    
+                  me.removeAsk(entity);
+                  // 半角スページ入力抑止
                   keyboard.spaceStopPropagation = true;
-                  if (entity) {
-                    if (_this.isSprite(entity)) {
-                      entity.Looks.say('');
-                    }
-                  }
-                  me.removeAsk();
+                  // Promise を解決、入力文字列を戻す
                   resolve(inputText);
                 });
               }));
-            case 48:
+            case 49:
             case "end":
               return _context3.stop();
           }
@@ -4689,12 +4724,20 @@ var QuestionBoxElement = /*#__PURE__*/function (_EventEmitter) {
       }
       return ask;
     }()
+    /**
+     * 質問を消す
+     */
   }, {
     key: "removeAsk",
-    value: function removeAsk() {
-      var _stageStageOverlays = document.getElementById(stageStageOverlays);
-      if (_stageStageOverlays) {
-        _stageStageOverlays.remove();
+    value: function removeAsk(entity) {
+      if (entity && this.isSprite(entity)) {
+        // スプライトの場合、フキダシを消す
+        entity.Looks.say('');
+      }
+      var _stageOverlays = document.getElementById(StageOverlays);
+      if (_stageOverlays) {
+        // 質問のDOMを削除する
+        _stageOverlays.remove();
       }
     }
   }]);
