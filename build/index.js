@@ -1116,6 +1116,25 @@ var Costumes = /*#__PURE__*/function () {
       return null;
     }
   }, {
+    key: "currentSkinNo",
+    value: function currentSkinNo() {
+      var costumesKeys = Array.from(this.costumes.keys());
+      if (costumesKeys.length == 0) {
+        return -1;
+      }
+      if (this.skinId == null) {
+        return -1;
+      }
+      for (var _idx = 0; _idx < costumesKeys.length; _idx++) {
+        var _name = costumesKeys[_idx];
+        var _skinId = this.costumes.get(_name);
+        if (_skinId == this.skinId) {
+          return _idx;
+        }
+      }
+      return -1;
+    }
+  }, {
     key: "nextCostume",
     value: function nextCostume() {
       var costumesKeys = Array.from(this.costumes.keys());
@@ -8435,9 +8454,51 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return this.Looks;
     }
   }, {
+    key: "Costume",
+    get: function get() {
+      var me = this;
+      var costume = {
+        "no": 0,
+        "name": ""
+      };
+      Object.defineProperty(costume, "no", {
+        get: function get() {
+          return me.costumes.currentSkinNo();
+        }
+      });
+      Object.defineProperty(costume, "name", {
+        get: function get() {
+          return me.costumes.currentSkinName();
+        }
+      });
+      return costume;
+    }
+  }, {
+    key: "Backdrop",
+    get: function get() {
+      var stage = PlayGround["default"].stage;
+      var backdrop = {
+        "no": 0,
+        "name": ""
+      };
+      Object.defineProperty(backdrop, "no", {
+        get: function get() {
+          return stage.backdrops.currentSkinNo();
+        }
+      });
+      Object.defineProperty(backdrop, "name", {
+        get: function get() {
+          return stage.backdrops.currentSkinName();
+        }
+      });
+      return backdrop;
+    }
+  }, {
     key: "Looks",
     get: function get() {
       return {
+        "Costume": this.Costume,
+        "Backdrop": this.Backdrop,
         "nextCostume": this.$nextCostume.bind(this),
         "switchCostume": this.$switchCostume.bind(this),
         "nextBackdrop": this.$nextBackDrop.bind(this),
@@ -9085,6 +9146,26 @@ var Stage = /*#__PURE__*/function (_Entity) {
       return $askAndWait;
     }()
   }, {
+    key: "Backdrop",
+    get: function get() {
+      var stage = this;
+      var backdrop = {
+        "no": 0,
+        "name": ""
+      };
+      Object.defineProperty(backdrop, "no", {
+        get: function get() {
+          return stage.backdrops.currentSkinNo();
+        }
+      });
+      Object.defineProperty(backdrop, "name", {
+        get: function get() {
+          return stage.backdrops.currentSkinName();
+        }
+      });
+      return backdrop;
+    }
+  }, {
     key: "L",
     get: function get() {
       return this.Looks;
@@ -9093,6 +9174,7 @@ var Stage = /*#__PURE__*/function (_Entity) {
     key: "Looks",
     get: function get() {
       return {
+        "Backdrop": this.Backdrop,
         "nextBackdrop": this.$nextBackDrop.bind(this),
         // Sprite-->Stageへ
         "switchBackdrop": this.$switchBackDrop.bind(this),
