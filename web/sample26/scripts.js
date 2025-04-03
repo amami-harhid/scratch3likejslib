@@ -31,7 +31,8 @@ Pg.prepare = async function () {
 
 Pg.setting = async function () {
 
-    stage.Event.whenFlag( async function*(){ 
+    stage.Event.whenFlag( async function(){ 
+        console.log('STAGE WHENFLAG');
         this.Event.broadcast('START');
     });
 
@@ -40,12 +41,15 @@ Pg.setting = async function () {
      */
     stage.Event.whenBroadcastReceived('START', async function*(){
         console.log('START');
-        // 音量 20
-        await this.Sound.setOption( Lib.SoundOption.VOLUME, 20 );
+        // 音量 100
+        await this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
         // 「終わるまで音を鳴らす」をずっと繰り返す
         while(true){
+            console.log('WHILE');
             // 処理が終わるまで待つために await をつける
-            await this.Sound.playUntilDone();
+            await this.Sound.playUntilDone(Chill);
+            await this.Sound.changeOptionValue(Lib.SoundOption.VOLUME, -10);
+            await this.Sound.changeOptionValue(Lib.SoundOption.PITCH, 10);
             yield;
         }
     })
