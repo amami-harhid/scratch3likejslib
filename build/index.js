@@ -1503,7 +1503,6 @@ var _Element = /*#__PURE__*/function () {
               }());
               controlStopMark.addEventListener('click', /*#__PURE__*/function () {
                 var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
-                  var _iterator, _step, s, _iterator3, _step3, c, _iterator2, _step2, _s;
                   return _regeneratorRuntime().wrap(function _callee3$(_context3) {
                     while (1) switch (_context3.prev = _context3.next) {
                       case 0:
@@ -1516,54 +1515,9 @@ var _Element = /*#__PURE__*/function () {
                         controlGreenFlag.classList.add('enableClick');
                         controlGreenFlag.classList.add('not-running');
                         controlGreenFlag.classList.remove('running');
-                        // thread loop 停止
-                        threads.stopThreadsInterval();
-                        // スプライトのクローンを削除
-                        if (playground.stage.sprites) {
-                          _iterator = _createForOfIteratorHelper(playground.stage.sprites);
-                          try {
-                            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                              s = _step.value;
-                              if (s && s.clones) {
-                                _iterator3 = _createForOfIteratorHelper(s.clones);
-                                try {
-                                  for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-                                    c = _step3.value;
-                                    if (c && c.isAlive()) {
-                                      c.$remove();
-                                    }
-                                  }
-                                } catch (err) {
-                                  _iterator3.e(err);
-                                } finally {
-                                  _iterator3.f();
-                                }
-                              }
-                            }
-                            // Sprite-QuestionBox を消す
-                          } catch (err) {
-                            _iterator.e(err);
-                          } finally {
-                            _iterator.f();
-                          }
-                          _iterator2 = _createForOfIteratorHelper(playground.stage.sprites);
-                          try {
-                            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                              _s = _step2.value;
-                              QuestionBoxElement["default"].removeAsk(_s);
-                            }
-                          } catch (err) {
-                            _iterator2.e(err);
-                          } finally {
-                            _iterator2.f();
-                          }
-                        }
-                        // Stage-QuestionBox を消す
-                        QuestionBoxElement["default"].removeAsk(playground.stage);
-                        playground._draw();
-                        playground.runtime.emit('PAUSING_GAME'); // ON は processの中にある
                         //process._init();
-                      case 14:
+                        _Element.stopAll();
+                      case 10:
                       case "end":
                         return _context3.stop();
                     }
@@ -1584,6 +1538,60 @@ var _Element = /*#__PURE__*/function () {
       }
       return flagInit;
     }()
+  }, {
+    key: "stopAll",
+    value: function stopAll() {
+      var playground = PlayGround["default"];
+      // thread loop 停止
+      threads.stopThreadsInterval();
+      // スプライトのクローンを削除
+      if (playground.stage.sprites) {
+        var _iterator = _createForOfIteratorHelper(playground.stage.sprites),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var s = _step.value;
+            if (s && s.clones) {
+              var _iterator3 = _createForOfIteratorHelper(s.clones),
+                _step3;
+              try {
+                for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                  var c = _step3.value;
+                  if (c && c.isAlive()) {
+                    c.$remove();
+                  }
+                }
+              } catch (err) {
+                _iterator3.e(err);
+              } finally {
+                _iterator3.f();
+              }
+            }
+          }
+          // Sprite-QuestionBox を消す
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+        var _iterator2 = _createForOfIteratorHelper(playground.stage.sprites),
+          _step2;
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var _s = _step2.value;
+            QuestionBoxElement["default"].removeAsk(_s);
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+      }
+      // Stage-QuestionBox を消す
+      QuestionBoxElement["default"].removeAsk(playground.stage);
+      playground._draw();
+      playground.runtime.emit('PAUSING_GAME'); // ON は processの中にある
+    }
   }, {
     key: "init",
     value: function () {
@@ -3726,6 +3734,11 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "$isMouseDown",
     value: function $isMouseDown() {
       return Libs["default"].mouseIsPressed();
+    }
+  }, {
+    key: "$stopAll",
+    value: function $stopAll() {
+      Element.stopAll();
     }
   }], [{
     key: "EmitIdMovePromise",
@@ -8380,18 +8393,22 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       };
       Object.defineProperty(position, "x", {
         get: function get() {
-          return me.x;
+          var _me$Motion$getCurrent = me.Motion.getCurrentPosition(),
+            x = _me$Motion$getCurrent.x;
+          return x;
         },
         set: function set(x) {
-          me.x = x;
+          me.Motion.setX(x);
         }
       });
       Object.defineProperty(position, "y", {
         get: function get() {
-          return me.y;
+          var _me$Motion$getCurrent2 = me.Motion.getCurrentPosition(),
+            y = _me$Motion$getCurrent2.y;
+          return y;
         },
         set: function set(y) {
-          me.y = y;
+          me.Motion.setY(y);
         }
       });
       return position;
@@ -8543,11 +8560,49 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "while": this["while"].bind(this),
         "repeat": this.repeat.bind(this),
         "repeatUntil": this.repeatUntil.bind(this),
-        "stopAll": null,
-        // 工事中
+        "stopAll": this.$stopAll.bind(this),
         "remove": this.$remove.bind(this),
         "alive": this.$isAlive.bind(this)
       };
+    }
+  }, {
+    key: "Distance",
+    get: function get() {
+      var me = this;
+      var distanceToOthers = function distanceToOthers(otherSprite) {
+        if (otherSprite && otherSprite['isSprite'] && otherSprite.isSprite() === true) {
+          var obj1 = {
+            x: me.Motion.Position.x,
+            y: me.Motion.Position.y
+          };
+          var obj2 = {
+            x: otherSprite.Motion.Position.x,
+            y: otherSprite.Motion.Position.y
+          };
+          var _distance = Utils.distance(obj1, obj2);
+          return _distance;
+        }
+        return -1;
+      };
+      var distance = {
+        "mousePointer": 0,
+        "to": distanceToOthers
+      };
+      Object.defineProperty(distance, "mousePointer", {
+        get: function get() {
+          var obj1 = {
+            x: me.Motion.Position.x,
+            y: me.Motion.Position.y
+          };
+          var obj2 = {
+            x: me.Sensing.Mouse.x,
+            y: me.Sensing.Mouse.y
+          };
+          var _distance = Utils.distance(obj1, obj2);
+          return _distance;
+        }
+      });
+      return distance;
     }
   }, {
     key: "Sensing",
@@ -8558,8 +8613,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "isKeyNotDown": this.$isKeyNotDown.bind(this),
         "isMouseDown": this.$isMouseDown.bind(this),
         "Mouse": this.Mouse,
-        // "mouseX" : this.$mouseX,
-        // "mouseY" : this.$mouseY,
+        "Distance": this.Distance,
         "timer": this.$timer,
         "resetTimer": this.$resetTimer.bind(this),
         "isTouchingEdge": this.$isTouchingEdge.bind(this),
@@ -9206,7 +9260,7 @@ var Stage = /*#__PURE__*/function (_Entity) {
         "while": this["while"].bind(this),
         "repeat": this.repeat.bind(this),
         "repeatUntil": this.repeatUntil.bind(this),
-        "stopAll": null // 工事中
+        "stopAll": this.$stopAll.bind(this)
       };
     }
   }, {
@@ -11178,8 +11232,31 @@ var _Utils = /*#__PURE__*/function () {
     _classCallCheck(this, Utils);
   }
   return _createClass(Utils, null, [{
-    key: "randomizeInRange",
+    key: "distance",
     value:
+    /**
+     * 距離を計算する
+     * @param {*} obj1 {x:number, y:number}
+     * @param {*} obj2 {x:number, y:number}
+     * @returns distance
+     */
+    function distance(obj1, obj2) {
+      if (obj1 && obj2 && obj1.x != undefined && obj1.y != undefined && obj2.x != undefined && obj2.y != undefined) {
+        var x1 = obj1.x;
+        var y1 = obj1.y;
+        var x2 = obj2.x;
+        var y2 = obj2.y;
+        if (_Utils.isNumber(x1) && _Utils.isNumber(y1) && _Utils.isNumber(x2) && _Utils.isNumber(y2)) {
+          var x = x1 - x2;
+          var y = y1 - y2;
+          var distanceSquare = x * x + y * y;
+          var _distance = Math.sqrt(distanceSquare);
+          return _distance;
+        }
+      }
+      return -1;
+    }
+
     /**
      * min,max の範囲でランダム値を取得する
      * min,max 両方とも整数の場合、min,maxを含む整数のランダム値を返す
@@ -11191,7 +11268,9 @@ var _Utils = /*#__PURE__*/function () {
      * @param {Boolean} forceAsDecimal　True時には強制的に小数値として扱う。省略時はFalse。
      * @returns 
      */
-    function randomizeInRange(min, max) {
+  }, {
+    key: "randomizeInRange",
+    value: function randomizeInRange(min, max) {
       var forceAsDecimal = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       if (_Utils.isNumber(min) && _Utils.isNumber(max)) {
         if (forceAsDecimal === false && _Utils.isInteger(min) && _Utils.isInteger(max)) {
@@ -11213,7 +11292,7 @@ var _Utils = /*#__PURE__*/function () {
   }, {
     key: "isNumber",
     value: function isNumber(val) {
-      if (val != undefined && typeof val === 'number' && isFinite(val)) {
+      if (val != undefined && (typeof val === 'number' || _Utils.isInteger(val)) && isFinite(val)) {
         return true;
       }
       return false;

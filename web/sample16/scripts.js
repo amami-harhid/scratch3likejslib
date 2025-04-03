@@ -51,7 +51,7 @@ Pg.setting = async function setting() {
         this.Sound.setOption( Lib.SoundOption.VOLUME, 50 )
         // function() の中なので、【this】はProxy(stage)である。
         while(true){
-            await this.Sound.playUntilDone();
+            //await this.Sound.playUntilDone();
             yield;
         }
     });
@@ -71,6 +71,13 @@ Pg.setting = async function setting() {
         while(true){
             this.Motion.pointToMouse();
             this.Motion.moveSteps(CAT_WALK_STEP);
+            const distanceCat2 = this.Sensing.Distance.to(cat2);
+            if(distanceCat2 == -1) {
+                this.Control.stopAll();
+            }
+            const distanceCat3 = this.Sensing.Distance.to(cat3);
+            const distanceMousePointer = this.Sensing.Distance.mousePointer;
+            console.log(`to cat2=${distanceCat2}, cat3=${distanceCat3}, mousePointer=${distanceMousePointer}`);
             yield;
         };
     });
