@@ -8511,6 +8511,40 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return backdrop;
     }
   }, {
+    key: "Size",
+    get: function get() {
+      var me = this;
+      var size = {
+        w: 0,
+        h: 0
+      };
+      Object.defineProperty(size, "w", {
+        get: function get() {
+          var _me$$getCurrentSize = me.$getCurrentSize(),
+            w = _me$$getCurrentSize.w;
+          return w;
+        },
+        set: function set(w) {
+          var _me$$getCurrentSize2 = me.$getCurrentSize(),
+            h = _me$$getCurrentSize2.h;
+          me.$setScale(w, h);
+        }
+      });
+      Object.defineProperty(size, "h", {
+        get: function get() {
+          var _me$$getCurrentSize3 = me.$getCurrentSize(),
+            h = _me$$getCurrentSize3.h;
+          return h;
+        },
+        set: function set(h) {
+          var _me$$getCurrentSize4 = me.$getCurrentSize(),
+            w = _me$$getCurrentSize4.w;
+          me.$setScale(w, h);
+        }
+      });
+      return size;
+    }
+  }, {
     key: "Looks",
     get: function get() {
       return {
@@ -8527,6 +8561,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "think": this.$think.bind(this),
         "thinkForSecs": this.$thinkForSecs.bind(this),
         "changeSizeBy": this.$changeSizeBy.bind(this),
+        "Size": this.Size,
         "getSize": this.$getCurrentSize.bind(this),
         "setSize": this.$setScale.bind(this),
         "changeEffectBy": this.$changeEffectBy.bind(this),
