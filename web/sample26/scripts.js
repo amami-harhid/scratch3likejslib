@@ -9,6 +9,7 @@ const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 Pg.title = "【Sample26】質問をする"
 
 const Jurassic = "Jurassic";
+const Backdrop = "Backdrop";
 const Cat01 = "Cat01";
 const Chill = "Chill";
 let stage;
@@ -16,6 +17,7 @@ let cat;
 
 Pg.preload = async function () {
     this.Image.load('../assets/Jurassic.svg', Jurassic);
+    this.Image.load('../assets/backdrop.png', Backdrop);
     this.Sound.load('../assets/Chill.wav', Chill);
     this.Image.load('../assets/cat.svg', Cat01 );
 }
@@ -23,6 +25,7 @@ Pg.prepare = async function () {
 //    moveCanvas();
     stage = new Lib.Stage();
     await stage.Image.add( Jurassic  );
+    await stage.Image.add( Backdrop );
     await stage.Sound.add( Chill );
     cat = new Lib.Sprite( 'cat' );
     await cat.Image.add( Cat01 );
@@ -32,10 +35,22 @@ Pg.prepare = async function () {
 Pg.setting = async function () {
 
     stage.Event.whenFlag( async function(){ 
+        this.Looks.switchBackdrop(Jurassic);
         console.log('STAGE WHENFLAG');
         this.Event.broadcast('START');
     });
+    stage.Event.whenKeyPressed('Space', async function(){
+        console.log('KEY PRESSED (Space)');
 
+    });
+    stage.Event.whenKeyPressed('J', async function(){
+        this.Looks.switchBackdrop(Jurassic);
+        console.log('KEY PRESSED (J)');
+    });
+    stage.Event.whenKeyPressed('B', async function(){
+        this.Looks.switchBackdrop(Backdrop);
+        console.log('KEY PRESSED (B)');
+    });
     /**
      * メッセージ(START)を受け取ったときの動き
      */
@@ -115,5 +130,17 @@ STAGE難易度を入力してね
         console.log(text);
         this.Looks.say(text);
 
+    });
+    cat.Event.whenBackdropSwitches(Jurassic, async function(){
+        console.log(`ネコ：${Jurassic}に切り替わりました`)
+    });
+    cat.Event.whenBackdropSwitches(Backdrop, async function(){
+        console.log(`ネコ：${Backdrop}に切り替わりました`)
+    });
+    stage.Event.whenBackdropSwitches(Jurassic, async function(){
+        console.log(`ステージ：${Jurassic}に切り替わりました`)
+    });
+    stage.Event.whenBackdropSwitches(Backdrop, async function(){
+        console.log(`ステージ：${Backdrop}に切り替わりました`)
     });
 }

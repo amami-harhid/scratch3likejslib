@@ -1743,6 +1743,7 @@ var _require2 = __webpack_require__(/*! ./types */ "../lib/types.js"),
   SoundOption = _require2.SoundOption,
   RotationStyle = _require2.RotationStyle;
 var Utils = __webpack_require__(/*! ./utils */ "../lib/utils.js");
+//const { default: playGround } = require('./playGround');
 var _Entity = /*#__PURE__*/function (_EventEmitter) {
   function Entity(name, layer) {
     var _this;
@@ -3004,6 +3005,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       }(), 0);
     }
   }, {
+    key: "$broadCastBackdropSwitch",
+    value: function $broadCastBackdropSwitch(backdropName) {
+      var messageId = "BackdropSwitches_".concat(backdropName);
+      this.$broadcast(messageId, backdropName);
+    }
+    /**
+     * 背景が〇〇になったときの動作
+     * @param {*} backdropName 
+     * @param {*} func 
+     */
+  }, {
     key: "$whenBackdropSwitches",
     value: function $whenBackdropSwitches(backdropName, func) {
       // Stage#nextBackDrop(), Stage#switchBackDrop() にて
@@ -3011,8 +3023,8 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       // 異なる場合、変更後のbackdropNameを使ったメッセージID で emit する
       // ここでは on でメッセージを受け取るが、
       // Entity#whenBroadcastReceived() と同様の処理にする
-      var messageId = "BackdropSwitches_".concat(backdropName);
-      this.$whenBroadcastReceived(messageId, func);
+      var EmitId = "BackdropSwitches_".concat(backdropName);
+      this.$whenBroadcastReceived(EmitId, func);
     }
   }, {
     key: "getProxyForHat",
@@ -3072,44 +3084,32 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       me.startThread(func, proxy);
       return proxy;
     }
-    // whenMouseTouchedのハットイベントは用意しないことにする
-    // $whenMouseTouched (func) {
-    //     const p = PlayGround.default;
-    //     const me = this;
-    //     Canvas.canvas.addEventListener('mousemove', async(e) => {
-    //         const mouseX = e.offsetX;
-    //         const mouseY = e.offsetY;
-    //         const _touchDrawableId = me.render.renderer.pick(mouseX,mouseY, 3, 3, [me.drawableID]);
-    //         if(me.drawableID == _touchDrawableId){
-    //             if( p.preloadDone === true ) {
-    //                 //_func();
-    //                 const EmitId = 'WhenMouseTouchedStopper';
-    //                 this.emit( EmitId );
-    //                 this._execWithEmit( func, EmitId );
-    //             }
-    //         }
-    //         e.stopPropagation()
-    //     }, {});
-    // }
-
-    // whenTouchingTargetのハットイベントは用意しないことにする
-    // $whenTouchingTarget(targets, func) {
-    //     const p = PlayGround.default;
-    //     const me = this;
-    //     if( p.preloadDone === true ) {
-    //         //const _func = func.bind(this);
-    //         setInterval(async function(){
-    //             const touching = me.isTouchingTarget(me, targets);
-    //             if(touching === true){
-    //                 const EmitId = 'WhenToucheingTargetStopper';
-    //                 this.emit( EmitId );
-    //                 // これの定義しているところがない。
-    //                 this._execWithEmit( func, EmitId );
-    //             }
-    //         },0);
-    //     }
-    // }
-
+  }, {
+    key: "$whenKeyPressed",
+    value: function $whenKeyPressed(key, func) {
+      var me = this;
+      var p = PlayGround["default"];
+      var runtime = p.runtime;
+      if (key && func) {
+        runtime.on("KEY_PRESSED", function (pressedKey) {
+          if (key === pressedKey) {
+            if (p.runningGame === false) {
+              return; // 緑の旗が押されていないときは何もしない
+            }
+            // whenClicked と同じ処理
+            var addId = "_keyPressed_".concat(key);
+            var entityId = this.id + addId;
+            threads.removeObjById(entityId); // 前回のキープレス分を止める
+            var threadId = me._generateUUID();
+            var proxy = me.getProxyForHat();
+            proxy.threadId = threadId;
+            if (p.preloadDone === true) {
+              me.startThread(func, proxy, false, addId); //二重起動禁止
+            }
+          }
+        });
+      }
+    }
     /**
      * whenClickedが二重に呼ばれたときは
      * 前回動作しているスレッドを停止させる。
@@ -3121,7 +3121,8 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       // 同じオブジェクトで前回クリックされているとき
       // 前回のクリックで起動したものを止める。
       var p = PlayGround["default"];
-      var entityId = this.id + '_clicked';
+      var addId = '_clicked';
+      var entityId = this.id + addId;
       var me = this;
       var eventf = /*#__PURE__*/function () {
         var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(e) {
@@ -3148,7 +3149,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                   proxy = me.getProxyForHat();
                   proxy.threadId = threadId;
                   if (p.preloadDone === true) {
-                    me.startThread(func, proxy, false); //二重起動禁止
+                    me.startThread(func, proxy, false, addId); //二重起動禁止
                   }
                 }
               case 8:
@@ -3175,40 +3176,6 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
         proxy.threadId = threadId;
         clone.startThread(func, proxy);
       });
-    }
-    /**
-    * whenEvent - adds the specified event listener to sprite/stage.
-    * When triggered will invoke user supplied function.
-    *
-    * @example
-    * let stage = new LS.Stage();
-    * let sprite = new LS.Sprite();
-    *
-    * sprite.addTo(stage);
-    * sprite.whenEvent('mouseover', (e) => {
-    *   console.log(e);
-    * });
-    *
-    * @param {string} eventStr - the named event (mosemove etc.).
-    * @param {function} func - requested function.
-    */
-  }, {
-    key: "whenEvent",
-    value: function whenEvent(eventStr, func) {
-      var threadId = this._generateUUID();
-      var proxy = this.getProxyForHat();
-      proxy.threadId = threadId;
-      var me = this;
-      var attachTo = Canvas.canvas;
-      var options = {};
-      'keydown|keyup|keypress'.indexOf(eventStr) !== -1 ? attachTo = document : null;
-      'touchstart|touchmove'.indexOf(eventStr) !== -1 ? options = {
-        passive: true
-      } : null;
-      attachTo.addEventListener(eventStr, function (e) {
-        e.stopPropagation();
-        me.startThread(func, proxy);
-      }, options);
     }
   }, {
     key: "updateVisible",
@@ -3250,6 +3217,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "startThread",
     value: function startThread(func, entity) {
       var doubleRunable = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+      var addId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
       var functionDeclareType = FunctionChecker.getFunctionDeclares(func);
       if (functionDeclareType.isArrow === true) {
         // アロー関数は許可しない
@@ -3264,7 +3232,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       var _entity = entity;
       var threadId = _entity.threadId;
       var obj = threads.createObj();
-      obj.entityId = _entity.id + (doubleRunable === false) ? '_clicked' : '';
+      obj.entityId = _entity.id + addId;
       obj.threadId = threadId; //this.id;
       obj.entity = _entity;
       obj.doubleRunable = doubleRunable;
@@ -8678,7 +8646,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "whenBroadcastReceived": this.$whenBroadcastReceived.bind(this),
         "whenRightNow": this.$whenRightNow.bind(this),
         "whenFlag": this.$whenFlag.bind(this),
-        //            "whenKeyPressed": null, // Entity 工事中
+        "whenKeyPressed": this.$whenKeyPressed.bind(this),
         //            "whenMouseTouched": this.$whenMouseTouched.bind(this),
         //            "whenTargetMouseTouched": this.$whenTouchingTarget.bind(this),
         "whenClicked": this.$whenClicked.bind(this),
@@ -9127,11 +9095,9 @@ var Stage = /*#__PURE__*/function (_Entity) {
   }, {
     key: "$emitWhenBackdropChange",
     value: function $emitWhenBackdropChange(backdropName, newBackdropName) {
-      if (backdropName === newBackdropName) {
-        var EmitId = "BackdropSwitches_".concat(newBackdropName);
-        var runtime = PlayGround["default"].runtime;
-        var eventId = "message_".concat(EmitId);
-        runtime.emit(eventId);
+      // 新しい名前の背景に切り替わったとき
+      if (backdropName !== newBackdropName) {
+        this.$broadCastBackdropSwitch(newBackdropName);
       }
     }
   }, {
@@ -9332,6 +9298,7 @@ var Stage = /*#__PURE__*/function (_Entity) {
         "whenBroadcastReceived": this.$whenBroadcastReceived.bind(this),
         "whenRightNow": this.$whenRightNow.bind(this),
         "whenFlag": this.$whenFlag.bind(this),
+        "whenKeyPressed": this.$whenKeyPressed.bind(this),
         //"whenMouseTouched": this.$whenMouseTouched.bind(this),
         //"whenTargetMouseTouched": this.$whenTouchingTarget.bind(this),
         "whenCloned": this.$whenCloned.bind(this),
