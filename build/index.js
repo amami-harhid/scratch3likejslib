@@ -7807,7 +7807,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       } else {
         _targets = [targets];
       }
-      var _iterator3 = _createForOfIteratorHelper(targets),
+      var _iterator3 = _createForOfIteratorHelper(_targets),
         _step3;
       try {
         for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
@@ -7832,7 +7832,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       } finally {
         _iterator3.f();
       }
-      var touch = _superPropGet(Sprite, "$isTouchingTargetToTarget", this, 3)([src, _targets]);
+      var touch = _superPropGet(Sprite, "$isTouchingTargetToTarget", this, 3)([this, _targets]);
       return touch;
     }
   }, {
