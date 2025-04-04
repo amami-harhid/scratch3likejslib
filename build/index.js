@@ -3118,15 +3118,22 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenClicked",
     value: function $whenClicked(func) {
+      if (_Entity._clickCounter == undefined) {
+        _Entity._clickCounter = 0;
+      } else {
+        _Entity._clickCounter += 1;
+      }
+      if (_Entity._clickFuncArr == undefined) {
+        _Entity._clickFuncArr = [];
+      }
       // 同じオブジェクトで前回クリックされているとき
       // 前回のクリックで起動したものを止める。
       var p = PlayGround["default"];
       var addId = '_clicked';
-      var entityId = this.id + addId;
       var me = this;
-      var eventf = /*#__PURE__*/function () {
+      var _clickEventF = /*#__PURE__*/function () {
         var _ref8 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee22(e) {
-          var mouseX, mouseY, _touchDrawableId, threadId, proxy;
+          var _counter, _iterator7, _step7, _eventf;
           return _regeneratorRuntime().wrap(function _callee22$(_context22) {
             while (1) switch (_context22.prev = _context22.next) {
               case 0:
@@ -3138,32 +3145,79 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 }
                 return _context22.abrupt("return");
               case 3:
-                threads.removeObjById(entityId); // 前回のクリック分を止める。
+                _counter = 0;
+                _iterator7 = _createForOfIteratorHelper(_Entity._clickFuncArr);
+                try {
+                  for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+                    _eventf = _step7.value;
+                    _counter += 1;
+                    _eventf(e, _counter);
+                  }
+                } catch (err) {
+                  _iterator7.e(err);
+                } finally {
+                  _iterator7.f();
+                }
+              case 6:
+              case "end":
+                return _context22.stop();
+            }
+          }, _callee22);
+        }));
+        return function _clickEventF(_x32) {
+          return _ref8.apply(this, arguments);
+        };
+      }();
+      var eventf = /*#__PURE__*/function () {
+        var _ref9 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23(e, _counter) {
+          var CLICK_COUNTER, entityId, mouseX, mouseY, _touchDrawableId, threadId, proxy;
+          return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+            while (1) switch (_context23.prev = _context23.next) {
+              case 0:
+                CLICK_COUNTER = _counter; //Entity._clickCounter;
+                entityId = me.id + addId;
+                e.stopPropagation();
+                // 緑の旗押されていないときは何もしない。
+                if (!(p.runningGame === false)) {
+                  _context23.next = 5;
+                  break;
+                }
+                return _context23.abrupt("return");
+              case 5:
+                //threads.removeObjById(entityId); // 前回のクリック分を止める。
                 mouseX = e.offsetX;
                 mouseY = e.offsetY; // クリックしたポイントにあるDrawableのうち一番前面にあるものを返す。
                 // そのポイントにDrawableがないときは Falseが返る。
                 // 第三引数を省略することで全ての表示中のDrawableから探す。
                 _touchDrawableId = me.render.renderer.pick(mouseX, mouseY, 3, 3);
                 if (me.drawableID == _touchDrawableId) {
+                  // 前回のクリック分を止める。
+                  console.log("removeObjById, entityId=".concat(entityId, ", CLICK_COUNTER=").concat(CLICK_COUNTER));
+                  threads.removeObjById(entityId, CLICK_COUNTER); // 前回のクリック分を止める。
                   threadId = me._generateUUID();
                   proxy = me.getProxyForHat();
+                  proxy.threadCounter = CLICK_COUNTER;
                   proxy.threadId = threadId;
                   if (p.preloadDone === true) {
                     me.startThread(func, proxy, false, addId); //二重起動禁止
                   }
                 }
-              case 8:
+              case 9:
               case "end":
-                return _context22.stop();
+                return _context23.stop();
             }
-          }, _callee22);
+          }, _callee23);
         }));
-        return function eventf(_x32) {
-          return _ref8.apply(this, arguments);
+        return function eventf(_x33, _x34) {
+          return _ref9.apply(this, arguments);
         };
       }();
-      Canvas.canvas.removeEventListener('click', eventf);
-      Canvas.canvas.addEventListener('click', eventf);
+      _Entity._clickFuncArr.push(eventf);
+      //Canvas.canvas.removeEventListener('click', eventf);
+      //        Canvas.canvas.addEventListener('click', eventf);
+      if (_Entity._clickCounter == 0) {
+        Canvas.canvas.addEventListener('click', _clickEventF);
+      }
     }
   }, {
     key: "$whenCloned",
@@ -3240,25 +3294,25 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
         var _func = func.bind(_entity);
         var _func2 = _func(_entity);
         var _f = /*#__PURE__*/function () {
-          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
-            return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-              while (1) switch (_context23.prev = _context23.next) {
+          var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24() {
+            return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+              while (1) switch (_context24.prev = _context24.next) {
                 case 0:
-                  _context23.prev = 0;
-                  return _context23.delegateYield(_asyncGeneratorDelegate(_asyncIterator(_func2), _awaitAsyncGenerator), "t0", 2);
+                  _context24.prev = 0;
+                  return _context24.delegateYield(_asyncGeneratorDelegate(_asyncIterator(_func2), _awaitAsyncGenerator), "t0", 2);
                 case 2:
-                  _context23.next = 8;
+                  _context24.next = 8;
                   break;
                 case 4:
-                  _context23.prev = 4;
-                  _context23.t1 = _context23["catch"](0);
-                  console.log(_context23.t1);
-                  throw _context23.t1;
+                  _context24.prev = 4;
+                  _context24.t1 = _context24["catch"](0);
+                  console.log(_context24.t1);
+                  throw _context24.t1;
                 case 8:
                 case "end":
-                  return _context23.stop();
+                  return _context24.stop();
               }
-            }, _callee23, null, [[0, 4]]);
+            }, _callee24, null, [[0, 4]]);
           }));
           return function _f() {
             return _ref.apply(this, arguments);
@@ -3268,26 +3322,26 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func3 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee24() {
-            return _regeneratorRuntime().wrap(function _callee24$(_context24) {
-              while (1) switch (_context24.prev = _context24.next) {
+          var _ref2 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25() {
+            return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+              while (1) switch (_context25.prev = _context25.next) {
                 case 0:
-                  _context24.prev = 0;
-                  _context24.next = 3;
+                  _context25.prev = 0;
+                  _context25.next = 3;
                   return _awaitAsyncGenerator(_func3(_entity));
                 case 3:
-                  _context24.next = 9;
+                  _context25.next = 9;
                   break;
                 case 5:
-                  _context24.prev = 5;
-                  _context24.t0 = _context24["catch"](0);
-                  console.log(_context24.t0);
-                  throw _context24.t0;
+                  _context25.prev = 5;
+                  _context25.t0 = _context25["catch"](0);
+                  console.log(_context25.t0);
+                  throw _context25.t0;
                 case 9:
                 case "end":
-                  return _context24.stop();
+                  return _context25.stop();
               }
-            }, _callee24, null, [[0, 5]]);
+            }, _callee25, null, [[0, 5]]);
           }));
           return function f() {
             return _ref2.apply(this, arguments);
@@ -3330,17 +3384,17 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       } else {
         var _func4 = func.bind(_entity);
         var f = /*#__PURE__*/function () {
-          var _ref3 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee25() {
-            return _regeneratorRuntime().wrap(function _callee25$(_context25) {
-              while (1) switch (_context25.prev = _context25.next) {
+          var _ref3 = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26() {
+            return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+              while (1) switch (_context26.prev = _context26.next) {
                 case 0:
-                  _context25.next = 2;
+                  _context26.next = 2;
                   return _awaitAsyncGenerator(_func4.apply(void 0, args));
                 case 2:
                 case "end":
-                  return _context25.stop();
+                  return _context26.stop();
               }
-            }, _callee25);
+            }, _callee26);
           }));
           return function f() {
             return _ref3.apply(this, arguments);
@@ -3513,30 +3567,30 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$speechAndWait",
     value: function () {
-      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee26(words, properties) {
+      var _$speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(words, properties) {
         var gender,
           locale,
           _properties,
           speech,
-          _args26 = arguments;
-        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
-          while (1) switch (_context26.prev = _context26.next) {
+          _args27 = arguments;
+        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+          while (1) switch (_context27.prev = _context27.next) {
             case 0:
-              gender = _args26.length > 2 && _args26[2] !== undefined ? _args26[2] : 'male';
-              locale = _args26.length > 3 && _args26[3] !== undefined ? _args26[3] : 'ja-JP';
+              gender = _args27.length > 2 && _args27[2] !== undefined ? _args27[2] : 'male';
+              locale = _args27.length > 3 && _args27[3] !== undefined ? _args27[3] : 'ja-JP';
               _properties = properties ? properties : {};
               speech = Speech.getInstance();
               speech.gender = gender;
               speech.locale = locale;
-              _context26.next = 8;
+              _context27.next = 8;
               return speech.speechAndWait(this, words, _properties);
             case 8:
             case "end":
-              return _context26.stop();
+              return _context27.stop();
           }
-        }, _callee26, this);
+        }, _callee27, this);
       }));
-      function $speechAndWait(_x33, _x34) {
+      function $speechAndWait(_x35, _x36) {
         return _$speechAndWait.apply(this, arguments);
       }
       return $speechAndWait;
@@ -3577,19 +3631,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "forever",
     value: function () {
-      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee27(func) {
-        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
-          while (1) switch (_context27.prev = _context27.next) {
+      var _forever = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(func) {
+        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+          while (1) switch (_context28.prev = _context28.next) {
             case 0:
-              _context27.next = 2;
+              _context28.next = 2;
               return Loop["while"](true, func, this);
             case 2:
             case "end":
-              return _context27.stop();
+              return _context28.stop();
           }
-        }, _callee27, this);
+        }, _callee28, this);
       }));
-      function forever(_x35) {
+      function forever(_x37) {
         return _forever.apply(this, arguments);
       }
       return forever;
@@ -3597,19 +3651,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "while",
     value: function () {
-      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee28(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
-          while (1) switch (_context28.prev = _context28.next) {
+      var _while2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
+          while (1) switch (_context29.prev = _context29.next) {
             case 0:
-              _context28.next = 2;
+              _context29.next = 2;
               return Loop["while"](condition, func, this);
             case 2:
             case "end":
-              return _context28.stop();
+              return _context29.stop();
           }
-        }, _callee28, this);
+        }, _callee29, this);
       }));
-      function _while(_x36, _x37) {
+      function _while(_x38, _x39) {
         return _while2.apply(this, arguments);
       }
       return _while;
@@ -3617,19 +3671,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeat",
     value: function () {
-      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee29(count, func) {
-        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
-          while (1) switch (_context29.prev = _context29.next) {
+      var _repeat = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(count, func) {
+        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
+          while (1) switch (_context30.prev = _context30.next) {
             case 0:
-              _context29.next = 2;
+              _context30.next = 2;
               return Loop.repeat(count, func, this);
             case 2:
             case "end":
-              return _context29.stop();
+              return _context30.stop();
           }
-        }, _callee29, this);
+        }, _callee30, this);
       }));
-      function repeat(_x38, _x39) {
+      function repeat(_x40, _x41) {
         return _repeat.apply(this, arguments);
       }
       return repeat;
@@ -3637,19 +3691,19 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "repeatUntil",
     value: function () {
-      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee30(condition, func) {
-        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
-          while (1) switch (_context30.prev = _context30.next) {
+      var _repeatUntil = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee31(condition, func) {
+        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
+          while (1) switch (_context31.prev = _context31.next) {
             case 0:
-              _context30.next = 2;
+              _context31.next = 2;
               return Loop.repeatUntil(condition, func, this);
             case 2:
             case "end":
-              return _context30.stop();
+              return _context31.stop();
           }
-        }, _callee30, this);
+        }, _callee31, this);
       }));
-      function repeatUntil(_x40, _x41) {
+      function repeatUntil(_x42, _x43) {
         return _repeatUntil.apply(this, arguments);
       }
       return repeatUntil;
@@ -8484,7 +8538,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       var me = this;
       var size = {
         w: 0,
-        h: 0
+        h: 0,
+        scale: 0
       };
       Object.defineProperty(size, "w", {
         get: function get() {
@@ -8508,6 +8563,22 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
           var _me$$getCurrentSize4 = me.$getCurrentSize(),
             w = _me$$getCurrentSize4.w;
           me.$setScale(w, h);
+        }
+      });
+      Object.defineProperty(size, "scale", {
+        get: function get() {
+          var _me$$getCurrentSize5 = me.$getCurrentSize(),
+            w = _me$$getCurrentSize5.w,
+            h = _me$$getCurrentSize5.h;
+          return {
+            w: w,
+            h: h
+          };
+        },
+        set: function set(scale) {
+          if (scale && scale.w != undefined && scale.h != undefined) {
+            me.$setScale(scale.w, scale.h);
+          }
         }
       });
       return size;
@@ -9950,39 +10021,58 @@ var Threads = /*#__PURE__*/function () {
     }
   }, {
     key: "removeObjById",
-    value: function removeObjById(id) {
-      var _iterator4 = _createForOfIteratorHelper(this.threadArr),
-        _step4;
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var obj = _step4.value;
-          if (obj.doubleRunable === false && obj.entityId == id) {
-            obj.forceExit = true;
+    value: function removeObjById(id, clickCounter) {
+      if (clickCounter == undefined) {
+        var _iterator4 = _createForOfIteratorHelper(this.threadArr),
+          _step4;
+        try {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+            var obj = _step4.value;
+            if (obj.doubleRunable === false && obj.entityId == id) {
+              console.log('removeObjById(1)');
+              obj.forceExit = true;
+            }
           }
+        } catch (err) {
+          _iterator4.e(err);
+        } finally {
+          _iterator4.f();
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
+      } else {
+        var _iterator5 = _createForOfIteratorHelper(this.threadArr),
+          _step5;
+        try {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var _obj2 = _step5.value;
+            if (_obj2.doubleRunable === false && _obj2.entityId == id && _obj2.entity && _obj2.entity.threadCounter == clickCounter) {
+              console.log('removeObjById(2) clickCounter=' + clickCounter);
+              _obj2.forceExit = true;
+            }
+          }
+        } catch (err) {
+          _iterator5.e(err);
+        } finally {
+          _iterator5.f();
+        }
       }
     }
   }, {
     key: "interval",
     value: function () {
       var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(me) {
-        var _p, _iterator5, _step5, _loop, _arr, _iterator6, _step6, obj, lastChildObj;
+        var _p, _iterator6, _step6, _loop, _arr, _iterator7, _step7, obj, lastChildObj;
         return _regeneratorRuntime().wrap(function _callee2$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
               _p = PlayGround["default"];
-              _iterator5 = _createForOfIteratorHelper(me.threadArr);
+              _iterator6 = _createForOfIteratorHelper(me.threadArr);
               _context3.prev = 2;
               _loop = /*#__PURE__*/_regeneratorRuntime().mark(function _loop() {
                 var obj, _obj, f;
                 return _regeneratorRuntime().wrap(function _loop$(_context2) {
                   while (1) switch (_context2.prev = _context2.next) {
                     case 0:
-                      obj = _step5.value;
+                      obj = _step6.value;
                       if (!obj.entity.isAlive()) {
                         // Entity生きていないとき
                         obj.forceExit = true; // 強制終了とする
@@ -10030,9 +10120,9 @@ var Threads = /*#__PURE__*/function () {
                   }
                 }, _loop, null, [[6, 10]]);
               });
-              _iterator5.s();
+              _iterator6.s();
             case 5:
-              if ((_step5 = _iterator5.n()).done) {
+              if ((_step6 = _iterator6.n()).done) {
                 _context3.next = 9;
                 break;
               }
@@ -10046,27 +10136,27 @@ var Threads = /*#__PURE__*/function () {
             case 11:
               _context3.prev = 11;
               _context3.t1 = _context3["catch"](2);
-              _iterator5.e(_context3.t1);
+              _iterator6.e(_context3.t1);
             case 14:
               _context3.prev = 14;
-              _iterator5.f();
+              _iterator6.f();
               return _context3.finish(14);
             case 17:
               // 終了したOBJは削除する
               _arr = [];
-              _iterator6 = _createForOfIteratorHelper(me.threadArr);
+              _iterator7 = _createForOfIteratorHelper(me.threadArr);
               try {
-                for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-                  obj = _step6.value;
+                for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+                  obj = _step7.value;
                   lastChildObj = me.getLastChildObj(obj);
                   if (!obj.forceExit && (!obj.done || !lastChildObj.done)) {
                     _arr.push(obj);
                   }
                 }
               } catch (err) {
-                _iterator6.e(err);
+                _iterator7.e(err);
               } finally {
-                _iterator6.f();
+                _iterator7.f();
               }
               me.threadArr = [].concat(_arr);
               _p._draw();
@@ -10798,15 +10888,15 @@ module.exports = Color;
   \*************************************/
 /***/ ((module) => {
 
+var _EntityProxyExt;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-var THREAD_ID = "threadId";
-var IS_PROXY_TEST = "isProxyTest";
-module.exports = /*#__PURE__*/function () {
+module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
   function EntityProxyExt() {
     _classCallCheck(this, EntityProxyExt);
   }
@@ -10815,19 +10905,26 @@ module.exports = /*#__PURE__*/function () {
     value: function getProxy(obj, callback) {
       var proxy = new Proxy(obj, {
         get: function get(target, name, receiver) {
-          if (name == THREAD_ID) {
+          if (name == EntityProxyExt.THREAD_ID) {
             return this.threadId;
           }
-          if (name == IS_PROXY_TEST) {
+          if (name == EntityProxyExt.IS_PROXY_TEST) {
             return function (_) {
               return true;
             };
           }
+          if (name == EntityProxyExt.THREAD_COUNTER) {
+            return this.threadCounter;
+          }
           return Reflect.get.apply(Reflect, arguments);
         },
         set: function set(target, name, value) {
-          if (name == THREAD_ID) {
+          if (name == EntityProxyExt.THREAD_ID) {
             this.threadId = value;
+            return true;
+          }
+          if (name == EntityProxyExt.THREAD_COUNTER) {
+            this.threadCounter = value;
             return true;
           }
           return Reflect.set.apply(Reflect, arguments);
@@ -10836,7 +10933,7 @@ module.exports = /*#__PURE__*/function () {
       return proxy;
     }
   }]);
-}();
+}(), _defineProperty(_EntityProxyExt, "THREAD_ID", "threadId"), _defineProperty(_EntityProxyExt, "THREAD_COUNTER", "threadCounter"), _defineProperty(_EntityProxyExt, "IS_PROXY_TEST", "isProxyTest"), _EntityProxyExt);
 
 /***/ }),
 

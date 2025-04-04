@@ -58,18 +58,21 @@ Pg.setting = async function () {
         console.log('START');
         // 音量 100
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
-        // 「終わるまで音を鳴らす」をずっと繰り返す
-        while(true){
-            console.log('WHILE');
-            // 処理が終わるまで待つために await をつける
-            await this.Sound.playUntilDone(Chill);
-            await this.Sound.changeOptionValue(Lib.SoundOption.VOLUME, -10);
-            await this.Sound.changeOptionValue(Lib.SoundOption.PITCH, 10);
-            yield;
-        }
+        this.Event.whenClicked(async function*(){
+            // 「終わるまで音を鳴らす」をずっと繰り返す
+            while(true){
+                console.log('WHILE');
+                // 処理が終わるまで待つために await をつける
+                await this.Sound.playUntilDone(Chill);
+                await this.Sound.changeOptionValue(Lib.SoundOption.VOLUME, -10);
+                await this.Sound.changeOptionValue(Lib.SoundOption.PITCH, 10);
+                yield;
+            }
+        });
     })
     // stage click で broadcast 内のループが止まる？？
     stage.Event.whenClicked(async function() {
+        console.log('stage.Event.whenClicked #001');
         const question = `
 STAGE難易度を入力してね
 (1 - 3)`;
@@ -88,8 +91,8 @@ STAGE難易度を入力してね
         }
 
     })
-    cat.Event.whenClicked(async function*(){
-        console.log('cat click1');
+    cat.Event.whenClicked(async function(){
+        console.log('cat.Event.whenClicked #002');
         await this.Control.wait(1);
 //        this.Looks.say("こんにちは")
         this.Motion.gotoXY(100,100);
@@ -102,6 +105,9 @@ STAGE難易度を入力してね
         console.log(`x=${this.Motion.Position.x}, y=${this.Motion.Position.y}`);
         await this.Control.wait(1);
         this.Motion.gotoXY(0,0);
+    });
+    cat.Event.whenClicked(async function*(){
+        console.log('cat.Event.whenClicked #003');
         let degree = 90;
         for(;;){
             degree += 1;
@@ -110,7 +116,30 @@ STAGE難易度を入力してね
             yield;
         }
     });
+
     cat.Event.whenClicked(async function*(){
+        console.log('cat.Event.whenClicked #004');
+        for(const _ of Lib.Iterator(20)){
+            this.Looks.Size.w -= 1;
+            this.Looks.Size.h -= 1;
+            yield;
+        }
+        for(;;){
+            for(const _ of Lib.Iterator(20)){
+                this.Looks.Size.w += 1;
+                this.Looks.Size.h += 1;
+                yield;
+            }
+            for(const _ of Lib.Iterator(20)){
+                this.Looks.Size.w -= 1;
+                this.Looks.Size.h -= 1;
+                yield;
+            }
+            yield;
+        }
+    });
+    cat.Event.whenClicked(async function*(){
+        console.log('cat.Event.whenClicked #005');
         console.log('cat click2');        let answer ;
         for(;;){
             const question = `
