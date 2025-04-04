@@ -67,15 +67,20 @@ Pg.setting = async function setting() {
         });
         // ネコをクリックしたらお話する
         cat.Event.whenClicked(async function(){
-            const words = `そこそこ`;
+            console.log('そこそこ')
+            const words = `そこそこ,そこなのよ、そうなのよ`;
             const properties = {'pitch': 1.7, 'volume': 500}
-            this.Event.broadcast('SPEAK', words, properties, 'female')
+            const gender = 'famale';
+            const locale = 'ja-JP';
+            this.emit('SOUND_STOP')
+            await this.Extensions.speechAndWait(words, properties, gender, locale);
         });
         
         /** SPEAK を受信したらスピーチする */
         cat.Event.whenBroadcastReceived('SPEAK', async function(words, properties, gender='male', locale='ja-JP') {
-            this.Extensions.speech(words, properties, gender, locale);
-
+            //this.Extensions.speech(words, properties, gender, locale);
+            console.log(words);
+            await this.Extensions.speech(words, properties, gender, locale);
         });
 
 }

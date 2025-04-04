@@ -1695,6 +1695,7 @@ module.exports = Runtime;
   \************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
+var _Class;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -1705,8 +1706,6 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -1714,6 +1713,9 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _wrapAsyncGenerator(e) { return function () { return new AsyncGenerator(e.apply(this, arguments)); }; }
 function AsyncGenerator(e) { var r, t; function resume(r, t) { try { var n = e[r](t), o = n.value, u = o instanceof _OverloadYield; Promise.resolve(u ? o.v : o).then(function (t) { if (u) { var i = "return" === r ? "return" : "next"; if (!o.k || t.done) return resume(i, t); t = e[i](t).value; } settle(n.done ? "return" : "normal", t); }, function (e) { resume("throw", e); }); } catch (e) { settle("throw", e); } } function settle(e, n) { switch (e) { case "return": r.resolve({ value: n, done: !0 }); break; case "throw": r.reject(n); break; default: r.resolve({ value: n, done: !1 }); } (r = r.next) ? resume(r.key, r.arg) : t = null; } this._invoke = function (e, n) { return new Promise(function (o, u) { var i = { key: e, arg: n, resolve: o, reject: u, next: null }; t ? t = t.next = i : (r = t = i, resume(e, n)); }); }, "function" != typeof e["return"] && (this["return"] = void 0); }
 AsyncGenerator.prototype["function" == typeof Symbol && Symbol.asyncIterator || "@@asyncIterator"] = function () { return this; }, AsyncGenerator.prototype.next = function (e) { return this._invoke("next", e); }, AsyncGenerator.prototype["throw"] = function (e) { return this._invoke("throw", e); }, AsyncGenerator.prototype["return"] = function (e) { return this._invoke("return", e); };
@@ -1744,7 +1746,7 @@ var _require2 = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require2.RotationStyle;
 var Utils = __webpack_require__(/*! ./utils */ "../lib/utils.js");
 //const { default: playGround } = require('./playGround');
-var _Entity = /*#__PURE__*/function (_EventEmitter) {
+var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
   function Entity(name, layer) {
     var _this;
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -2304,9 +2306,14 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       this.sounds.stopImmediately();
     }
   }, {
+    key: "SPEECH_SOUND_STOP",
+    get: function get() {
+      return "SPEECH_SOUND_STOP";
+    }
+  }, {
     key: "$speechStopImmediately",
     value: function $speechStopImmediately() {
-      this.emit("SOUND_STOP"); // ---> スピーチを停止する Soundの中で。
+      this.emit(this.SPEECH_SOUND_STOP); // ---> スピーチを停止する Soundの中で。
     }
   }, {
     key: "$startSoundUntilDone",
@@ -3118,14 +3125,6 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$whenClicked",
     value: function $whenClicked(func) {
-      if (_Entity._clickCounter == undefined) {
-        _Entity._clickCounter = 0;
-      } else {
-        _Entity._clickCounter += 1;
-      }
-      if (_Entity._clickFuncArr == undefined) {
-        _Entity._clickFuncArr = [];
-      }
       // 同じオブジェクトで前回クリックされているとき
       // 前回のクリックで起動したものを止める。
       var p = PlayGround["default"];
@@ -3146,7 +3145,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 return _context22.abrupt("return");
               case 3:
                 _counter = 0;
-                _iterator7 = _createForOfIteratorHelper(_Entity._clickFuncArr);
+                _iterator7 = _createForOfIteratorHelper(_Entity.eventFuncArray);
                 try {
                   for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
                     _eventf = _step7.value;
@@ -3192,7 +3191,9 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
                 _touchDrawableId = me.render.renderer.pick(mouseX, mouseY, 3, 3);
                 if (me.drawableID == _touchDrawableId) {
                   // 前回のクリック分を止める。
-                  console.log("removeObjById, entityId=".concat(entityId, ", CLICK_COUNTER=").concat(CLICK_COUNTER));
+                  // me.$soundStopImmediately();
+                  // me.$speechStopImmediately();
+
                   threads.removeObjById(entityId, CLICK_COUNTER); // 前回のクリック分を止める。
                   threadId = me._generateUUID();
                   proxy = me.getProxyForHat();
@@ -3212,11 +3213,12 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
           return _ref9.apply(this, arguments);
         };
       }();
-      _Entity._clickFuncArr.push(eventf);
+      _Entity.eventFuncArray.push(eventf);
       //Canvas.canvas.removeEventListener('click', eventf);
       //        Canvas.canvas.addEventListener('click', eventf);
-      if (_Entity._clickCounter == 0) {
+      if (_Entity.clickFirstRegist === true) {
         Canvas.canvas.addEventListener('click', _clickEventF);
+        _Entity.clickFirstRegist = false;
       }
     }
   }, {
@@ -3768,7 +3770,7 @@ var _Entity = /*#__PURE__*/function (_EventEmitter) {
       return '_MovePromise_';
     }
   }]);
-}(EventEmitter);
+}(EventEmitter), _defineProperty(_Class, "clickFirstRegist", true), _defineProperty(_Class, "eventFuncArray", []), _Class);
 module.exports = _Entity;
 
 /***/ }),
@@ -6622,13 +6624,24 @@ var SoundPlayer = /*#__PURE__*/function () {
     key: "startSoundUntilDone",
     value: function () {
       var _startSoundUntilDone = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var __soundPlayer;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
+              __soundPlayer = this._soundPlayer; // --- replace finished.
+              // --- when sounds stoped, change property(isPlaying) to false
+              this._soundPlayer.finished = function () {
+                return new Promise(function (resolve) {
+                  __soundPlayer.once('stop', function () {
+                    __soundPlayer.isPlaying = false;
+                    resolve;
+                  });
+                });
+              };
               this.play();
-              _context.next = 3;
+              _context.next = 5;
               return this._soundPlayer.finished();
-            case 3:
+            case 5:
             case "end":
               return _context.stop();
           }
@@ -6897,22 +6910,23 @@ var Sounds = /*#__PURE__*/function () {
               me = this;
               return _context5.abrupt("return", new Promise(/*#__PURE__*/function () {
                 var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resolve) {
-                  var _f;
+                  var _f, EMIT_ID;
                   return _regeneratorRuntime().wrap(function _callee4$(_context4) {
                     while (1) switch (_context4.prev = _context4.next) {
                       case 0:
                         _f = function _f(_) {
                           me.stopImmediately();
                           resolve();
-                        };
-                        self.once("SOUND_STOP", _f);
-                        _context4.next = 4;
+                        }; // Entity.$speechStopImmediately()でEmitされる
+                        EMIT_ID = self.SPEECH_SOUND_STOP;
+                        self.once(EMIT_ID, _f);
+                        _context4.next = 5;
                         return _this2.soundPlayer.startSoundUntilDone();
-                      case 4:
+                      case 5:
                         // 終わるまで待つ
-                        self.removeListener("SOUND_STOP", _f);
+                        self.removeListener(EMIT_ID, _f);
                         resolve();
-                      case 6:
+                      case 7:
                       case "end":
                         return _context4.stop();
                     }
@@ -7160,7 +7174,7 @@ var _Speech = /*#__PURE__*/function () {
   }, {
     key: "speechAndWait",
     value: function () {
-      var _speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(self, words) {
+      var _speechAndWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(entity, words) {
         var properties,
           text,
           path,
@@ -7188,7 +7202,7 @@ var _Speech = /*#__PURE__*/function () {
             case 9:
               sound = this.cache.get(path);
               _context.next = 12;
-              return this._speechPlayUntilDone(self, sound.name, sound.data, properties);
+              return this._speechPlayUntilDone(entity, sound.name, sound.data, properties);
             case 12:
             case "end":
               return _context.stop();
@@ -7203,7 +7217,7 @@ var _Speech = /*#__PURE__*/function () {
   }, {
     key: "_speechPlayUntilDone",
     value: function () {
-      var _speechPlayUntilDone2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(self, name, data, properties) {
+      var _speechPlayUntilDone2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(entity, name, data, properties) {
         var sounds;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
@@ -7213,7 +7227,7 @@ var _Speech = /*#__PURE__*/function () {
               return sounds.setSound(name, data, properties);
             case 3:
               _context2.next = 5;
-              return sounds.startSoundUntilDone(self);
+              return sounds.startSoundUntilDone(entity);
             case 5:
             case "end":
               return _context2.stop();
@@ -9812,7 +9826,6 @@ var Threads = /*#__PURE__*/function () {
     this.threadArr = [];
     this._intervalId = null;
     this._running = false;
-    //this.nowExecutingObj = null;
   }
   return _createClass(Threads, [{
     key: "RUNNING",
@@ -9906,10 +9919,6 @@ var Threads = /*#__PURE__*/function () {
               }
               return _context.abrupt("return");
             case 2:
-              // if(this._running){
-              //     this.pauseThreadsInterval();
-              //     await Utils.wait(10);
-              // }
               this._intervalId = setInterval(this.interval, INTERVAL, this);
               this._running = true;
             case 4:
@@ -9946,14 +9955,16 @@ var Threads = /*#__PURE__*/function () {
         var p = PlayGround["default"];
         var stage = p.stage;
         if (stage != null) {
-          stage.soundStopImmediately();
+          stage.$soundStopImmediately();
+          stage.$speechStopImmediately();
           if (stage.sprites != null) {
             var _iterator2 = _createForOfIteratorHelper(stage.sprites),
               _step2;
             try {
               for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
                 var s = _step2.value;
-                s.soundStopImmediately();
+                s.$soundStopImmediately();
+                s.$speechStopImmediately();
               }
             } catch (err) {
               _iterator2.e(err);
@@ -9985,6 +9996,7 @@ var Threads = /*#__PURE__*/function () {
         var stage = p.stage;
         if (stage != null) {
           stage.$soundStopImmediately();
+          stage.$speechStopImmediately();
           if (stage.sprites != null) {
             var _iterator3 = _createForOfIteratorHelper(stage.sprites),
               _step3;
@@ -9994,12 +10006,6 @@ var Threads = /*#__PURE__*/function () {
                 if (s) {
                   s.$soundStopImmediately();
                   s.$speechStopImmediately();
-                  // クローン削除は STOPボタン押下のイベント内でやっている。
-                  // if(s.clones){
-                  //     for(const c of s.clones){
-                  //         if(c && c.isAlive()) c.remove();
-                  //     }        
-                  // }
                 }
               }
             } catch (err) {
@@ -10008,7 +10014,6 @@ var Threads = /*#__PURE__*/function () {
               _iterator3.f();
             }
           }
-          //                stage.remove();
         }
       }
       this._running = false;
@@ -10029,8 +10034,9 @@ var Threads = /*#__PURE__*/function () {
           for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
             var obj = _step4.value;
             if (obj.doubleRunable === false && obj.entityId == id) {
-              console.log('removeObjById(1)');
               obj.forceExit = true;
+              obj.entity.$soundStopImmediately();
+              obj.entity.$speechStopImmediately();
             }
           }
         } catch (err) {
@@ -10045,8 +10051,9 @@ var Threads = /*#__PURE__*/function () {
           for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
             var _obj2 = _step5.value;
             if (_obj2.doubleRunable === false && _obj2.entityId == id && _obj2.entity && _obj2.entity.threadCounter == clickCounter) {
-              console.log('removeObjById(2) clickCounter=' + clickCounter);
               _obj2.forceExit = true;
+              _obj2.entity.$soundStopImmediately();
+              _obj2.entity.$speechStopImmediately();
             }
           }
         } catch (err) {

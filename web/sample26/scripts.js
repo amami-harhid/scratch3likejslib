@@ -58,17 +58,20 @@ Pg.setting = async function () {
         console.log('START');
         // 音量 100
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
-        this.Event.whenClicked(async function*(){
-            // 「終わるまで音を鳴らす」をずっと繰り返す
-            while(true){
-                console.log('WHILE');
-                // 処理が終わるまで待つために await をつける
-                await this.Sound.playUntilDone(Chill);
-                await this.Sound.changeOptionValue(Lib.SoundOption.VOLUME, -10);
-                await this.Sound.changeOptionValue(Lib.SoundOption.PITCH, 10);
-                yield;
-            }
-        });
+        await this.Sound.setOption( Lib.SoundOption.PITCH, 100 );
+    })
+    stage.Event.whenKeyPressed('A', async function*(){
+        // 「終わるまで音を鳴らす」をずっと繰り返す
+        while(true){
+            console.log('WHILE');
+            // 処理が終わるまで待つために await をつける
+            console.log('Chill play start');
+            await this.Sound.playUntilDone(Chill);
+            console.log('Chill play done');
+            await this.Sound.changeOptionValue(Lib.SoundOption.VOLUME, -10);
+            await this.Sound.changeOptionValue(Lib.SoundOption.PITCH, 10);
+            yield;
+        }
     })
     // stage click で broadcast 内のループが止まる？？
     stage.Event.whenClicked(async function() {
