@@ -6667,7 +6667,7 @@ var SoundPlayer = /*#__PURE__*/function () {
                 return new Promise(function (resolve) {
                   __soundPlayer.once('stop', function () {
                     __soundPlayer.isPlaying = false;
-                    resolve;
+                    resolve();
                   });
                 });
               };
