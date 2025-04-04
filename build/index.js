@@ -1588,7 +1588,8 @@ var _Element = /*#__PURE__*/function () {
         }
       }
       // Stage-QuestionBox を消す
-      QuestionBoxElement["default"].removeAsk(playground.stage);
+      // QuestionBoxElement.default.removeAsk(playground.stage);
+      playground.stage.emit(QuestionBoxElement["default"].QuestionBoxForceComplete);
       playground._draw();
       playground.runtime.emit('PAUSING_GAME'); // ON は processの中にある
     }
@@ -4658,7 +4659,7 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
-var playGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
+var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
 var Utils = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 
 /** div include canvas */
@@ -4685,61 +4686,84 @@ var QuestionSubmitButtonIcon = 'question_question-submit-button-icon';
 var ButtonIconSrc = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDUxLjIgKDU3NTE5KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5HZW5lcmFsL0NoZWNrPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTcuODYxNDQwNTksMTUuNDAyODc3NiBDNy40MzUyNjg1OSwxNS40MDI4Nzc2IDcuMDA5MDk2NTgsMTUuMjM5NzMzNiA2LjY4NDQ3MzM4LDE0LjkxNTExMDQgTDMuNDg4MTgzMzYsMTEuNzE4ODIwNCBDMi44MzcyNzIyMSwxMS4wNjc5MDkzIDIuODM3MjcyMjEsMTAuMDE1Nzk3MSAzLjQ4ODE4MzM2LDkuMzY0ODg2IEM0LjEzOTA5NDUsOC43MTM5NzQ4NSA1LjE5MTIwNjY0LDguNzEzOTc0ODUgNS44NDIxMTc3OCw5LjM2NDg4NiBMNy44NjE0NDA1OSwxMS4zODQyMDg4IEwxNC4xNTkxMzA4LDUuMDg4MTgzMzYgQzE0LjgwODM3NzIsNC40MzcyNzIyMSAxNS44NjIxNTQsNC40MzcyNzIyMSAxNi41MTMwNjUyLDUuMDg4MTgzMzYgQzE3LjE2MjMxMTYsNS43Mzc0Mjk3NyAxNy4xNjIzMTE2LDYuNzkxMjA2NjQgMTYuNTEzMDY1Miw3LjQ0MjExNzc4IEw5LjAzODQwNzgsMTQuOTE1MTEwNCBDOC43MTM3ODQ2LDE1LjIzOTczMzYgOC4yODc2MTI1OSwxNS40MDI4Nzc2IDcuODYxNDQwNTksMTUuNDAyODc3NiIgaWQ9InBhdGgtMSI+PC9wYXRoPgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkdlbmVyYWwvQ2hlY2siIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICA8L21hc2s+CiAgICAgICAgPHVzZSBpZD0iQ2hlY2siIGZpbGw9IiM1NzVFNzUiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgIDxnIGlkPSJDb2xvci9XaGl0ZSIgbWFzaz0idXJsKCNtYXNrLTIpIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHJlY3QgaWQ9IkNvbG9yIiB4PSIwIiB5PSIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
 var _QuestionBoxElement = (_Class = /*#__PURE__*/function (_EventEmitter) {
   function QuestionBoxElement() {
+    var _this;
     _classCallCheck(this, QuestionBoxElement);
-    return _callSuper(this, QuestionBoxElement);
+    _this = _callSuper(this, QuestionBoxElement);
+    _this.forceComplete = false;
+    return _this;
   }
   /**
    * DOM(StageStageOverlays)が存在しなくなるまで待つ
+   * 強制打ち切りの場合は false を返す
    * @returns Promise<void>
    */
   _inherits(QuestionBoxElement, _EventEmitter);
   return _createClass(QuestionBoxElement, [{
     key: "askWait",
     value: (function () {
-      var _askWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var _askWait = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(entity) {
+        var me;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
+              me = this;
               return _context2.abrupt("return", new Promise(/*#__PURE__*/function () {
                 var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(resolve) {
-                  var stage_stage_overlays;
+                  var f, stage, stage_stage_overlays;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
                     while (1) switch (_context.prev = _context.next) {
                       case 0:
+                        f = function f() {
+                          me.forceComplete = true;
+                        };
+                        stage = PlayGround["default"].stage;
+                        stage.once(_QuestionBoxElement.QuestionBoxForceComplete, f);
                         stage_stage_overlays = document.getElementById(StageOverlays);
-                      case 1:
-                        if (!(stage_stage_overlays == undefined)) {
-                          _context.next = 3;
+                      case 4:
+                        if (!(me.forceComplete === true)) {
+                          _context.next = 7;
                           break;
                         }
-                        return _context.abrupt("break", 8);
-                      case 3:
-                        _context.next = 5;
-                        return Utils["default"].wait(0.033);
-                      case 5:
-                        stage_stage_overlays = document.getElementById(StageOverlays);
-                      case 6:
-                        _context.next = 1;
-                        break;
-                      case 8:
-                        resolve();
+                        _QuestionBoxElement.removeAsk(entity);
+                        return _context.abrupt("break", 14);
+                      case 7:
+                        if (!(stage_stage_overlays == undefined)) {
+                          _context.next = 9;
+                          break;
+                        }
+                        return _context.abrupt("break", 14);
                       case 9:
+                        _context.next = 11;
+                        return Utils["default"].wait(0.033);
+                      case 11:
+                        stage_stage_overlays = document.getElementById(StageOverlays);
+                      case 12:
+                        _context.next = 4;
+                        break;
+                      case 14:
+                        if (me.forceComplete === true) {
+                          resolve(false);
+                        } else {
+                          stage.removeListener(_QuestionBoxElement.QuestionBoxForceComplete, f);
+                          resolve(true);
+                        }
+                      case 15:
                       case "end":
                         return _context.stop();
                     }
                   }, _callee);
                 }));
-                return function (_x) {
+                return function (_x2) {
                   return _ref.apply(this, arguments);
                 };
               }()));
-            case 1:
+            case 2:
             case "end":
               return _context2.stop();
           }
-        }, _callee2);
+        }, _callee2, this);
       }));
-      function askWait() {
+      function askWait(_x) {
         return _askWait.apply(this, arguments);
       }
       return askWait;
@@ -4754,13 +4778,22 @@ var _QuestionBoxElement = (_Class = /*#__PURE__*/function (_EventEmitter) {
     key: "ask",
     value: function () {
       var _ask = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(entity, text) {
-        var canvasDiv, stage_overlays, stage_stage_bottom_wrapper, stage_question_wrapper, div, questionContainer, questionLabel, questionInputDiv, input, button, img, runtime, keyboard, inputText, inputChange, me, keyPress, buttonClick;
+        var result, canvasDiv, stage_overlays, stage_stage_bottom_wrapper, stage_question_wrapper, div, questionContainer, questionLabel, questionInputDiv, input, button, img, runtime, keyboard, inputText, inputChange, me, keyPress, buttonClick;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              _context3.next = 2;
-              return this.askWait();
-            case 2:
+              this.forceComplete = false;
+              _context3.next = 3;
+              return this.askWait(entity);
+            case 3:
+              result = _context3.sent;
+              if (!(result === false || this.forceComplete === true)) {
+                _context3.next = 7;
+                break;
+              }
+              _QuestionBoxElement.removeAsk(entity);
+              return _context3.abrupt("return", '');
+            case 7:
               canvasDiv = document.getElementById(CanvasDiv);
               stage_overlays = document.createElement('div');
               stage_overlays.id = StageOverlays;
@@ -4806,7 +4839,7 @@ var _QuestionBoxElement = (_Class = /*#__PURE__*/function (_EventEmitter) {
               img.src = ButtonIconSrc;
               button.appendChild(img);
               questionInputDiv.appendChild(button);
-              runtime = playGround["default"].runtime;
+              runtime = PlayGround["default"].runtime;
               keyboard = runtime.ioDevices.keyboard; // 半角スペースの入力を許可する
               keyboard.spaceStopPropagation = false;
               inputText = '';
@@ -4838,13 +4871,13 @@ var _QuestionBoxElement = (_Class = /*#__PURE__*/function (_EventEmitter) {
                   resolve(inputText);
                 });
               }));
-            case 49:
+            case 54:
             case "end":
               return _context3.stop();
           }
         }, _callee3, this);
       }));
-      function ask(_x2, _x3) {
+      function ask(_x3, _x4) {
         return _ask.apply(this, arguments);
       }
       return ask;
@@ -4887,7 +4920,7 @@ var _QuestionBoxElement = (_Class = /*#__PURE__*/function (_EventEmitter) {
       }
     }
   }]);
-}(EventEmitter), _defineProperty(_Class, "TextInputComplete", 'textInputComplete'), _Class);
+}(EventEmitter), _defineProperty(_Class, "TextInputComplete", 'textInputComplete'), _defineProperty(_Class, "QuestionBoxForceComplete", 'QuestionBoxForceComplete'), _Class);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_QuestionBoxElement);
 
 /***/ }),
