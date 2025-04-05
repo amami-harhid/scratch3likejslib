@@ -1868,23 +1868,23 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
         var v = this._effect.color;
         this._effect.color = v + changeVal;
       } else if (target == ImageEffective.FISHEYE) {
-        var _v2 = this._effect.fisheye;
-        this._effect.fisheye = _v2 + changeVal;
+        var _v = this._effect.fisheye;
+        this._effect.fisheye = _v + changeVal;
       } else if (target == ImageEffective.WHIRL) {
-        var _v3 = this._effect.whirl;
-        this._effect.whirl = _v3 + changeVal;
+        var _v2 = this._effect.whirl;
+        this._effect.whirl = _v2 + changeVal;
       } else if (target == ImageEffective.PIXELATE) {
-        var _v4 = this._effect.pixelate;
-        this._effect.pixelate = _v4 + changeVal;
+        var _v3 = this._effect.pixelate;
+        this._effect.pixelate = _v3 + changeVal;
       } else if (target == ImageEffective.MOSAIC) {
-        var _v5 = this._effect.mosaic;
-        this._effect.mosaic = _v5 + changeVal;
+        var _v4 = this._effect.mosaic;
+        this._effect.mosaic = _v4 + changeVal;
       } else if (target == ImageEffective.BRIGHTNESS) {
-        var _v6 = this._effect.brightness;
-        this._effect.brightness = _v6 + changeVal;
+        var _v5 = this._effect.brightness;
+        this._effect.brightness = _v5 + changeVal;
       } else if (target == ImageEffective.GHOST) {
-        var _v7 = this._effect.ghost;
-        this._effect.ghost = _v7 + changeVal;
+        var _v6 = this._effect.ghost;
+        this._effect.ghost = _v6 + changeVal;
       }
     }
   }, {
@@ -2186,16 +2186,14 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
     key: "$setOption",
     value: function () {
       var _$setOption = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(key, value) {
-        var _v;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) switch (_context7.prev = _context7.next) {
             case 0:
               if (key == SoundOption.VOLUME) {
                 this.$setSoundVolume(value);
               } else if (key == SoundOption.PITCH) {
-                if (value > 0) {
-                  _v = value / 100;
-                  this.$setSoundPitch(_v);
+                if (-360 <= value && value <= 360) {
+                  this.$setSoundPitch(value);
                 }
               }
               // 音量変更時直後の再生にて 最初に雑音「ブッ」が入る。
@@ -2221,7 +2219,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
           while (1) switch (_context8.prev = _context8.next) {
             case 0:
               this.$setSoundVolume(100);
-              this.$setSoundPitch(1.0);
+              this.$setSoundPitch(0);
               _context8.next = 4;
               return Libs["default"].wait(1000 / 33 * 2);
             case 4:
@@ -2236,10 +2234,28 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
       return $clearSoundEffect;
     }()
   }, {
+    key: "$pitchAudio2Scratch",
+    value: function $pitchAudio2Scratch(pitch) {
+      if (12.5 <= pitch && pitch <= 800) {
+        var scratchPitch = 120 * Math.log2(pitch / 100);
+        return scratchPitch;
+      }
+      return 100;
+    }
+  }, {
+    key: "$pitchScratch2Audio",
+    value: function $pitchScratch2Audio(pitch) {
+      if (-360 <= pitch && pitch <= 360) {
+        var audioPitch = 100 * Math.pow(2, pitch / 120);
+        return audioPitch;
+      }
+      return 0;
+    }
+  }, {
     key: "$changeOptionValue",
     value: function () {
       var _$changeOptionValue = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(key, value) {
-        var volume, pitch, _v;
+        var volume, changePitch, pitch, pitchScratch;
         return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) switch (_context9.prev = _context9.next) {
             case 0:
@@ -2247,10 +2263,11 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
                 volume = this.sounds.volume;
                 this.$setSoundVolume(volume + value);
               } else if (key == SoundOption.PITCH) {
-                if (value > 0) {
-                  pitch = this.sounds.pitch;
-                  _v = value / 100;
-                  this.$setSoundPitch(pitch + _v);
+                changePitch = this.$pitchScratch2Audio(value);
+                pitch = this.sounds.pitch + changePitch;
+                if (12.5 <= pitch && pitch <= 800) {
+                  pitchScratch = this.$pitchAudio2Scratch(pitch);
+                  this.$setSoundPitch(pitchScratch);
                 }
               }
               // 音量変更時直後の再生にて 最初に雑音「ブッ」が入る。
@@ -2292,7 +2309,8 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
     key: "$setSoundPitch",
     value: function $setSoundPitch(pitch) {
       if (this.sounds == null) return;
-      this.sounds.pitch = pitch;
+      var audioPitch = this.$pitchScratch2Audio(pitch);
+      this.sounds.pitch = audioPitch / 100;
     }
   }, {
     key: "$soundStop",

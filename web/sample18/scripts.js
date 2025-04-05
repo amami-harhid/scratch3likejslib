@@ -37,7 +37,7 @@ Pg.prepare = async function prepare() {
     await cross.Image.add( Cross01 );
     await cross.Image.add( Cross02 );
     await cross.Sound.add( Pew );
-    cross.Looks.setSize({w:100,h:100});
+    cross.Looks.setSize(100, 100);
 }
 
 Pg.setting = async function setting() {
@@ -66,13 +66,14 @@ Pg.setting = async function setting() {
     });
     cross.Event.whenFlag(async function*(){
         await this.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
-        await this.Sound.setOption( Lib.SoundOption.PITCH, 150 );
+        await this.Sound.setOption( Lib.SoundOption.PITCH, 50 );
         while(true){
             // 矢印キーを押しながら、スペースキーを検知させたい
             if(Lib.keyIsDown('Space')){
                 this.Sound.play(Pew);
                 const options = {scale:{w:20,h:20}, direction:0}
                 this.Control.clone(options);
+                //await this.Control.wait(0.5);
                 //次をコメントアウトしているときは キー押下中連続してクローン作る  
                 //await Libs.waitWhile( ()=>Lib.keyIsDown('Space'));
             }
@@ -90,7 +91,7 @@ Pg.setting = async function setting() {
     cross.Control.whenCloned( async function*() {
         const clone = this;
         await clone.Sound.setOption( Lib.SoundOption.VOLUME, 100 );
-        await clone.Sound.setOption( Lib.SoundOption.PITCH, 20 ); // 低音にする
+        await clone.Sound.setOption( Lib.SoundOption.PITCH, -200 ); // 低音にする
         // while の後に処理があるときは await 忘れないようにしましょう
         while(true){
             clone.Motion.turnRightDegrees(TURN_RIGHT_DEGREE);
