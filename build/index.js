@@ -3124,7 +3124,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
             }
             // whenClicked と同じ処理
             var addId = "_keyPressed_".concat(key);
-            var entityId = this.id + addId;
+            var entityId = me.id + addId;
             threads.removeObjById(entityId); // 前回のキープレス分を止める
             var threadId = me._generateUUID();
             var proxy = me.getProxyForHat();
@@ -3426,7 +3426,16 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
       threads.registThread(obj);
       return obj;
     }
-
+  }, {
+    key: "$stopThisScript",
+    value: function $stopThisScript() {
+      throw threads.THROW_STOP_THIS_SCRIPTS;
+    }
+  }, {
+    key: "$stopOtherScripts",
+    value: function $stopOtherScripts() {
+      // entityProxyExt にて処理
+    }
     // これは使わない
   }, {
     key: "stopThread",
@@ -8725,7 +8734,9 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "repeatUntil": this.repeatUntil.bind(this),
         "stopAll": this.$stopAll.bind(this),
         "remove": this.$remove.bind(this),
-        "alive": this.$isAlive.bind(this)
+        "alive": this.$isAlive.bind(this),
+        "stopThisScript": this.$stopThisScript.bind(this),
+        "stopOtherScripts": this.$stopOtherScripts.bind(this)
       };
     }
   }, {
@@ -9421,7 +9432,9 @@ var Stage = /*#__PURE__*/function (_Entity) {
         "while": this["while"].bind(this),
         "repeat": this.repeat.bind(this),
         "repeatUntil": this.repeatUntil.bind(this),
-        "stopAll": this.$stopAll.bind(this)
+        "stopAll": this.$stopAll.bind(this),
+        "stopThisScript": this.$stopThisScript.bind(this),
+        "stopOtherScripts": this.$stopOtherScripts.bind(this)
       };
     }
   }, {
@@ -9918,6 +9931,11 @@ var Threads = /*#__PURE__*/function () {
       return 'stop';
     }
   }, {
+    key: "THROW_STOP_THIS_SCRIPTS",
+    get: function get() {
+      return "throwStopThisScripts";
+    }
+  }, {
     key: "getTopThreadObj",
     value: function getTopThreadObj(threadId) {
       var _iterator = _createForOfIteratorHelper(this.threadArr),
@@ -10100,14 +10118,35 @@ var Threads = /*#__PURE__*/function () {
       this._running = false;
     }
   }, {
+    key: "stopOtherScripts",
+    value: function stopOtherScripts(entity, threadId) {
+      var _iterator4 = _createForOfIteratorHelper(this.threadArr),
+        _step4;
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var obj = _step4.value;
+          if (obj.entity.id == entity.id && obj.threadId != threadId) {
+            obj.forceExit = true;
+            obj.entity.$soundStopImmediately();
+            obj.entity.$speechStopImmediately();
+            obj.entity.$stopThisScriptSwitch = true;
+          }
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+    }
+  }, {
     key: "removeObjById",
     value: function removeObjById(id, clickCounter) {
       if (clickCounter == undefined) {
-        var _iterator4 = _createForOfIteratorHelper(this.threadArr),
-          _step4;
+        var _iterator5 = _createForOfIteratorHelper(this.threadArr),
+          _step5;
         try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var obj = _step4.value;
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var obj = _step5.value;
             if (obj.doubleRunable === false && obj.entityId == id) {
               obj.forceExit = true;
               obj.entity.$soundStopImmediately();
@@ -10115,16 +10154,16 @@ var Threads = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator4.e(err);
+          _iterator5.e(err);
         } finally {
-          _iterator4.f();
+          _iterator5.f();
         }
       } else {
-        var _iterator5 = _createForOfIteratorHelper(this.threadArr),
-          _step5;
+        var _iterator6 = _createForOfIteratorHelper(this.threadArr),
+          _step6;
         try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var _obj2 = _step5.value;
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            var _obj2 = _step6.value;
             if (_obj2.doubleRunable === false && _obj2.entityId == id && _obj2.entity && _obj2.entity.threadCounter == clickCounter) {
               _obj2.forceExit = true;
               _obj2.entity.$soundStopImmediately();
@@ -10132,9 +10171,9 @@ var Threads = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator5.e(err);
+          _iterator6.e(err);
         } finally {
-          _iterator5.f();
+          _iterator6.f();
         }
       }
     }
@@ -10142,19 +10181,19 @@ var Threads = /*#__PURE__*/function () {
     key: "interval",
     value: function () {
       var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(me) {
-        var _p, _iterator6, _step6, _loop, _arr, _iterator7, _step7, obj, lastChildObj;
+        var _p, _iterator7, _step7, _loop, _arr, _iterator8, _step8, obj, lastChildObj;
         return _regeneratorRuntime().wrap(function _callee2$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
               _p = PlayGround["default"];
-              _iterator6 = _createForOfIteratorHelper(me.threadArr);
+              _iterator7 = _createForOfIteratorHelper(me.threadArr);
               _context3.prev = 2;
               _loop = /*#__PURE__*/_regeneratorRuntime().mark(function _loop() {
                 var obj, _obj, f;
                 return _regeneratorRuntime().wrap(function _loop$(_context2) {
                   while (1) switch (_context2.prev = _context2.next) {
                     case 0:
-                      obj = _step6.value;
+                      obj = _step7.value;
                       if (!obj.entity.isAlive()) {
                         // Entity生きていないとき
                         obj.forceExit = true; // 強制終了とする
@@ -10179,12 +10218,17 @@ var Threads = /*#__PURE__*/function () {
                         _obj.status = me.YIELD;
                         // waitするメソッドがあるときは
                       })["catch"](function (e) {
-                        var f = _obj.originalF;
-                        console.error(e);
-                        if (f) {
-                          console.error(f.toString());
+                        if (e == me.THROW_STOP_THIS_SCRIPTS) {
+                          // 何もしない
+                          // console.log('なにもしない');
+                        } else {
+                          var f = _obj.originalF;
+                          console.error(e);
+                          if (f) {
+                            console.error(f.toString());
+                          }
+                          throw e;
                         }
-                        throw e;
                       });
                       _context2.next = 15;
                       break;
@@ -10202,9 +10246,9 @@ var Threads = /*#__PURE__*/function () {
                   }
                 }, _loop, null, [[6, 10]]);
               });
-              _iterator6.s();
+              _iterator7.s();
             case 5:
-              if ((_step6 = _iterator6.n()).done) {
+              if ((_step7 = _iterator7.n()).done) {
                 _context3.next = 9;
                 break;
               }
@@ -10218,27 +10262,27 @@ var Threads = /*#__PURE__*/function () {
             case 11:
               _context3.prev = 11;
               _context3.t1 = _context3["catch"](2);
-              _iterator6.e(_context3.t1);
+              _iterator7.e(_context3.t1);
             case 14:
               _context3.prev = 14;
-              _iterator6.f();
+              _iterator7.f();
               return _context3.finish(14);
             case 17:
               // 終了したOBJは削除する
               _arr = [];
-              _iterator7 = _createForOfIteratorHelper(me.threadArr);
+              _iterator8 = _createForOfIteratorHelper(me.threadArr);
               try {
-                for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-                  obj = _step7.value;
+                for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+                  obj = _step8.value;
                   lastChildObj = me.getLastChildObj(obj);
                   if (!obj.forceExit && (!obj.done || !lastChildObj.done)) {
                     _arr.push(obj);
                   }
                 }
               } catch (err) {
-                _iterator7.e(err);
+                _iterator8.e(err);
               } finally {
-                _iterator7.f();
+                _iterator8.f();
               }
               me.threadArr = [].concat(_arr);
               _p._draw();
@@ -10968,7 +11012,7 @@ module.exports = Color;
 /*!*************************************!*\
   !*** ../lib/util/entityProxyExt.js ***!
   \*************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _EntityProxyExt;
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -10978,35 +11022,67 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var threads = __webpack_require__(/*! ../threads */ "../lib/threads.js");
+/**
+ * エンティティのプロキシ拡張
+ */
 module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
   function EntityProxyExt() {
     _classCallCheck(this, EntityProxyExt);
   }
   return _createClass(EntityProxyExt, null, [{
     key: "getProxy",
-    value: function getProxy(obj, callback) {
+    value: /** プロキシの定義 */
+    function getProxy(obj, callback) {
       var proxy = new Proxy(obj, {
         get: function get(target, name, receiver) {
-          if (name == EntityProxyExt.THREAD_ID) {
-            return this.threadId;
-          }
+          // 実体がプロキシであるかをチェックする
           if (name == EntityProxyExt.IS_PROXY_TEST) {
             return function (_) {
               return true;
             };
           }
+          // スレッドＩＤを返す
+          if (name == EntityProxyExt.THREAD_ID) {
+            return this.threadId;
+          }
+          // スレッドカウンターを返す
           if (name == EntityProxyExt.THREAD_COUNTER) {
             return this.threadCounter;
+          }
+          // 「STOP_OTHER_SCRIPTS」メソッドを実行しようと
+          // したとき（「STOP_OTHER_SCRIPTS」メソッドを取り出すとき）
+          // 「STOP_OTHER_SCRIPTS」メソッドの代わりに
+          // 同一Entityの他スレッドを削除する。
+          // 空のファンクションを返す。
+          if (name == EntityProxyExt.STOP_OTHER_SCRIPTS) {
+            threads.stopOtherScripts(target, this.threadId);
+            return function () {};
+          }
+          //「このスクリプトを停止」スイッチオンのとき
+          if (this.stop_this_script_switch === true) {
+            if (name == 'Motion' || name == 'Looks' || name == 'Sound' || name == 'Event' || name == 'Control' || name == 'Sensing' || name == 'Image') {
+              // 「このスクリプトを停止」スイッチオンのときは
+              // 例外を発生させる。
+              throw threads.THROW_STOP_THIS_SCRIPTS;
+            }
           }
           return Reflect.get.apply(Reflect, arguments);
         },
         set: function set(target, name, value) {
+          // スレッドＩＤのセッター
           if (name == EntityProxyExt.THREAD_ID) {
             this.threadId = value;
             return true;
           }
+          // スレッドカウンターのセッター
           if (name == EntityProxyExt.THREAD_COUNTER) {
             this.threadCounter = value;
+            return true;
+          }
+          // 「このスクリプトを停止」スイッチのセッター
+          if (name == EntityProxyExt.STOP_THIS_SCRIPT_SWITCH) {
+            this.stop_this_script_switch = value;
             return true;
           }
           return Reflect.set.apply(Reflect, arguments);
@@ -11015,7 +11091,7 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
       return proxy;
     }
   }]);
-}(), _defineProperty(_EntityProxyExt, "THREAD_ID", "threadId"), _defineProperty(_EntityProxyExt, "THREAD_COUNTER", "threadCounter"), _defineProperty(_EntityProxyExt, "IS_PROXY_TEST", "isProxyTest"), _EntityProxyExt);
+}(), _defineProperty(_EntityProxyExt, "THREAD_ID", "threadId"), _defineProperty(_EntityProxyExt, "THREAD_COUNTER", "threadCounter"), _defineProperty(_EntityProxyExt, "STOP_OTHER_SCRIPTS", "$stopOtherScripts"), _defineProperty(_EntityProxyExt, "STOP_THIS_SCRIPT_SWITCH", "$stopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "IS_PROXY_TEST", "isProxyTest"), _EntityProxyExt);
 
 /***/ }),
 

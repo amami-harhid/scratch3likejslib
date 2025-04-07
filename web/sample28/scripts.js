@@ -65,6 +65,7 @@ Pg.setting = async function setting() {
      * STARTを受け取ったときの動き（ステージ） 
      */ 
     stage.Event.whenBroadcastReceived('START', async function*(){
+        console.log('(A) threadId='+this.threadId);
         // 音量 10
         await this.Sound.setOption(Lib.SoundOption.VOLUME, 10);
         // ずっと繰り返す
@@ -74,7 +75,6 @@ Pg.setting = async function setting() {
             yield;
         }
     })
-
     /**
      * STARTを受け取ったときの動き（ステージ） 
      */ 
