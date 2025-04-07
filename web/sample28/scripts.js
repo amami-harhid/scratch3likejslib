@@ -61,11 +61,10 @@ Pg.setting = async function setting() {
         }
     });
     stage.Event.whenFlag(async function(){
-        console.log('START');
-        await this.$waitSeconds(2);
-        console.log('STOP');
+        // 4秒後に「ステージの他のスクリプトを止める」
+        await this.$waitSeconds(10);
+        console.log('Stage stopOtherScripts')
         this.Control.stopOtherScripts();
-        console.log('STOP after');
     })
 
     stage.Event.whenFlag(async function*(){
@@ -74,15 +73,10 @@ Pg.setting = async function setting() {
         await this.Sound.setOption(Lib.SoundOption.PITCH, -50);
         // ずっと繰り返す
         for(;;){
-            console.log(this);
             // 終わるまで音を鳴らす
             //await this.Sound.playUntilDone(Chill);
-            console.log('----(1)');
             this.Sound.play(Chill);
-            console.log('this.$stopThisScriptSwitch='+this.$stopThisScriptSwitch)
-            console.log('----(2)');
             await this.Control.wait(1);
-            console.log('----(3)');
             yield;
         }
     })
@@ -90,11 +84,12 @@ Pg.setting = async function setting() {
     /**
      * STARTを受け取ったときの動き（ステージ） 
      */ 
-    stage.Event.whenBroadcastReceived('START2', async function*(){
+    stage.Event.whenBroadcastReceived('START', async function*(){
         // 音量 10
-        await this.Sound.setOption(Lib.SoundOption.VOLUME, 50);
+        await this.Sound.setOption(Lib.SoundOption.VOLUME, 150);
         // ずっと繰り返す
         for(;;){
+            console.log('playUntilDone(Chill)')
             // 終わるまで音を鳴らす
             await this.Sound.playUntilDone(Chill);
             yield;
