@@ -3058,6 +3058,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
       var proxy = EntityProxyExt.getProxy(this, function (_) {
         throw 'NOT FOUND PROPERTY in TARGET';
       });
+      console.log('proxy.stop_this_script_switch=' + proxy.stop_this_script_switch);
       return proxy;
     }
   }, {
@@ -3327,7 +3328,9 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
                 case 4:
                   _context24.prev = 4;
                   _context24.t1 = _context24["catch"](0);
-                  console.log(_context24.t1);
+                  if (_context24.t1 !== threads.THROW_STOP_THIS_SCRIPTS) {
+                    console.log(_context24.t1);
+                  }
                   throw _context24.t1;
                 case 8:
                 case "end":
@@ -3356,7 +3359,9 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
                 case 5:
                   _context25.prev = 5;
                   _context25.t0 = _context25["catch"](0);
-                  console.log(_context25.t0);
+                  if (_context25.t0 !== threads.THROW_STOP_THIS_SCRIPTS) {
+                    console.log(_context25.t0);
+                  }
                   throw _context25.t0;
                 case 9:
                 case "end":
@@ -10127,6 +10132,7 @@ var Threads = /*#__PURE__*/function () {
           var obj = _step4.value;
           if (obj.entity.id == entity.id && obj.threadId != threadId) {
             obj.forceExit = true;
+            obj.status = this.STOP;
             obj.entity.$soundStopImmediately();
             obj.entity.$speechStopImmediately();
             obj.entity.$stopThisScriptSwitch = true;
@@ -10199,13 +10205,13 @@ var Threads = /*#__PURE__*/function () {
                         obj.forceExit = true; // 強制終了とする
                       }
                       if (!(obj.status != me.STOP)) {
-                        _context2.next = 15;
+                        _context2.next = 16;
                         break;
                       }
                       // obj.childObj が設定済のときは最終OBJを取り出す。
                       _obj = me.getLastChildObj(obj); //me.nowExecutingObj = _obj;
                       if (!(_obj.status == me.YIELD)) {
-                        _context2.next = 15;
+                        _context2.next = 16;
                         break;
                       }
                       // 投げっぱなし, Promise終了時に done をObjへ設定する
@@ -10220,17 +10226,23 @@ var Threads = /*#__PURE__*/function () {
                       })["catch"](function (e) {
                         if (e == me.THROW_STOP_THIS_SCRIPTS) {
                           // 何もしない
-                          // console.log('なにもしない');
+                          console.log(e);
+                          //_obj.entity.$stopThisScriptSwitch = false;
+                          _obj.entity.$soundStopImmediately();
+                          _obj.entity.$speechStopImmediately();
+                          _obj.forceExit = true;
+                          _obj.status = me.STOP;
                         } else {
                           var f = _obj.originalF;
                           console.error(e);
                           if (f) {
                             console.error(f.toString());
                           }
+                          _obj.forceExit = true;
                           throw e;
                         }
                       });
-                      _context2.next = 15;
+                      _context2.next = 16;
                       break;
                     case 10:
                       _context2.prev = 10;
@@ -10239,8 +10251,9 @@ var Threads = /*#__PURE__*/function () {
                       if (f) {
                         console.error(f.toString());
                       }
+                      _obj.forceExit = true;
                       throw _context2.t0;
-                    case 15:
+                    case 16:
                     case "end":
                       return _context2.stop();
                   }
@@ -11059,6 +11072,9 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
             threads.stopOtherScripts(target, this.threadId);
             return function () {};
           }
+          if (name == EntityProxyExt.STOP_THIS_SCRIPT_SWITCH) {
+            return this.stop_this_script_switch;
+          }
           //「このスクリプトを停止」スイッチオンのとき
           if (this.stop_this_script_switch === true) {
             if (name == 'Motion' || name == 'Looks' || name == 'Sound' || name == 'Event' || name == 'Control' || name == 'Sensing' || name == 'Image') {
@@ -11066,6 +11082,9 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
               // 例外を発生させる。
               throw threads.THROW_STOP_THIS_SCRIPTS;
             }
+          }
+          if (this.stop_this_script_switch) {
+            console.log(this.stop_this_script_switch);
           }
           return Reflect.get.apply(Reflect, arguments);
         },
