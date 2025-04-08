@@ -1816,6 +1816,11 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
   }
   _inherits(Entity, _EventEmitter);
   return _createClass(Entity, [{
+    key: "SOUND_FORCE_STOP",
+    get: function get() {
+      return "sound_force_stop";
+    }
+  }, {
     key: "isAlive",
     value: function isAlive() {
       // スプライトの場合はオーバーライドしている
@@ -2048,7 +2053,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              if (this.sounds == null) this.sounds = new Sounds();
+              if (this.sounds == null) this.sounds = new Sounds(this);
               _context3.next = 3;
               return this.sounds.importSound(sound);
             case 3:
@@ -2089,7 +2094,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
               }
               throw "【Sound.add】正しいサウンドデータを指定してください";
             case 5:
-              if (this.sounds == null) this.sounds = new Sounds();
+              if (this.sounds == null) this.sounds = new Sounds(this);
               me = this;
               return _context5.abrupt("return", new Promise(/*#__PURE__*/function () {
                 var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resolve) {
@@ -2135,7 +2140,7 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
               this.importIdx += 1;
               _importIdx = this.importIdx;
               this.importAllDone.push(false);
-              if (this.sounds == null) this.sounds = new Sounds();
+              if (this.sounds == null) this.sounds = new Sounds(this);
               _context6.next = 7;
               return this.sounds.loadSound(name, soundUrl, options);
             case 7:
@@ -3434,12 +3439,13 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "$stopThisScript",
     value: function $stopThisScript() {
+      // console.log('----entity#$stopThisScript------')
       throw threads.THROW_STOP_THIS_SCRIPTS;
     }
   }, {
     key: "$stopOtherScripts",
     value: function $stopOtherScripts() {
-      // entityProxyExt にて処理
+      threads.stopOtherScripts(this);
     }
     // これは使わない
   }, {
@@ -6752,9 +6758,11 @@ var AudioEngine = __webpack_require__(/*! scratch-audio */ "../node_modules/scra
 var SoundLoader = __webpack_require__(/*! ./importer/soundLoader */ "../lib/importer/soundLoader.js");
 //const Process = require('./process');
 var SoundPlayer = __webpack_require__(/*! ./soundPlayer */ "../lib/soundPlayer.js");
+var threads = __webpack_require__(/*! ./threads */ "../lib/threads.js");
 var Sounds = /*#__PURE__*/function () {
-  function Sounds() {
+  function Sounds(entity) {
     _classCallCheck(this, Sounds);
+    this.entity = entity;
     this.audioEngine = new AudioEngine();
     this.soundPlayers = new Map();
     this.soundPlayer = null;
@@ -6956,24 +6964,23 @@ var Sounds = /*#__PURE__*/function () {
   }, {
     key: "startSoundUntilDone",
     value: function () {
-      var _startSoundUntilDone = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(self) {
-        var _this2 = this;
-        var me;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+      var _startSoundUntilDone = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(self) {
+        var me, _me;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
               if (!(this.soundPlayer == null)) {
-                _context5.next = 2;
+                _context6.next = 2;
                 break;
               }
-              return _context5.abrupt("return");
+              return _context6.abrupt("return");
             case 2:
               if (!self) {
-                _context5.next = 7;
+                _context6.next = 7;
                 break;
               }
               me = this;
-              return _context5.abrupt("return", new Promise(/*#__PURE__*/function () {
+              return _context6.abrupt("return", new Promise(/*#__PURE__*/function () {
                 var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(resolve) {
                   var _f, EMIT_ID;
                   return _regeneratorRuntime().wrap(function _callee4$(_context4) {
@@ -6986,7 +6993,7 @@ var Sounds = /*#__PURE__*/function () {
                         EMIT_ID = self.SPEECH_SOUND_STOP;
                         self.once(EMIT_ID, _f);
                         _context4.next = 5;
-                        return _this2.soundPlayer.startSoundUntilDone();
+                        return me.soundPlayer.startSoundUntilDone();
                       case 5:
                         // 終わるまで待つ
                         self.removeListener(EMIT_ID, _f);
@@ -7002,13 +7009,41 @@ var Sounds = /*#__PURE__*/function () {
                 };
               }()));
             case 7:
-              _context5.next = 9;
-              return this.soundPlayer.startSoundUntilDone();
+              _me = this; //await this.soundPlayer.startSoundUntilDone(); // 終わるまで待つ
+              return _context6.abrupt("return", new Promise(/*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(resolve) {
+                  var _f, EMIT_ID;
+                  return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+                    while (1) switch (_context5.prev = _context5.next) {
+                      case 0:
+                        // me.entity は constructorで受け取る Sprite/Stage のentity
+                        _f = function _f(_) {
+                          _me.stopImmediately();
+                          //throw threads.THROW_STOP_THIS_SCRIPTS;
+                        };
+                        EMIT_ID = _me.entity.SOUND_FORCE_STOP;
+                        _me.entity.once(EMIT_ID, _f);
+                        _context5.next = 5;
+                        return _me.soundPlayer.startSoundUntilDone();
+                      case 5:
+                        // 終わるまで待つ
+                        _me.entity.removeListener(EMIT_ID, _f);
+                        resolve();
+                      case 7:
+                      case "end":
+                        return _context5.stop();
+                    }
+                  }, _callee5);
+                }));
+                return function (_x8) {
+                  return _ref2.apply(this, arguments);
+                };
+              }()));
             case 9:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
       function startSoundUntilDone(_x6) {
         return _startSoundUntilDone.apply(this, arguments);
@@ -9941,6 +9976,11 @@ var Threads = /*#__PURE__*/function () {
       return "throwStopThisScripts";
     }
   }, {
+    key: "THROW_FORCE_STOP_THIS_SCRIPTS",
+    get: function get() {
+      return "throwForceStopThisScripts";
+    }
+  }, {
     key: "getTopThreadObj",
     value: function getTopThreadObj(threadId) {
       var _iterator = _createForOfIteratorHelper(this.threadArr),
@@ -10124,19 +10164,31 @@ var Threads = /*#__PURE__*/function () {
     }
   }, {
     key: "stopOtherScripts",
-    value: function stopOtherScripts(entity, threadId) {
+    value: function stopOtherScripts(entity) {
+      var me = this;
       var _iterator4 = _createForOfIteratorHelper(this.threadArr),
         _step4;
       try {
         for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
           var obj = _step4.value;
-          if (obj.entity.id == entity.id && obj.threadId != threadId) {
-            obj.forceExit = true;
-            obj.status = this.STOP;
-            obj.entity.$soundStopImmediately();
-            obj.entity.$speechStopImmediately();
-            console.log('stopOtherScripts threadId=' + obj.entity.threadId);
-            obj.entity.$setStopThisScriptSwitch(true);
+          // console.log(`thread name = ${obj.entity.threadName}`);
+          // console.log(`StopThisScriptSwitch = ${obj.entity.getStopThisScriptSwitch()}`)
+          if (obj.entity.id == entity.id && obj.threadId != entity.threadId) {
+            // console.log(obj.entity);
+            // console.log('※ stopOtherScripts In Threads, thread name='+obj.entity.threadName);
+            // stopSwitchON で 例外を誘発する
+            obj.entity.setStopThisScriptSwitch(true);
+            // console.log(`StopThisScriptSwitch = ${obj.entity.getStopThisScriptSwitch()}`)
+            // 「終わるまで音を鳴らす」に対して、強制停止を行う(例外を起こす)
+            obj.entity.emit(obj.entity.SOUND_FORCE_STOP);
+            // // 他のスクリプトを止めるために、obj.f を入れ替える
+            // // 再実行時に例外を起こすようにしている。
+            // const f = async function*(){
+            //     console.log(`error thread id = ${entity.threadId}, throw = ${me.THROW_STOP_THIS_SCRIPTS}`);
+            //     me.THROW_FORCE_STOP_THIS_SCRIPTS();
+            // }
+            // obj.f = f();
+            // console.log(`me.STOP=${me.STOP}`);
           }
         }
       } catch (err) {
@@ -10206,13 +10258,13 @@ var Threads = /*#__PURE__*/function () {
                         obj.forceExit = true; // 強制終了とする
                       }
                       if (!(obj.status != me.STOP)) {
-                        _context2.next = 16;
+                        _context2.next = 19;
                         break;
                       }
                       // obj.childObj が設定済のときは最終OBJを取り出す。
                       _obj = me.getLastChildObj(obj); //me.nowExecutingObj = _obj;
                       if (!(_obj.status == me.YIELD)) {
-                        _context2.next = 16;
+                        _context2.next = 19;
                         break;
                       }
                       // 投げっぱなし, Promise終了時に done をObjへ設定する
@@ -10220,19 +10272,30 @@ var Threads = /*#__PURE__*/function () {
                       // 長いBGM演奏などのとき他スレッドが止まるため awaitで止めない。
                       _obj.status = me.RUNNING;
                       _context2.prev = 6;
-                      //console.log('threadId='+obj.entity.threadId+', next restart')
                       _obj.f.next().then(function (rslt) {
                         _obj.done = rslt.done;
                         _obj.status = me.YIELD;
+                        if (_obj.entity.getStopThisScriptSwitch() === true) {
+                          _obj.status = me.STOP;
+                        }
                         // waitするメソッドがあるときは
                       })["catch"](function (e) {
                         if (e == me.THROW_STOP_THIS_SCRIPTS) {
                           // 何もしない
-                          //console.log(e);
-                          //_obj.entity.$stopThisScriptSwitch = false;
-                          _obj.entity.$soundStopImmediately();
-                          _obj.entity.$speechStopImmediately();
+                          // console.log('[01] me.STOP='+me.STOP);
+                          // console.log('name= '+ _obj.entity.threadName);
+                          // console.log(e);
                           _obj.forceExit = true;
+                          _obj.status = me.STOP;
+                          // 「終わるまで音を鳴らす」に対して、強制停止を行う(例外を起こす)
+                          _obj.entity.emit(_obj.entity.SOUND_FORCE_STOP);
+                        } else if (e == me.THROW_FORCE_STOP_THIS_SCRIPTS) {
+                          // 何もしない
+                          // console.log('[02]');
+                          // console.log('name= '+ _obj.entity.threadName);
+                          // console.log(e);
+                          _obj.forceExit = true;
+                          obj.forceExit = true;
                           _obj.status = me.STOP;
                         } else {
                           var f = _obj.originalF;
@@ -10244,18 +10307,25 @@ var Threads = /*#__PURE__*/function () {
                           throw e;
                         }
                       });
-                      _context2.next = 16;
+                      _context2.next = 19;
                       break;
                     case 10:
                       _context2.prev = 10;
                       _context2.t0 = _context2["catch"](6);
+                      if (!(_context2.t0 == me.THROW_FORCE_STOP_THIS_SCRIPTS)) {
+                        _context2.next = 15;
+                        break;
+                      }
+                      _context2.next = 19;
+                      break;
+                    case 15:
                       f = _obj.originalF;
                       if (f) {
                         console.error(f.toString());
                       }
                       _obj.forceExit = true;
                       throw _context2.t0;
-                    case 16:
+                    case 19:
                     case "end":
                       return _context2.stop();
                   }
@@ -11064,30 +11134,25 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
           if (name == EntityProxyExt.THREAD_ID) {
             return this.threadId;
           }
+          if (name == EntityProxyExt.THREAD_NAME) {
+            return this.threadName;
+          }
           // スレッドカウンターを返す
           if (name == EntityProxyExt.THREAD_COUNTER) {
             return this.threadCounter;
           }
-          // 「STOP_OTHER_SCRIPTS」メソッドを実行しようと
-          // したとき（「STOP_OTHER_SCRIPTS」メソッドを取り出すとき）
-          // 「STOP_OTHER_SCRIPTS」メソッドの代わりに
-          // 同一Entityの他スレッドを削除する。
-          // 空のファンクションを返す。
-          if (name == EntityProxyExt.STOP_OTHER_SCRIPTS) {
+          if (name == EntityProxyExt.GET_STOP_THIS_SCRIPT_SWITCH) {
             var self = this;
             return function () {
-              threads.stopOtherScripts(target, self.threadId);
-            };
-          }
-          if (name == EntityProxyExt.GET_STOP_THIS_SCRIPT_SWITCH) {
-            var _self = this;
-            return function () {
-              return _self.stop_this_script_switch;
+              return self.stop_this_script_switch;
             };
           }
           if (name == EntityProxyExt.SET_STOP_THIS_SCRIPT_SWITCH) {
+            var _self = this;
             return function (value) {
-              this.stop_this_script_switch = value;
+              _self.stop_this_script_switch = value;
+              // console.log('threadName = '+self.threadName);
+              // console.log('SET stop_this_script_switch = '+self.stop_this_script_switch);
             };
           }
           //「このスクリプトを停止」スイッチオンのとき
@@ -11095,10 +11160,17 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
             if (name == 'Motion' || name == 'Looks' || name == 'Sound' || name == 'Event' || name == 'Control' || name == 'Sensing' || name == 'Image') {
               // 「このスクリプトを停止」スイッチオンのときは
               // 例外を発生させる。
-              //console.log('THROW STOP THIS SCRIPTS name='+name)
-              this.stop_this_script_switch = true;
+              // console.log('◇◇◇ THROW STOP THIS SCRIPTS name='+name)
+              // console.log('◇◇◇ threadName = ' + this.threadName)
+              //this.stop_this_script_switch = true;
+              // console.log(`◇◇◇ error thread id = ${this.threadId}, throw = ${threads.THROW_STOP_THIS_SCRIPTS}`);
               throw threads.THROW_STOP_THIS_SCRIPTS;
             }
+          }
+          if (name == threads.THROW_FORCE_STOP_THIS_SCRIPTS) {
+            return function () {
+              throw threads.THROW_FORCE_STOP_THIS_SCRIPTS;
+            };
           }
           // if(this.stop_this_script_switch){
           //     console.log(`name=${name}, this.stop_this_script_switch=${this.stop_this_script_switch}` )
@@ -11121,13 +11193,17 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
             this.stop_this_script_switch = value;
             return true;
           }
+          if (name == EntityProxyExt.THREAD_NAME) {
+            this.threadName = value;
+            return true;
+          }
           return Reflect.set.apply(Reflect, arguments);
         }
       });
       return proxy;
     }
   }]);
-}(), _defineProperty(_EntityProxyExt, "THREAD_ID", "threadId"), _defineProperty(_EntityProxyExt, "THREAD_COUNTER", "threadCounter"), _defineProperty(_EntityProxyExt, "STOP_OTHER_SCRIPTS", "$stopOtherScripts"), _defineProperty(_EntityProxyExt, "STOP_THIS_SCRIPT_SWITCH", "$stopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "SET_STOP_THIS_SCRIPT_SWITCH", "$setStopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "GET_STOP_THIS_SCRIPT_SWITCH", "$getStopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "IS_PROXY_TEST", "isProxyTest"), _EntityProxyExt);
+}(), _defineProperty(_EntityProxyExt, "THREAD_ID", "threadId"), _defineProperty(_EntityProxyExt, "THREAD_COUNTER", "threadCounter"), _defineProperty(_EntityProxyExt, "STOP_OTHER_SCRIPTS", "$stopOtherScripts"), _defineProperty(_EntityProxyExt, "STOP_THIS_SCRIPT_SWITCH", "$stopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "SET_STOP_THIS_SCRIPT_SWITCH", "setStopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "GET_STOP_THIS_SCRIPT_SWITCH", "getStopThisScriptSwitch"), _defineProperty(_EntityProxyExt, "THREAD_NAME", "threadName"), _defineProperty(_EntityProxyExt, "IS_PROXY_TEST", "isProxyTest"), _EntityProxyExt);
 
 /***/ }),
 

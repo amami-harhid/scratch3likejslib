@@ -60,27 +60,6 @@ Pg.setting = async function setting() {
             yield;
         }
     });
-    stage.Event.whenFlag(async function(){
-        // 4秒後に「ステージの他のスクリプトを止める」
-        await this.$waitSeconds(10);
-        console.log('Stage stopOtherScripts')
-        this.Control.stopOtherScripts();
-    })
-
-    stage.Event.whenFlag(async function*(){
-        // 音量 10
-        await this.Sound.setOption(Lib.SoundOption.VOLUME, 50);
-        await this.Sound.setOption(Lib.SoundOption.PITCH, -50);
-        // ずっと繰り返す
-        for(;;){
-            // 終わるまで音を鳴らす
-            //await this.Sound.playUntilDone(Chill);
-            this.Sound.play(Chill);
-            await this.Control.wait(1);
-            yield;
-        }
-    })
-
     /**
      * STARTを受け取ったときの動き（ステージ） 
      */ 
