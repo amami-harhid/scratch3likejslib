@@ -1420,7 +1420,7 @@ var _Element = /*#__PURE__*/function () {
     key: "flagInit",
     value: function () {
       var _flagInit = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var playground, controlGreenFlag, controlPauseMark, controlStopMark, me, greenFlagClicked, restartMarkFlag;
+        var playground, controlGreenFlag, controlPauseMark, controlStopMark, me, greenFlagClicked, restartMarkFlag, runtime, EmitID_GREEN_BUTTON_ENABLED;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
@@ -1527,7 +1527,20 @@ var _Element = /*#__PURE__*/function () {
                   return _ref3.apply(this, arguments);
                 };
               }());
-            case 19:
+              runtime = PlayGround["default"].runtime;
+              EmitID_GREEN_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED;
+              runtime.on(EmitID_GREEN_BUTTON_ENABLED, function () {
+                controlStopMark.classList.remove('enableClick');
+                // 自動停止したときは停止ボタンはクリック可能、２回目はクリックできない。
+                //controlStopMark.classList.add('disableClick'); 
+                controlStopMark.classList.add('is-not-active');
+                controlStopMark.classList.remove('is-active');
+                controlGreenFlag.classList.remove('disableClick');
+                controlGreenFlag.classList.add('enableClick');
+                controlGreenFlag.classList.add('not-running');
+                controlGreenFlag.classList.remove('running');
+              });
+            case 22:
             case "end":
               return _context4.stop();
           }
@@ -1674,6 +1687,11 @@ var Runtime = /*#__PURE__*/function (_EventEmitter) {
   }
   _inherits(Runtime, _EventEmitter);
   return _createClass(Runtime, [{
+    key: "GREEN_BUTTON_ENABLED",
+    get: function get() {
+      return 'GREEN_BUTTON_ENABLED';
+    }
+  }, {
     key: "attachRenderer",
     value: function attachRenderer(renderer) {
       this.renderer = renderer;
@@ -2330,14 +2348,9 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
       this.sounds.stopImmediately();
     }
   }, {
-    key: "SPEECH_SOUND_STOP",
-    get: function get() {
-      return "SPEECH_SOUND_STOP";
-    }
-  }, {
     key: "$speechStopImmediately",
     value: function $speechStopImmediately() {
-      this.emit(this.SPEECH_SOUND_STOP); // ---> スピーチを停止する Soundの中で。
+      this.emit(this.SOUND_FORCE_STOP); // ---> スピーチを停止する Soundの中で。
     }
   }, {
     key: "$startSoundUntilDone",
@@ -6990,7 +7003,7 @@ var Sounds = /*#__PURE__*/function () {
                           me.stopImmediately();
                           resolve();
                         }; // Entity.$speechStopImmediately()でEmitされる
-                        EMIT_ID = self.SPEECH_SOUND_STOP;
+                        EMIT_ID = self.SOUND_FORCE_STOP;
                         self.once(EMIT_ID, _f);
                         _context4.next = 5;
                         return me.soundPlayer.startSoundUntilDone();
@@ -7019,7 +7032,7 @@ var Sounds = /*#__PURE__*/function () {
                         // me.entity は constructorで受け取る Sprite/Stage のentity
                         _f = function _f(_) {
                           _me.stopImmediately();
-                          //throw threads.THROW_STOP_THIS_SCRIPTS;
+                          resolve();
                         };
                         EMIT_ID = _me.entity.SOUND_FORCE_STOP;
                         _me.entity.once(EMIT_ID, _f);
@@ -9944,6 +9957,11 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _awaitAsyncGenerator(e) { return new _OverloadYield(e, 0); }
+function _wrapAsyncGenerator(e) { return function () { return new AsyncGenerator(e.apply(this, arguments)); }; }
+function AsyncGenerator(e) { var r, t; function resume(r, t) { try { var n = e[r](t), o = n.value, u = o instanceof _OverloadYield; Promise.resolve(u ? o.v : o).then(function (t) { if (u) { var i = "return" === r ? "return" : "next"; if (!o.k || t.done) return resume(i, t); t = e[i](t).value; } settle(n.done ? "return" : "normal", t); }, function (e) { resume("throw", e); }); } catch (e) { settle("throw", e); } } function settle(e, n) { switch (e) { case "return": r.resolve({ value: n, done: !0 }); break; case "throw": r.reject(n); break; default: r.resolve({ value: n, done: !1 }); } (r = r.next) ? resume(r.key, r.arg) : t = null; } this._invoke = function (e, n) { return new Promise(function (o, u) { var i = { key: e, arg: n, resolve: o, reject: u, next: null }; t ? t = t.next = i : (r = t = i, resume(e, n)); }); }, "function" != typeof e["return"] && (this["return"] = void 0); }
+AsyncGenerator.prototype["function" == typeof Symbol && Symbol.asyncIterator || "@@asyncIterator"] = function () { return this; }, AsyncGenerator.prototype.next = function (e) { return this._invoke("next", e); }, AsyncGenerator.prototype["throw"] = function (e) { return this._invoke("throw", e); }, AsyncGenerator.prototype["return"] = function (e) { return this._invoke("return", e); };
+function _OverloadYield(e, d) { this.v = e, this.k = d; }
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
 var Utils = __webpack_require__(/*! ./utils */ "../lib/utils.js");
 var INTERVAL = 1000 / 33;
@@ -10177,17 +10195,30 @@ var Threads = /*#__PURE__*/function () {
             // console.log(obj.entity);
             // console.log('※ stopOtherScripts In Threads, thread name='+obj.entity.threadName);
             // stopSwitchON で 例外を誘発する
-            obj.entity.setStopThisScriptSwitch(true);
+            //                obj.entity.setStopThisScriptSwitch(true);
             // console.log(`StopThisScriptSwitch = ${obj.entity.getStopThisScriptSwitch()}`)
-            // 「終わるまで音を鳴らす」に対して、強制停止を行う(例外を起こす)
+            // 「終わるまで音を鳴らす」に対して、強制停止を行う
             obj.entity.emit(obj.entity.SOUND_FORCE_STOP);
-            // // 他のスクリプトを止めるために、obj.f を入れ替える
-            // // 再実行時に例外を起こすようにしている。
-            // const f = async function*(){
-            //     console.log(`error thread id = ${entity.threadId}, throw = ${me.THROW_STOP_THIS_SCRIPTS}`);
-            //     me.THROW_FORCE_STOP_THIS_SCRIPTS();
-            // }
-            // obj.f = f();
+            // 他のスクリプトを止めるために、obj.f を入れ替える
+            // 再実行時に例外を起こすようにしている。
+            var f = /*#__PURE__*/function () {
+              var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+                return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                  while (1) switch (_context2.prev = _context2.next) {
+                    case 0:
+                      //console.log(`error thread id = ${entity.threadId}, throw = ${me.THROW_STOP_THIS_SCRIPTS}`);
+                      entity.THROW_FORCE_STOP_THIS_SCRIPTS;
+                    case 1:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }, _callee2);
+              }));
+              return function f() {
+                return _ref.apply(this, arguments);
+              };
+            }();
+            obj.f = f();
             // console.log(`me.STOP=${me.STOP}`);
           }
         }
@@ -10239,18 +10270,18 @@ var Threads = /*#__PURE__*/function () {
   }, {
     key: "interval",
     value: function () {
-      var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(me) {
-        var _p, _iterator7, _step7, _loop, _arr, _iterator8, _step8, obj, lastChildObj;
-        return _regeneratorRuntime().wrap(function _callee2$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
+      var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(me) {
+        var _p, _iterator7, _step7, _loop, _arr, _iterator8, _step8, obj, lastChildObj, runtime, EmitID_GREEN_MARK_BUTTON_ENABLED;
+        return _regeneratorRuntime().wrap(function _callee3$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
             case 0:
               _p = PlayGround["default"];
               _iterator7 = _createForOfIteratorHelper(me.threadArr);
-              _context3.prev = 2;
+              _context4.prev = 2;
               _loop = /*#__PURE__*/_regeneratorRuntime().mark(function _loop() {
                 var obj, _obj, f;
-                return _regeneratorRuntime().wrap(function _loop$(_context2) {
-                  while (1) switch (_context2.prev = _context2.next) {
+                return _regeneratorRuntime().wrap(function _loop$(_context3) {
+                  while (1) switch (_context3.prev = _context3.next) {
                     case 0:
                       obj = _step7.value;
                       if (!obj.entity.isAlive()) {
@@ -10258,20 +10289,20 @@ var Threads = /*#__PURE__*/function () {
                         obj.forceExit = true; // 強制終了とする
                       }
                       if (!(obj.status != me.STOP)) {
-                        _context2.next = 19;
+                        _context3.next = 19;
                         break;
                       }
                       // obj.childObj が設定済のときは最終OBJを取り出す。
                       _obj = me.getLastChildObj(obj); //me.nowExecutingObj = _obj;
                       if (!(_obj.status == me.YIELD)) {
-                        _context2.next = 19;
+                        _context3.next = 19;
                         break;
                       }
                       // 投げっぱなし, Promise終了時に done をObjへ設定する
                       //await はつけずにPromise.then で解決する。
                       // 長いBGM演奏などのとき他スレッドが止まるため awaitで止めない。
                       _obj.status = me.RUNNING;
-                      _context2.prev = 6;
+                      _context3.prev = 6;
                       _obj.f.next().then(function (rslt) {
                         _obj.done = rslt.done;
                         _obj.status = me.YIELD;
@@ -10307,16 +10338,16 @@ var Threads = /*#__PURE__*/function () {
                           throw e;
                         }
                       });
-                      _context2.next = 19;
+                      _context3.next = 19;
                       break;
                     case 10:
-                      _context2.prev = 10;
-                      _context2.t0 = _context2["catch"](6);
-                      if (!(_context2.t0 == me.THROW_FORCE_STOP_THIS_SCRIPTS)) {
-                        _context2.next = 15;
+                      _context3.prev = 10;
+                      _context3.t0 = _context3["catch"](6);
+                      if (!(_context3.t0 == me.THROW_FORCE_STOP_THIS_SCRIPTS)) {
+                        _context3.next = 15;
                         break;
                       }
-                      _context2.next = 19;
+                      _context3.next = 19;
                       break;
                     case 15:
                       f = _obj.originalF;
@@ -10324,34 +10355,34 @@ var Threads = /*#__PURE__*/function () {
                         console.error(f.toString());
                       }
                       _obj.forceExit = true;
-                      throw _context2.t0;
+                      throw _context3.t0;
                     case 19:
                     case "end":
-                      return _context2.stop();
+                      return _context3.stop();
                   }
                 }, _loop, null, [[6, 10]]);
               });
               _iterator7.s();
             case 5:
               if ((_step7 = _iterator7.n()).done) {
-                _context3.next = 9;
+                _context4.next = 9;
                 break;
               }
-              return _context3.delegateYield(_loop(), "t0", 7);
+              return _context4.delegateYield(_loop(), "t0", 7);
             case 7:
-              _context3.next = 5;
+              _context4.next = 5;
               break;
             case 9:
-              _context3.next = 14;
+              _context4.next = 14;
               break;
             case 11:
-              _context3.prev = 11;
-              _context3.t1 = _context3["catch"](2);
-              _iterator7.e(_context3.t1);
+              _context4.prev = 11;
+              _context4.t1 = _context4["catch"](2);
+              _iterator7.e(_context4.t1);
             case 14:
-              _context3.prev = 14;
+              _context4.prev = 14;
               _iterator7.f();
-              return _context3.finish(14);
+              return _context4.finish(14);
             case 17:
               // 終了したOBJは削除する
               _arr = [];
@@ -10370,12 +10401,18 @@ var Threads = /*#__PURE__*/function () {
                 _iterator8.f();
               }
               me.threadArr = [].concat(_arr);
+              if (me.threadArr.length == 0) {
+                // 緑の旗のボタンを押せるようにする
+                runtime = PlayGround["default"].runtime;
+                EmitID_GREEN_MARK_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED;
+                runtime.emit(EmitID_GREEN_MARK_BUTTON_ENABLED);
+              }
               _p._draw();
-            case 22:
+            case 23:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
-        }, _callee2, null, [[2, 11, 14, 17]]);
+        }, _callee3, null, [[2, 11, 14, 17]]);
       }));
       function interval(_x) {
         return _interval.apply(this, arguments);
