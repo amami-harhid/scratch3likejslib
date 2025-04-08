@@ -3815,6 +3815,9 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
     key: "$stopAll",
     value: function $stopAll() {
       Element.stopAll();
+      var runtime = PlayGround["default"].runtime;
+      var EmitID_GREEN_MARK_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED;
+      runtime.emit(EmitID_GREEN_MARK_BUTTON_ENABLED);
     }
   }], [{
     key: "EmitIdMovePromise",
@@ -10184,31 +10187,30 @@ var Threads = /*#__PURE__*/function () {
     key: "stopOtherScripts",
     value: function stopOtherScripts(entity) {
       var me = this;
-      var _iterator4 = _createForOfIteratorHelper(this.threadArr),
+      var _iterator4 = _createForOfIteratorHelper(me.threadArr),
         _step4;
       try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var _loop = function _loop() {
           var obj = _step4.value;
-          // console.log(`thread name = ${obj.entity.threadName}`);
-          // console.log(`StopThisScriptSwitch = ${obj.entity.getStopThisScriptSwitch()}`)
           if (obj.entity.id == entity.id && obj.threadId != entity.threadId) {
-            // console.log(obj.entity);
-            // console.log('※ stopOtherScripts In Threads, thread name='+obj.entity.threadName);
-            // stopSwitchON で 例外を誘発する
-            //                obj.entity.setStopThisScriptSwitch(true);
-            // console.log(`StopThisScriptSwitch = ${obj.entity.getStopThisScriptSwitch()}`)
-            // 「終わるまで音を鳴らす」に対して、強制停止を行う
+            // 実行中のスレッドの途中の場合、
+            // Motion,Looks,Sound,Event,Control,Sensingを使ったときは
+            // Proxyのなかで例外を発生させる
+            obj.entity.setStopThisScriptSwitch(true); // 【A】
+            // 「終わるまで音を鳴らす」が実行中の場合、音を強制停止させる
             obj.entity.emit(obj.entity.SOUND_FORCE_STOP);
-            // 他のスクリプトを止めるために、obj.f を入れ替える
-            // 再実行時に例外を起こすようにしている。
+            // 上記の【A】により例外が起きなかった場合、
+            // 他のスクリプトが(next)により再実行されるときに必ず例外を起こして止める。
+            var _f = obj.entity.THROW_FORCE_STOP_THIS_SCRIPTS;
             var f = /*#__PURE__*/function () {
               var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
                 return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                   while (1) switch (_context2.prev = _context2.next) {
                     case 0:
-                      //console.log(`error thread id = ${entity.threadId}, throw = ${me.THROW_STOP_THIS_SCRIPTS}`);
-                      entity.THROW_FORCE_STOP_THIS_SCRIPTS;
-                    case 1:
+                      _f(); // ここで例外が起きる。
+                      _context2.next = 3;
+                      return;
+                    case 3:
                     case "end":
                       return _context2.stop();
                   }
@@ -10218,9 +10220,11 @@ var Threads = /*#__PURE__*/function () {
                 return _ref.apply(this, arguments);
               };
             }();
-            obj.f = f();
-            // console.log(`me.STOP=${me.STOP}`);
+            obj.f = f(); // Generator関数を生成
           }
+        };
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          _loop();
         }
       } catch (err) {
         _iterator4.e(err);
@@ -10271,16 +10275,16 @@ var Threads = /*#__PURE__*/function () {
     key: "interval",
     value: function () {
       var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(me) {
-        var _p, _iterator7, _step7, _loop, _arr, _iterator8, _step8, obj, lastChildObj, runtime, EmitID_GREEN_MARK_BUTTON_ENABLED;
+        var _p, _iterator7, _step7, _loop2, _arr, _iterator8, _step8, obj, lastChildObj, runtime, EmitID_GREEN_MARK_BUTTON_ENABLED;
         return _regeneratorRuntime().wrap(function _callee3$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
               _p = PlayGround["default"];
               _iterator7 = _createForOfIteratorHelper(me.threadArr);
               _context4.prev = 2;
-              _loop = /*#__PURE__*/_regeneratorRuntime().mark(function _loop() {
+              _loop2 = /*#__PURE__*/_regeneratorRuntime().mark(function _loop2() {
                 var obj, _obj, f;
-                return _regeneratorRuntime().wrap(function _loop$(_context3) {
+                return _regeneratorRuntime().wrap(function _loop2$(_context3) {
                   while (1) switch (_context3.prev = _context3.next) {
                     case 0:
                       obj = _step7.value;
@@ -10289,18 +10293,19 @@ var Threads = /*#__PURE__*/function () {
                         obj.forceExit = true; // 強制終了とする
                       }
                       if (!(obj.status != me.STOP)) {
-                        _context3.next = 19;
+                        _context3.next = 16;
                         break;
                       }
+                      // TODO ↓ getLastChildObj は不要だと思う。あとで確認すること。
                       // obj.childObj が設定済のときは最終OBJを取り出す。
-                      _obj = me.getLastChildObj(obj); //me.nowExecutingObj = _obj;
+                      _obj = me.getLastChildObj(obj);
                       if (!(_obj.status == me.YIELD)) {
-                        _context3.next = 19;
+                        _context3.next = 16;
                         break;
                       }
                       // 投げっぱなし, Promise終了時に done をObjへ設定する
-                      //await はつけずにPromise.then で解決する。
-                      // 長いBGM演奏などのとき他スレッドが止まるため awaitで止めない。
+                      // await はつけずにPromise.then で解決する。
+                      // await をつけると長いBGM演奏などのとき他スレッドが止まる弊害がある。
                       _obj.status = me.RUNNING;
                       _context3.prev = 6;
                       _obj.f.next().then(function (rslt) {
@@ -10311,23 +10316,12 @@ var Threads = /*#__PURE__*/function () {
                         }
                         // waitするメソッドがあるときは
                       })["catch"](function (e) {
-                        if (e == me.THROW_STOP_THIS_SCRIPTS) {
-                          // 何もしない
-                          // console.log('[01] me.STOP='+me.STOP);
-                          // console.log('name= '+ _obj.entity.threadName);
-                          // console.log(e);
+                        if (e == me.THROW_STOP_THIS_SCRIPTS || e == me.THROW_FORCE_STOP_THIS_SCRIPTS) {
+                          // この例外はthrowせずに objは抹消する（再実行しない）
                           _obj.forceExit = true;
                           _obj.status = me.STOP;
                           // 「終わるまで音を鳴らす」に対して、強制停止を行う(例外を起こす)
                           _obj.entity.emit(_obj.entity.SOUND_FORCE_STOP);
-                        } else if (e == me.THROW_FORCE_STOP_THIS_SCRIPTS) {
-                          // 何もしない
-                          // console.log('[02]');
-                          // console.log('name= '+ _obj.entity.threadName);
-                          // console.log(e);
-                          _obj.forceExit = true;
-                          obj.forceExit = true;
-                          _obj.status = me.STOP;
                         } else {
                           var f = _obj.originalF;
                           console.error(e);
@@ -10338,29 +10332,22 @@ var Threads = /*#__PURE__*/function () {
                           throw e;
                         }
                       });
-                      _context3.next = 19;
+                      _context3.next = 16;
                       break;
                     case 10:
                       _context3.prev = 10;
                       _context3.t0 = _context3["catch"](6);
-                      if (!(_context3.t0 == me.THROW_FORCE_STOP_THIS_SCRIPTS)) {
-                        _context3.next = 15;
-                        break;
-                      }
-                      _context3.next = 19;
-                      break;
-                    case 15:
                       f = _obj.originalF;
                       if (f) {
                         console.error(f.toString());
                       }
                       _obj.forceExit = true;
                       throw _context3.t0;
-                    case 19:
+                    case 16:
                     case "end":
                       return _context3.stop();
                   }
-                }, _loop, null, [[6, 10]]);
+                }, _loop2, null, [[6, 10]]);
               });
               _iterator7.s();
             case 5:
@@ -10368,7 +10355,7 @@ var Threads = /*#__PURE__*/function () {
                 _context4.next = 9;
                 break;
               }
-              return _context4.delegateYield(_loop(), "t0", 7);
+              return _context4.delegateYield(_loop2(), "t0", 7);
             case 7:
               _context4.next = 5;
               break;
@@ -10402,7 +10389,8 @@ var Threads = /*#__PURE__*/function () {
               }
               me.threadArr = [].concat(_arr);
               if (me.threadArr.length == 0) {
-                // 緑の旗のボタンを押せるようにする
+                // 実行中のスレッドがなくなったとき
+                // 緑の旗のボタンを押せるようにする（赤の停止ボタンは実行待ちのステータスになる）
                 runtime = PlayGround["default"].runtime;
                 EmitID_GREEN_MARK_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED;
                 runtime.emit(EmitID_GREEN_MARK_BUTTON_ENABLED);
@@ -11188,8 +11176,6 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
             var _self = this;
             return function (value) {
               _self.stop_this_script_switch = value;
-              // console.log('threadName = '+self.threadName);
-              // console.log('SET stop_this_script_switch = '+self.stop_this_script_switch);
             };
           }
           //「このスクリプトを停止」スイッチオンのとき
@@ -11197,10 +11183,6 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
             if (name == 'Motion' || name == 'Looks' || name == 'Sound' || name == 'Event' || name == 'Control' || name == 'Sensing' || name == 'Image') {
               // 「このスクリプトを停止」スイッチオンのときは
               // 例外を発生させる。
-              // console.log('◇◇◇ THROW STOP THIS SCRIPTS name='+name)
-              // console.log('◇◇◇ threadName = ' + this.threadName)
-              //this.stop_this_script_switch = true;
-              // console.log(`◇◇◇ error thread id = ${this.threadId}, throw = ${threads.THROW_STOP_THIS_SCRIPTS}`);
               throw threads.THROW_STOP_THIS_SCRIPTS;
             }
           }
@@ -11209,9 +11191,6 @@ module.exports = (_EntityProxyExt = /*#__PURE__*/function () {
               throw threads.THROW_FORCE_STOP_THIS_SCRIPTS;
             };
           }
-          // if(this.stop_this_script_switch){
-          //     console.log(`name=${name}, this.stop_this_script_switch=${this.stop_this_script_switch}` )
-          // }
           return Reflect.get.apply(Reflect, arguments);
         },
         set: function set(target, name, value) {

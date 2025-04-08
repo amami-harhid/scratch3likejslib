@@ -67,6 +67,9 @@ Pg.setting = async function setting() {
         await this.$waitSeconds(4);
         this.Control.stopOtherScripts();
         this.Event.broadcast('START');
+        await this.$waitSeconds(3);
+        //console.log('stopAll')
+        //this.Control.stopAll();
     })
 
     stage.Event.whenFlag(async function*(){
