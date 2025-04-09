@@ -5636,7 +5636,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -7496,8 +7496,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
   }, {
@@ -10072,15 +10072,17 @@ var Threads = /*#__PURE__*/function () {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
+              this._startSwitch = true;
               if (!(this._intervalId != null)) {
-                _context.next = 2;
+                _context.next = 3;
                 break;
               }
               return _context.abrupt("return");
-            case 2:
+            case 3:
+              // この行の扱いは注意せよ！
               this._intervalId = setInterval(this.interval, INTERVAL, this);
               this._running = true;
-            case 4:
+            case 5:
             case "end":
               return _context.stop();
           }
@@ -10201,16 +10203,16 @@ var Threads = /*#__PURE__*/function () {
             obj.entity.emit(obj.entity.SOUND_FORCE_STOP);
             // 上記の【A】により例外が起きなかった場合、
             // 他のスクリプトが(next)により再実行されるときに必ず例外を起こして止める。
-            var _f = obj.entity.THROW_FORCE_STOP_THIS_SCRIPTS;
+
             var f = /*#__PURE__*/function () {
               var _ref = _wrapAsyncGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
                 return _regeneratorRuntime().wrap(function _callee2$(_context2) {
                   while (1) switch (_context2.prev = _context2.next) {
                     case 0:
-                      _f(); // ここで例外が起きる。
-                      _context2.next = 3;
-                      return;
-                    case 3:
+                      // ここで例外が起きる。
+                      obj.entity.throwForceStopThisScripts();
+                      //yield; // ここには到達しない
+                    case 1:
                     case "end":
                       return _context2.stop();
                   }
@@ -10275,7 +10277,7 @@ var Threads = /*#__PURE__*/function () {
     key: "interval",
     value: function () {
       var _interval = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(me) {
-        var _p, _iterator7, _step7, _loop2, _arr, _iterator8, _step8, obj, lastChildObj, runtime, EmitID_GREEN_MARK_BUTTON_ENABLED;
+        var _p, _iterator7, _step7, _loop2, _arr, _iterator8, _step8, obj, runtime, EmitID_GREEN_MARK_BUTTON_ENABLED;
         return _regeneratorRuntime().wrap(function _callee3$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
@@ -10298,7 +10300,7 @@ var Threads = /*#__PURE__*/function () {
                       }
                       // TODO ↓ getLastChildObj は不要だと思う。あとで確認すること。
                       // obj.childObj が設定済のときは最終OBJを取り出す。
-                      _obj = me.getLastChildObj(obj);
+                      _obj = obj; //me.getLastChildObj(obj);
                       if (!(_obj.status == me.YIELD)) {
                         _context3.next = 16;
                         break;
@@ -10311,9 +10313,9 @@ var Threads = /*#__PURE__*/function () {
                       _obj.f.next().then(function (rslt) {
                         _obj.done = rslt.done;
                         _obj.status = me.YIELD;
-                        if (_obj.entity.getStopThisScriptSwitch() === true) {
-                          _obj.status = me.STOP;
-                        }
+                        //if(_obj.entity.getStopThisScriptSwitch() === true) {
+                        //    _obj.status = me.STOP;
+                        //}
                         // waitするメソッドがあるときは
                       })["catch"](function (e) {
                         if (e == me.THROW_STOP_THIS_SCRIPTS || e == me.THROW_FORCE_STOP_THIS_SCRIPTS) {
@@ -10377,8 +10379,7 @@ var Threads = /*#__PURE__*/function () {
               try {
                 for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
                   obj = _step8.value;
-                  lastChildObj = me.getLastChildObj(obj);
-                  if (!obj.forceExit && (!obj.done || !lastChildObj.done)) {
+                  if (!(obj.forceExit || obj.done)) {
                     _arr.push(obj);
                   }
                 }
@@ -10389,11 +10390,14 @@ var Threads = /*#__PURE__*/function () {
               }
               me.threadArr = [].concat(_arr);
               if (me.threadArr.length == 0) {
-                // 実行中のスレッドがなくなったとき
-                // 緑の旗のボタンを押せるようにする（赤の停止ボタンは実行待ちのステータスになる）
-                runtime = PlayGround["default"].runtime;
-                EmitID_GREEN_MARK_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED;
-                runtime.emit(EmitID_GREEN_MARK_BUTTON_ENABLED);
+                if (me._startSwitch === true) {
+                  // 実行中のスレッドがなくなったとき
+                  // 緑の旗のボタンを押せるようにする（赤の停止ボタンは実行待ちのステータスになる）
+                  runtime = PlayGround["default"].runtime;
+                  EmitID_GREEN_MARK_BUTTON_ENABLED = runtime.GREEN_BUTTON_ENABLED; // 個数ゼロになった直後の１回だけ emit するべき。
+                  runtime.emit(EmitID_GREEN_MARK_BUTTON_ENABLED);
+                  me._startSwitch = false;
+                }
               }
               _p._draw();
             case 23:
@@ -11895,7 +11899,6 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
-  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -12098,6 +12101,7 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
+  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -12241,6 +12245,7 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
+    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -12295,7 +12300,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -12475,6 +12480,16 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
+  }
+  parseClassAccessorProperty(node) {
+    const accessorPropertyNode = super.parseClassAccessorProperty(node);
+    {
+      if (!this.getPluginOption("estree", "classFeatures")) {
+        return accessorPropertyNode;
+      }
+    }
+    accessorPropertyNode.type = "AccessorProperty";
+    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -14181,7 +14196,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 1024)) return false;
+        if (!(this.optionFlags & 2048)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -14222,7 +14237,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -14338,7 +14353,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -14361,12 +14376,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 2048 ? [] : null;
+    const comments = this.optionFlags & 4096 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -14413,7 +14428,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -14424,7 +14439,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -15132,7 +15147,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 1024)) throw error;
+    if (!(this.optionFlags & 2048)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -15590,6 +15605,9 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
+    if (this.optionFlags & 32) {
+      paramFlags |= 1;
+    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -15616,7 +15634,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -15704,8 +15722,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
-    if (this.optionFlags & 2048) {
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 4096) {
       this.processComment(node);
     }
     return node;
@@ -15713,12 +15731,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 64) node.range[0] = startLoc.index;
+    if (this.optionFlags & 128) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -22268,7 +22286,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -22304,9 +22322,11 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    if (this.isContextual(108)) {
+    const isYield = this.isContextual(108);
+    if (isYield) {
       if (this.prodParam.hasYield) {
-        let left = this.parseYield();
+        this.next();
+        let left = this.parseYield(startLoc);
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -22357,6 +22377,16 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
+    }
+    if (isYield) {
+      const {
+        type
+      } = this.state;
+      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
+        return this.parseYield(startLoc);
+      }
     }
     return left;
   }
@@ -22534,7 +22564,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousAwait()) {
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -22773,7 +22803,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 256) {
+          if (this.optionFlags & 512) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -23078,7 +23108,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 256)) {
+      if (!(this.optionFlags & 512)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -23198,7 +23228,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 512)) {
+    if (!(this.optionFlags & 1024)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -23754,7 +23784,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousAwait()) {
+      if (this.isAmbiguousPrefixOrIdentifier()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -23765,17 +23795,16 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousAwait() {
+  isAmbiguousPrefixOrIdentifier() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield() {
-    const node = this.startNode();
+  parseYield(startLoc) {
+    const node = this.startNodeAt(startLoc);
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
-    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -24077,7 +24106,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -24087,7 +24116,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -25777,6 +25806,7 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
+        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -25890,31 +25920,34 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 32;
+      optionFlags |= 64;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.ranges) {
-      optionFlags |= 64;
+    if (options.allowYieldOutsideFunction) {
+      optionFlags |= 32;
     }
-    if (options.tokens) {
+    if (options.ranges) {
       optionFlags |= 128;
     }
-    if (options.createImportExpressions) {
+    if (options.tokens) {
       optionFlags |= 256;
     }
-    if (options.createParenthesizedExpressions) {
+    if (options.createImportExpressions) {
       optionFlags |= 512;
     }
-    if (options.errorRecovery) {
+    if (options.createParenthesizedExpressions) {
       optionFlags |= 1024;
     }
-    if (options.attachComment) {
+    if (options.errorRecovery) {
       optionFlags |= 2048;
     }
-    if (options.annexB) {
+    if (options.attachComment) {
       optionFlags |= 4096;
+    }
+    if (options.annexB) {
+      optionFlags |= 8192;
     }
     this.optionFlags = optionFlags;
   }

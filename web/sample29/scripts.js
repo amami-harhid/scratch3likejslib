@@ -57,6 +57,7 @@ Pg.setting = async function setting() {
     });
     cat.Event.whenBroadcastReceived('START', async function(){
         this.threadName = 'cat whenBroadcastReceived Thread [02]';
+        console.log('stopOtherScripts() In cat whenBroadcastReceived Thread [02]')
         this.Control.stopOtherScripts();
 
     });
@@ -64,12 +65,16 @@ Pg.setting = async function setting() {
     stage.Event.whenFlag(async function(){
         this.threadName = 'Stage whenFlag Thread [01]';
         // 4秒後に「ステージの他のスクリプトを止める」
-        await this.$waitSeconds(4);
+        await this.Control.wait(4);
+        // 4秒後に StageのstopOtherScripts
         this.Control.stopOtherScripts();
+        await this.Control.wait(4);
+        // 4秒後にSTART ---> catの中でstopOtherScripts
         this.Event.broadcast('START');
-        await this.$waitSeconds(3);
-        //console.log('stopAll')
-        //this.Control.stopAll();
+        await this.Control.wait(3);
+        // 3秒後にSTOP ALL
+        console.log('stopAll')
+        this.Control.stopAll();
     })
 
     stage.Event.whenFlag(async function*(){
@@ -81,6 +86,7 @@ Pg.setting = async function setting() {
         for(;;){
             // 終わるまで音を鳴らす
             await this.Sound.playUntilDone(Chill);
+            console.log('After playUntilDone In Stage whenFlag Thread [02]')
             //this.Sound.play(Chill);
             //await this.Control.wait(0.1);
             yield;
