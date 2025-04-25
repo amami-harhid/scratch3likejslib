@@ -1850,8 +1850,8 @@ var _Entity = (_Class = /*#__PURE__*/function (_EventEmitter) {
       return true;
     }
   }, {
-    key: "delete",
-    value: function _delete() {
+    key: "$delete",
+    value: function $delete() {
       this.modules = null;
       delete this.modules;
     }
@@ -7445,9 +7445,9 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
   }
   _inherits(Sprite, _Entity);
   return _createClass(Sprite, [{
-    key: "delete",
-    value: function _delete() {
-      _superPropGet(Sprite, "delete", this, 3)([]);
+    key: "$delete",
+    value: function $delete() {
+      _superPropGet(Sprite, "$delete", this, 3)([]);
       this.bubble = null;
       delete this.bubble;
       this.costumes = null;
@@ -7480,7 +7480,7 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         this._isAlive = false;
       }
       this.costumes.destroyAllSkin();
-      this["delete"]();
+      this.$delete();
     }
   }, {
     key: "$isAlive",
@@ -8017,8 +8017,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return true;
     }
   }, {
-    key: "isTouchingVirticalEdge",
-    value: function isTouchingVirticalEdge() {
+    key: "$isTouchingVirticalEdge",
+    value: function $isTouchingVirticalEdge() {
       if (!this.$isAlive()) return false;
       var touch = this.$isTouchingEdge();
       if (touch === false) {
@@ -8032,8 +8032,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
       return true;
     }
   }, {
-    key: "isTouchingHorizontalEdge",
-    value: function isTouchingHorizontalEdge() {
+    key: "$isTouchingHorizontalEdge",
+    value: function $isTouchingHorizontalEdge() {
       if (!this.$isAlive()) return false;
       var touch = this.$isTouchingEdge();
       if (touch === false) {
@@ -8847,8 +8847,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
         "timer": this.$timer,
         "resetTimer": this.$resetTimer.bind(this),
         "isTouchingEdge": this.$isTouchingEdge.bind(this),
-        "isTouchingVirticalEdge": this.isTouchingVirticalEdge.bind(this),
-        "isTouchingHorizontalEdge": this.isTouchingHorizontalEdge.bind(this),
+        "isTouchingVirticalEdge": this.$isTouchingVirticalEdge.bind(this),
+        "isTouchingHorizontalEdge": this.$isTouchingHorizontalEdge.bind(this),
         "isNotMouseTouching": this.$isNotMouseTouching.bind(this),
         "isMouseTouching": this.$isMouseTouching.bind(this),
         "isTouchingToSprite": this.$isTouchingTargetToTarget.bind(this),
@@ -9383,7 +9383,7 @@ var Stage = /*#__PURE__*/function (_Entity) {
       } catch (e) {} finally {}
       this.backdrops.destroyAllSkin();
       PlayGround["default"].stage = null;
-      this["delete"]();
+      this.$delete();
     }
   }, {
     key: "$askAndWait",
