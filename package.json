@@ -1,6 +1,6 @@
 {
   "name": "@amami-harhid/scratch3likejslib",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Support using Scratch3 Libraries",
   "main": "./lib",
   "scripts": {
