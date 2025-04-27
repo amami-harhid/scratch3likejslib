@@ -1,0 +1,6 @@
+.github/
+.vscode/
+.node-version
+.npmrc
+babel.config.json
+webpack.config.js

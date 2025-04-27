@@ -1,6 +1,6 @@
 {
-  "name": "@amami-harhid/scratch3likejslib",
-  "version": "0.0.4",
+  "name": "@tscratch3/scratch3likejslib",
+  "version": "1.0.0-alpha.1",
   "description": "Support using Scratch3 Libraries",
   "main": "./lib",
   "scripts": {
@@ -10,8 +10,11 @@
   "author": "amami-harhid",
   "license": "AGPL-3.0-only",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/amami-harhid"
+    "access": "public"
   },
+  "files": [
+    "build"
+  ],
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
