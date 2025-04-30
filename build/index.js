@@ -417,6 +417,7 @@ var _Canvas = /*#__PURE__*/function () {
   }, {
     key: "resize2DContext",
     value: function resize2DContext(width, height) {
+      console.log("width, height= ".concat(width, ",").concat(height));
       var textCanvas = _Canvas.textCanvas;
       textCanvas.style.left = '0px';
       textCanvas.style.top = '0px';
@@ -5013,6 +5014,7 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var Loop = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Loop);
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
+var Monitor2 = __webpack_require__(/*! ./monitor2 */ "../lib/monitor2.js");
 //const Mouse = require('./io/mouse');
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
 var Render = __webpack_require__(/*! ./render */ "../lib/render.js");
@@ -5103,6 +5105,11 @@ var _Libs = /*#__PURE__*/function () {
     key: "MathUtils",
     get: function get() {
       return MathUtils;
+    }
+  }, {
+    key: "Monitor2",
+    get: function get() {
+      return Monitor2;
     }
     /**
      * 指定したkeyが押されているとき TRUE
@@ -5782,6 +5789,585 @@ var Monitor = /*#__PURE__*/function () {
   }]);
 }();
 module.exports = Monitor;
+
+/***/ }),
+
+/***/ "../lib/monitor/s3-canvas-measurement-provider.js":
+/*!********************************************************!*\
+  !*** ../lib/monitor/s3-canvas-measurement-provider.js ***!
+  \********************************************************/
+/***/ ((module) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var S3CanvasMeasurementProvider = /*#__PURE__*/function () {
+  /**
+   * @param {CanvasRenderingContext2D} ctx - provides a canvas rendering context
+   * with 'font' set to the text style of the text to be wrapped.
+   */
+  function S3CanvasMeasurementProvider(ctx) {
+    _classCallCheck(this, S3CanvasMeasurementProvider);
+    this._ctx = ctx;
+    this._cache = {};
+  }
+
+  // We don't need to set up or tear down anything here. Should these be removed altogether?
+
+  /**
+   * Called by the TextWrapper before a batch of zero or more calls to measureText().
+   */
+  return _createClass(S3CanvasMeasurementProvider, [{
+    key: "beginMeasurementSession",
+    value: function beginMeasurementSession() {}
+
+    /**
+     * Called by the TextWrapper after a batch of zero or more calls to measureText().
+     */
+  }, {
+    key: "endMeasurementSession",
+    value: function endMeasurementSession() {}
+
+    /**
+     * Measure a whole string as one unit.
+     * @param {string} text - the text to measure.
+     * @returns {number} - the length of the string.
+     */
+  }, {
+    key: "measureText",
+    value: function measureText(text) {
+      if (!this._cache[text]) {
+        console.log(this._ctx);
+        this._cache[text] = this._ctx.measureText(text).width;
+      }
+      return this._cache[text];
+    }
+  }]);
+}();
+module.exports = S3CanvasMeasurementProvider;
+
+/***/ }),
+
+/***/ "../lib/monitor/s3-text-wrapper.js":
+/*!*****************************************!*\
+  !*** ../lib/monitor/s3-text-wrapper.js ***!
+  \*****************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var LineBreaker = __webpack_require__(/*! !ify-loader!linebreak */ "../node_modules/ify-loader/index.js!../node_modules/linebreak/src/linebreaker.js");
+var GraphemeBreaker = __webpack_require__(/*! !ify-loader!grapheme-breaker */ "../node_modules/ify-loader/index.js!../node_modules/grapheme-breaker/src/GraphemeBreaker.js");
+/**
+ * Tell this text wrapper to use a specific measurement provider.
+ * @typedef {object} MeasurementProvider - the new measurement provider.
+ * @property {Function} beginMeasurementSession - this will be called before a batch of measurements are made.
+ *      Optionally, this function may return an object to be provided to the endMeasurementSession function.
+ * @property {Function} measureText - this will be called each time a piece of text must be measured.
+ * @property {Function} endMeasurementSession - this will be called after a batch of measurements is finished.
+ *      It will be passed whatever value beginMeasurementSession returned, if any.
+ */
+
+/**
+ * Utility to wrap text across several lines, respecting Unicode grapheme clusters and, when possible, Unicode line
+ * break opportunities.
+ * Reference material:
+ * - Unicode Standard Annex #14: http://unicode.org/reports/tr14/
+ * - Unicode Standard Annex #29: http://unicode.org/reports/tr29/
+ * - "JavaScript has a Unicode problem" by Mathias Bynens: https://mathiasbynens.be/notes/javascript-unicode
+ */
+var S3TextWrapper = /*#__PURE__*/function () {
+  /**
+   * Construct a text wrapper which will measure text using the specified measurement provider.
+   * @param {MeasurementProvider} measurementProvider - a helper object to provide text measurement services.
+   */
+  function S3TextWrapper(measurementProvider) {
+    _classCallCheck(this, S3TextWrapper);
+    this._measurementProvider = measurementProvider;
+    this._cache = {};
+  }
+
+  /**
+   * Wrap the provided text into lines restricted to a maximum width. See Unicode Standard Annex (UAX) #14.
+   * @param {number} maxWidth - the maximum allowed width of a line.
+   * @param {string} text - the text to be wrapped. Will be split on whitespace.
+   * @returns {Array.<string>} an array containing the wrapped lines of text.
+   */
+  return _createClass(S3TextWrapper, [{
+    key: "wrapText",
+    value: function wrapText(maxWidth, text) {
+      // Normalize to canonical composition (see Unicode Standard Annex (UAX) #15)
+      text = text.normalize();
+      var cacheKey = "".concat(maxWidth, "-").concat(text);
+      if (this._cache[cacheKey]) {
+        return this._cache[cacheKey];
+      }
+      var measurementSession = this._measurementProvider.beginMeasurementSession();
+      var breaker = new LineBreaker(text);
+      var lastPosition = 0;
+      var nextBreak;
+      var currentLine = null;
+      var lines = [];
+      while (nextBreak = breaker.nextBreak()) {
+        var word = text.slice(lastPosition, nextBreak.position).replace(/\n+$/, '');
+        var proposedLine = (currentLine || '').concat(word);
+        var proposedLineWidth = this._measurementProvider.measureText(proposedLine);
+        if (proposedLineWidth > maxWidth) {
+          // The next word won't fit on this line. Will it fit on a line by itself?
+          var wordWidth = this._measurementProvider.measureText(word);
+          if (wordWidth > maxWidth) {
+            // The next word can't even fit on a line by itself. Consume it one grapheme cluster at a time.
+            var lastCluster = 0;
+            var nextCluster = void 0;
+            while (lastCluster !== (nextCluster = GraphemeBreaker.nextBreak(word, lastCluster))) {
+              var cluster = word.substring(lastCluster, nextCluster);
+              proposedLine = (currentLine || '').concat(cluster);
+              proposedLineWidth = this._measurementProvider.measureText(proposedLine);
+              if (currentLine === null || proposedLineWidth <= maxWidth) {
+                // first cluster of a new line or the cluster fits
+                currentLine = proposedLine;
+              } else {
+                // no more can fit
+                lines.push(currentLine);
+                currentLine = cluster;
+              }
+              lastCluster = nextCluster;
+            }
+          } else {
+            // The next word can fit on the next line. Finish the current line and move on.
+            if (currentLine !== null) lines.push(currentLine);
+            currentLine = word;
+          }
+        } else {
+          // The next word fits on this line. Just keep going.
+          currentLine = proposedLine;
+        }
+
+        // Did we find a \n or similar?
+        if (nextBreak.required) {
+          if (currentLine !== null) lines.push(currentLine);
+          currentLine = null;
+        }
+        lastPosition = nextBreak.position;
+      }
+      currentLine = currentLine || '';
+      if (currentLine.length > 0 || lines.length === 0) {
+        lines.push(currentLine);
+      }
+      this._cache[cacheKey] = lines;
+      this._measurementProvider.endMeasurementSession(measurementSession);
+      return lines;
+    }
+  }]);
+}();
+module.exports = S3TextWrapper;
+
+/***/ }),
+
+/***/ "../lib/monitor/s3MonitorImage.js":
+/*!****************************************!*\
+  !*** ../lib/monitor/s3MonitorImage.js ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = {
+  MONITOR_IMAGE: "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" \nwidth=\"84.0\" height=\"30.0\" viewBox=\"0,0,84.0,30.0\">\n<g transform=\"translate(-198.36893,-165.65315)\">\n<g data-paper-data=\"{&quot;isPaintingLayer&quot;:true}\" fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#979896\" stroke-width=\"0.5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" style=\"mix-blend-mode: normal\">\n<path d=\"M198.61893,194.09685v-28.19369h82.76214v28.19369z\"/>\n</g></g></svg>"
+};
+
+/***/ }),
+
+/***/ "../lib/monitor/s3MonitorSkin.js":
+/*!***************************************!*\
+  !*** ../lib/monitor/s3MonitorSkin.js ***!
+  \***************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
+var twgl = __webpack_require__(/*! twgl.js */ "../node_modules/twgl.js/dist/4.x/twgl-full.js");
+var S3CanvasMeasurementProvider = __webpack_require__(/*! ./s3-canvas-measurement-provider */ "../lib/monitor/s3-canvas-measurement-provider.js");
+var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/monitor/s3RenderConstants.js");
+var S3TextWrapper = __webpack_require__(/*! ./s3-text-wrapper */ "../lib/monitor/s3-text-wrapper.js");
+var S3MonitorImage = __webpack_require__(/*! ./s3MonitorImage */ "../lib/monitor/s3MonitorImage.js");
+var MonitorStyle = {
+  MAX_LINE_WIDTH: 60,
+  // Maximum width, in Scratch pixels, of a single line of text
+  //    MAX_LINE_WIDTH: 170, // Maximum width, in Scratch pixels, of a single line of text
+
+  MIN_WIDTH: 50,
+  // Minimum width, in Scratch pixels, of a text bubble
+  STROKE_WIDTH: 4,
+  // Thickness of the stroke around the monitor. Only half's visible because it's drawn under the fill
+  PADDING: 10,
+  // Padding around the text area
+  CORNER_RADIUS: 16,
+  // Radius of the rounded corners
+
+  FONT: 'Helvetica',
+  // Font to render the text with
+  FONT_SIZE: 14,
+  // Font size, in Scratch pixels
+  FONT_HEIGHT_RATIO: 0.9,
+  // Height, in Scratch pixels, of the text, as a proportion of the font's size
+  LINE_HEIGHT: 16,
+  // Spacing between each line of text
+
+  COLORS: {
+    //        FILL: 'white',
+    FILL: 'rgba(50,50,50,0.5)',
+    STROKE: 'rgba(0, 0, 0, 0.15)',
+    //        STROKE: 'rgba(255, 0, 0, 1)',
+    TEXT_FILL: '#ffffff'
+    //        TEXT_FILL: '#575E75'
+  }
+};
+var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
+  /**
+   * Create a S3Skin, which stores and/or generates textures for use in rendering.
+   * @param {int} id - The unique ID for this S3Skin.
+   * @param {!RenderWebGL} renderer - The renderer which will use this skin. 
+   * @constructor
+   */
+  function S3MonitorSkin(id, renderer) {
+    var _this;
+    _classCallCheck(this, S3MonitorSkin);
+    _this = _callSuper(this, S3MonitorSkin);
+    /** @type {int} */
+    _this._id = id;
+    /** @type {RenderWebGL} */
+    _this._renderer = renderer;
+    /** @type {HTMLCanvasElement} */
+    _this._canvas = document.getElementById('canvas-text2D');
+    /** @type {Array<number>} */
+    _this._size = [0, 0];
+    /** @type {number} */
+    _this._renderedScale = 0;
+    /** @type {Array<string>} */
+    _this._lines = [];
+    /** @type {object} */
+    _this._textAreaSize = {
+      width: 0,
+      height: 0
+    };
+    /** @type {boolean} */
+    _this._textDirty = true;
+    /** @type {boolean} */
+    _this._textureDirty = true;
+    /** @type {Vec3} */
+    _this._rotationCenter = twgl.v3.create(0, 0);
+    /** @type {WebGLTexture} */
+    _this._texture = null;
+    console.log(_this._canvas);
+    _this._ctx = _this._canvas.getContext('2d', {
+      willReadFrequently: true
+    });
+    console.log(_this._ctx);
+    _this.measurementProvider = new S3CanvasMeasurementProvider(_this._ctx);
+    _this.textWrapper = new S3TextWrapper(_this.measurementProvider);
+    _this._restyleCanvas();
+    return _this;
+  }
+  /**
+   * Dispose of this object. Do not use it after calling this method.
+   */
+  _inherits(S3MonitorSkin, _EventEmitter);
+  return _createClass(S3MonitorSkin, [{
+    key: "dispose",
+    value: function dispose() {
+      if (this._texture) {
+        this._renderer.gl.deleteTexture(this._texture);
+        this._texture = null;
+      }
+      this._canvas = null;
+      this._id = S3RenderConstants.ID_NONE;
+    }
+    /**
+     * @return {int} the unique ID for this Skin.
+     */
+  }, {
+    key: "id",
+    get: function get() {
+      return this._id;
+    }
+  }, {
+    key: "rotationCenter",
+    get: function get() {
+      return this._rotationCenter;
+    }
+    /**
+     * @return {Array<number>} the "native" size, in texels, of this skin.
+     */
+  }, {
+    key: "size",
+    get: function get() {
+      if (this._textDirty) {
+        this._reflowLines();
+      }
+      return this._size;
+    }
+    /**
+     * Get the center of the current bounding box
+     * @returns {Array<number>} the center of the current bounding box
+     */
+  }, {
+    key: "calculateRotationCenter",
+    value: function calculateRotationCenter() {
+      return [this.size[0] / 2, this.size[1] / 2];
+    }
+    /**
+     * @param {Array<number>} scale - The scaling factors to be used.
+     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given size.
+     */
+  }, {
+    key: "getTexture",
+    value: function getTexture(scale) {
+      console.log("\u30101\u3011scale = ".concat(scale));
+      console.log("\u30102\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
+      // The texture only ever gets uniform scale. Take the larger of the two axes.
+      var scaleMax = scale ? Math.max(Math.abs(scale[0]), Math.abs(scale[1])) : 100;
+      console.log("\u30103\u3011scaleMax = ".concat(scaleMax));
+      var requestedScale = scaleMax / 100;
+      // If we already rendered the text monitor at this scale, we can skip re-rendering it.
+      if (this._textureDirty || this._renderedScale !== requestedScale) {
+        this._renderTextMonitor(requestedScale);
+        this._textureDirty = false;
+
+        //            const context = this._canvas.getContext('2d', { willReadFrequently: true });
+        //            const context = this._canvas.getContext('2d');
+        console.log("\u30104\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
+        var textureData = this._ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
+        var gl = this._renderer.gl;
+        if (this._texture === null) {
+          var textureOptions = {
+            auto: false,
+            wrap: gl.CLAMP_TO_EDGE
+          };
+          this._texture = twgl.createTexture(gl, textureOptions);
+        }
+        this._setTexture(textureData);
+      }
+      return this._texture;
+    }
+    /**
+     * Set this skin's texture to the given image.
+     * @param {ImageData|HTMLCanvasElement} textureData - The canvas or image data to set the texture to.
+     */
+  }, {
+    key: "_setTexture",
+    value: function _setTexture(textureData) {
+      var gl = this._renderer.gl;
+      gl.bindTexture(gl.TEXTURE_2D, this._texture);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureData);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    }
+    /**
+     * Set parameters for this text monitor.
+     * @param {*} text 
+     */
+  }, {
+    key: "setTextMonitor",
+    value: function setTextMonitor(text) {
+      this._text = text;
+      this._textDirty = true;
+      this._textureDirty = true;
+    }
+  }, {
+    key: "_restyleCanvas",
+    value: function _restyleCanvas() {
+      //this._canvas.getContext('2d').font = `${MonitorStyle.FONT_SIZE}px ${MonitorStyle.FONT}, sans-serif`;
+    }
+    /**
+     * Update the array of wrapped lines and the text dimensions.
+     */
+  }, {
+    key: "_reflowLines",
+    value: function _reflowLines() {
+      this._lines = this.textWrapper.wrapText(MonitorStyle.MAX_LINE_WIDTH, this._text);
+      // Measure width of longest line to avoid extra-wide bubbles
+      var longestLineWidth = 0;
+      var _iterator = _createForOfIteratorHelper(this._lines),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var line = _step.value;
+          longestLineWidth = Math.max(longestLineWidth, this.measurementProvider.measureText(line));
+        }
+        // Calculate the canvas-space sizes of the padded text area and full text bubble
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      var paddedWidth = Math.max(longestLineWidth, MonitorStyle.MIN_WIDTH) + MonitorStyle.PADDING * 2;
+      var paddedHeight = MonitorStyle.LINE_HEIGHT * this._lines.length + MonitorStyle.PADDING * 2;
+      this._textAreaSize.width = paddedWidth + MonitorStyle.CORNER_RADIUS;
+      this._textAreaSize.height = paddedHeight;
+      this._size[0] = paddedWidth + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS;
+      this._size[1] = paddedHeight + MonitorStyle.STROKE_WIDTH;
+      this._textDirty = false;
+    }
+    /**
+     * Render this text monitor at a certain scale, using the current parameters, to the canvas.
+     * @param {*} scale 
+     */
+  }, {
+    key: "_renderTextMonitor",
+    value: function _renderTextMonitor(scale) {
+      var ctx = this._ctx;
+      console.log("_renderTextMonitor\u30101\u3011scale = ".concat(scale));
+      console.log("_renderTextMonitor\u30102\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
+      if (this._textDirty) {
+        this._reflowLines();
+      }
+      console.log("_renderTextMonitor\u30103\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
+      // Calculate the canvas-space sizes of the padded text area and full text monitor
+      var paddedWidth = this._textAreaSize.width;
+      var paddedHeight = this._textAreaSize.height;
+      // Resize the canvas to the correct screen-space size
+      this._canvas.width = Math.ceil(this._size[0] * scale);
+      this._canvas.height = Math.ceil(this._size[1] * scale);
+      this._restyleCanvas();
+      // Reset the transform before clearing to ensure 100% clearage
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+      ctx.scale(scale, scale);
+      ctx.translate(MonitorStyle.STROKE_WIDTH * 0.5, MonitorStyle.STROKE_WIDTH * 0.5);
+      ctx.save();
+      // Draw the monitor's rounded borders
+      ctx.beginPath();
+      ctx.moveTo(MonitorStyle.CORNER_RADIUS, paddedHeight);
+      ctx.arcTo(0, paddedHeight, 0, paddedHeight - MonitorStyle.CORNER_RADIUS, MonitorStyle.CORNER_RADIUS);
+      ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyle.CORNER_RADIUS);
+      ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS);
+      ctx.arcTo(paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS, paddedHeight, MonitorStyle.CORNER_RADIUS);
+
+      // ctx.arcTo(0, paddedHeight, 0, paddedHeight - BubbleStyle.CORNER_RADIUS, BubbleStyle.CORNER_RADIUS);
+      // ctx.arcTo(0, 0, paddedWidth, 0, BubbleStyle.CORNER_RADIUS);
+      // ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, BubbleStyle.CORNER_RADIUS);
+      // ctx.arcTo(paddedWidth, paddedHeight, paddedWidth - BubbleStyle.CORNER_RADIUS, paddedHeight,
+      //     BubbleStyle.CORNER_RADIUS);
+
+      // Translate the canvas so we don't have to do a bunch of width/height arithmetic
+      ctx.save();
+      ctx.translate(paddedWidth - MonitorStyle.CORNER_RADIUS, paddedHeight);
+      ctx.restore();
+      ctx.fillStyle = MonitorStyle.COLORS.FILL;
+      ctx.strokeStyle = MonitorStyle.COLORS.STROKE;
+      ctx.lineWidth = MonitorStyle.STROKE_WIDTH;
+      ctx.stroke();
+      ctx.fill();
+      // Un-flip the canvas if it was flipped
+      ctx.restore();
+      // Draw each line of text
+      ctx.fillStyle = MonitorStyle.COLORS.TEXT_FILL;
+      ctx.font = "".concat(MonitorStyle.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+      var lines = this._lines;
+      for (var lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+        var line = lines[lineNumber];
+        ctx.fillText(line, MonitorStyle.PADDING, MonitorStyle.PADDING + MonitorStyle.LINE_HEIGHT * lineNumber + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyle.FONT_SIZE);
+      }
+      this._renderedScale = scale;
+    }
+  }]);
+}(EventEmitter);
+module.exports = S3MonitorSkin;
+
+/***/ }),
+
+/***/ "../lib/monitor/s3RenderConstants.js":
+/*!*******************************************!*\
+  !*** ../lib/monitor/s3RenderConstants.js ***!
+  \*******************************************/
+/***/ ((module) => {
+
+module.exports = {
+  /**
+   * The ID value to use for "no item" or when an object has been disposed.
+   * @const {int}
+   */
+  ID_NONE: -1
+};
+
+/***/ }),
+
+/***/ "../lib/monitor2.js":
+/*!**************************!*\
+  !*** ../lib/monitor2.js ***!
+  \**************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var Costumes = __webpack_require__(/*! ./costumes */ "../lib/costumes.js");
+var Entity = __webpack_require__(/*! ./entity */ "../lib/entity.js");
+var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
+var StageLayering = __webpack_require__(/*! ./stageLayering */ "../lib/stageLayering.js");
+var S3MonitorImage = __webpack_require__(/*! ./monitor/s3MonitorImage */ "../lib/monitor/s3MonitorImage.js");
+var S3MonitorSkin = __webpack_require__(/*! ./monitor/s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
+var Image = '';
+var Monitor2 = /*#__PURE__*/function (_Entity) {
+  function Monitor2(name) {
+    var _this;
+    _classCallCheck(this, Monitor2);
+    _this = _callSuper(this, Monitor2, [name, StageLayering.SPRITE_LAYER]);
+    _this.visible = false;
+    _this.skin = null;
+    //this.costumes = new Costumes();
+    //this.costumes.addImage('image', S3MonitorImage.MONITOR_IMAGE);
+    return _this;
+  }
+  _inherits(Monitor2, _Entity);
+  return _createClass(Monitor2, [{
+    key: "createTextSkin",
+    value: function createTextSkin(text) {
+      var skin = new S3MonitorSkin(9999, this.render.renderer);
+      skin.setTextMonitor(text);
+      this.skin = skin;
+    }
+  }, {
+    key: "textRender",
+    value: function textRender(text) {
+      var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [100, 100];
+      this.skin.setTextMonitor(text);
+      this.skin.getTexture(size);
+    }
+  }]);
+}(Entity);
+module.exports = Monitor2;
 
 /***/ }),
 
