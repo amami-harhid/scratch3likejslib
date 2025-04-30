@@ -5014,7 +5014,7 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var Loop = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Loop);
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
-var Monitor2 = __webpack_require__(/*! ./monitor2 */ "../lib/monitor2.js");
+var Monitor = __webpack_require__(/*! ./monitor/monitor */ "../lib/monitor/monitor.js");
 //const Mouse = require('./io/mouse');
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
 var Render = __webpack_require__(/*! ./render */ "../lib/render.js");
@@ -5107,9 +5107,9 @@ var _Libs = /*#__PURE__*/function () {
       return MathUtils;
     }
   }, {
-    key: "Monitor2",
+    key: "Monitor",
     get: function get() {
-      return Monitor2;
+      return Monitor;
     }
     /**
      * 指定したkeyが押されているとき TRUE
@@ -5643,7 +5643,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -5788,6 +5788,65 @@ var Monitor = /*#__PURE__*/function () {
     }
   }]);
 }();
+module.exports = Monitor;
+
+/***/ }),
+
+/***/ "../lib/monitor/monitor.js":
+/*!*********************************!*\
+  !*** ../lib/monitor/monitor.js ***!
+  \*********************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var Costumes = __webpack_require__(/*! ../costumes */ "../lib/costumes.js");
+var Entity = __webpack_require__(/*! ../entity */ "../lib/entity.js");
+var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
+var StageLayering = __webpack_require__(/*! ../stageLayering */ "../lib/stageLayering.js");
+//const S3MonitorImage = require('./s3MonitorImage');
+var S3MonitorSkin = __webpack_require__(/*! ./s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
+var Monitor = /*#__PURE__*/function (_Entity) {
+  function Monitor(name) {
+    var _this;
+    _classCallCheck(this, Monitor);
+    _this = _callSuper(this, Monitor, [name, StageLayering.SPRITE_LAYER]);
+    _this.visible = false;
+    _this.skin = null;
+    //this.costumes = new Costumes();
+    //this.costumes.addImage('image', S3MonitorImage.MONITOR_IMAGE);
+    _this.createTextSkin();
+    return _this;
+  }
+  _inherits(Monitor, _Entity);
+  return _createClass(Monitor, [{
+    key: "createTextSkin",
+    value: function createTextSkin() {
+      var newSkinId = this.render.renderer._allSkins.length + 1;
+      var skin = new S3MonitorSkin(this.drawableID, this.render.renderer);
+      //skin.setTextMonitor(text);
+      this.skin = skin;
+    }
+  }, {
+    key: "textRender",
+    value: function textRender(text) {
+      var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [100, 100];
+      this.skin.setTextMonitor(text);
+      this.skin.getTexture(size);
+    }
+  }]);
+}(Entity);
 module.exports = Monitor;
 
 /***/ }),
@@ -6012,9 +6071,8 @@ var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/m
 var S3TextWrapper = __webpack_require__(/*! ./s3-text-wrapper */ "../lib/monitor/s3-text-wrapper.js");
 var S3MonitorImage = __webpack_require__(/*! ./s3MonitorImage */ "../lib/monitor/s3MonitorImage.js");
 var MonitorStyle = {
-  MAX_LINE_WIDTH: 60,
+  MAX_LINE_WIDTH: 170 * 3,
   // Maximum width, in Scratch pixels, of a single line of text
-  //    MAX_LINE_WIDTH: 170, // Maximum width, in Scratch pixels, of a single line of text
 
   MIN_WIDTH: 50,
   // Minimum width, in Scratch pixels, of a text bubble
@@ -6059,7 +6117,14 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     /** @type {RenderWebGL} */
     _this._renderer = renderer;
     /** @type {HTMLCanvasElement} */
-    _this._canvas = document.getElementById('canvas-text2D');
+    _this._canvas = document.createElement('canvas');
+    var canvasDiv = document.getElementById('canvasDiv');
+    _this._canvas.style.position = 'absolute';
+    _this._canvas.style.border = 'none';
+    _this._canvas.style.zIndex = '91';
+    _this._canvas.style.left = '0px';
+    _this._canvas.style.top = '0px';
+    canvasDiv.appendChild(_this._canvas);
     /** @type {Array<number>} */
     _this._size = [0, 0];
     /** @type {number} */
@@ -6079,11 +6144,9 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     _this._rotationCenter = twgl.v3.create(0, 0);
     /** @type {WebGLTexture} */
     _this._texture = null;
-    console.log(_this._canvas);
     _this._ctx = _this._canvas.getContext('2d', {
       willReadFrequently: true
     });
-    console.log(_this._ctx);
     _this.measurementProvider = new S3CanvasMeasurementProvider(_this._ctx);
     _this.textWrapper = new S3TextWrapper(_this.measurementProvider);
     _this._restyleCanvas();
@@ -6221,11 +6284,11 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       } finally {
         _iterator.f();
       }
-      var paddedWidth = Math.max(longestLineWidth, MonitorStyle.MIN_WIDTH) + MonitorStyle.PADDING * 2;
+      var paddedWidth = Math.max(longestLineWidth, MonitorStyle.MIN_WIDTH) + MonitorStyle.PADDING * 2 + MonitorStyle.CORNER_RADIUS * 2;
       var paddedHeight = MonitorStyle.LINE_HEIGHT * this._lines.length + MonitorStyle.PADDING * 2;
-      this._textAreaSize.width = paddedWidth + MonitorStyle.CORNER_RADIUS;
+      this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
-      this._size[0] = paddedWidth + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS;
+      this._size[0] = paddedWidth + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS * 2;
       this._size[1] = paddedHeight + MonitorStyle.STROKE_WIDTH;
       this._textDirty = false;
     }
@@ -6310,64 +6373,6 @@ module.exports = {
    */
   ID_NONE: -1
 };
-
-/***/ }),
-
-/***/ "../lib/monitor2.js":
-/*!**************************!*\
-  !*** ../lib/monitor2.js ***!
-  \**************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-var Costumes = __webpack_require__(/*! ./costumes */ "../lib/costumes.js");
-var Entity = __webpack_require__(/*! ./entity */ "../lib/entity.js");
-var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
-var StageLayering = __webpack_require__(/*! ./stageLayering */ "../lib/stageLayering.js");
-var S3MonitorImage = __webpack_require__(/*! ./monitor/s3MonitorImage */ "../lib/monitor/s3MonitorImage.js");
-var S3MonitorSkin = __webpack_require__(/*! ./monitor/s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
-var Image = '';
-var Monitor2 = /*#__PURE__*/function (_Entity) {
-  function Monitor2(name) {
-    var _this;
-    _classCallCheck(this, Monitor2);
-    _this = _callSuper(this, Monitor2, [name, StageLayering.SPRITE_LAYER]);
-    _this.visible = false;
-    _this.skin = null;
-    //this.costumes = new Costumes();
-    //this.costumes.addImage('image', S3MonitorImage.MONITOR_IMAGE);
-    return _this;
-  }
-  _inherits(Monitor2, _Entity);
-  return _createClass(Monitor2, [{
-    key: "createTextSkin",
-    value: function createTextSkin(text) {
-      var skin = new S3MonitorSkin(9999, this.render.renderer);
-      skin.setTextMonitor(text);
-      this.skin = skin;
-    }
-  }, {
-    key: "textRender",
-    value: function textRender(text) {
-      var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [100, 100];
-      this.skin.setTextMonitor(text);
-      this.skin.getTexture(size);
-    }
-  }]);
-}(Entity);
-module.exports = Monitor2;
 
 /***/ }),
 
@@ -8082,8 +8087,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-              v.hatProc(func);
-          });
+             v.hatProc(func);
+         });
     }
     */
   }, {
@@ -12485,6 +12490,7 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
+  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -12687,7 +12693,6 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
-  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -12831,7 +12836,6 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
-    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -12886,7 +12890,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -13066,16 +13070,6 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
-  }
-  parseClassAccessorProperty(node) {
-    const accessorPropertyNode = super.parseClassAccessorProperty(node);
-    {
-      if (!this.getPluginOption("estree", "classFeatures")) {
-        return accessorPropertyNode;
-      }
-    }
-    accessorPropertyNode.type = "AccessorProperty";
-    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -14782,7 +14776,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 2048)) return false;
+        if (!(this.optionFlags & 1024)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -14823,7 +14817,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -14939,7 +14933,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -14962,12 +14956,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 256) this.pushToken(comment);
+    if (this.optionFlags & 128) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 4096 ? [] : null;
+    const comments = this.optionFlags & 2048 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -15014,7 +15008,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -15025,7 +15019,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -15733,7 +15727,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 2048)) throw error;
+    if (!(this.optionFlags & 1024)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -16191,9 +16185,6 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
-    if (this.optionFlags & 32) {
-      paramFlags |= 1;
-    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -16220,7 +16211,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -16308,8 +16299,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
-    if (this.optionFlags & 4096) {
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 2048) {
       this.processComment(node);
     }
     return node;
@@ -16317,12 +16308,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 128) node.range[0] = startLoc.index;
+    if (this.optionFlags & 64) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 64) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -22872,7 +22863,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -22908,11 +22899,9 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    const isYield = this.isContextual(108);
-    if (isYield) {
+    if (this.isContextual(108)) {
       if (this.prodParam.hasYield) {
-        this.next();
-        let left = this.parseYield(startLoc);
+        let left = this.parseYield();
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -22963,16 +22952,6 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
-    }
-    if (isYield) {
-      const {
-        type
-      } = this.state;
-      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
-        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
-        return this.parseYield(startLoc);
-      }
     }
     return left;
   }
@@ -23150,7 +23129,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+      if (startsExpr && !this.isAmbiguousAwait()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -23389,7 +23368,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 512) {
+          if (this.optionFlags & 256) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -23694,7 +23673,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 512)) {
+      if (!(this.optionFlags & 256)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -23814,7 +23793,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 1024)) {
+    if (!(this.optionFlags & 512)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -24370,7 +24349,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousPrefixOrIdentifier()) {
+      if (this.isAmbiguousAwait()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -24381,16 +24360,17 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousPrefixOrIdentifier() {
+  isAmbiguousAwait() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield(startLoc) {
-    const node = this.startNodeAt(startLoc);
+  parseYield() {
+    const node = this.startNode();
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
+    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -24692,7 +24672,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 256) {
+    if (this.optionFlags & 128) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -24702,7 +24682,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -26392,7 +26372,6 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
-        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -26506,34 +26485,31 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 64;
+      optionFlags |= 32;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.allowYieldOutsideFunction) {
-      optionFlags |= 32;
-    }
     if (options.ranges) {
-      optionFlags |= 128;
+      optionFlags |= 64;
     }
     if (options.tokens) {
-      optionFlags |= 256;
+      optionFlags |= 128;
     }
     if (options.createImportExpressions) {
-      optionFlags |= 512;
+      optionFlags |= 256;
     }
     if (options.createParenthesizedExpressions) {
-      optionFlags |= 1024;
+      optionFlags |= 512;
     }
     if (options.errorRecovery) {
-      optionFlags |= 2048;
+      optionFlags |= 1024;
     }
     if (options.attachComment) {
-      optionFlags |= 4096;
+      optionFlags |= 2048;
     }
     if (options.annexB) {
-      optionFlags |= 8192;
+      optionFlags |= 4096;
     }
     this.optionFlags = optionFlags;
   }

@@ -41,8 +41,9 @@ Pg.prepare = async function prepare() {
     await cat.Image.add( Cat02 );
     //cat.Looks.hide();
 
-    monitor = new Lib.Monitor2('monitor');
-    monitor.createTextSkin('Sample');
+    monitor = new Lib.Monitor('monitor');
+    console.log(monitor);
+    //monitor.createTextSkin('Sample');
 
 }
 
@@ -105,5 +106,5 @@ Pg.setting = async function setting() {
 
 Pg.draw = function() {
     monitor.textRender(`変数
-00133334444`, [100,100]);
+00133334444555666777888999`, [100,100]);
 }
