@@ -41,7 +41,7 @@ Pg.prepare = async function prepare() {
     await cat.Image.add( Cat02 );
     //cat.Looks.hide();
 
-    monitor = new Lib.Monitor('monitor');
+    monitor = new Lib.Monitor('M01');
     console.log(monitor);
     //monitor.createTextSkin('Sample');
     
@@ -107,5 +107,5 @@ Pg.setting = async function setting() {
 
 Pg.draw = function() {
     counter += 1;
-    monitor.textRender(counter + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    monitor.textRender(counter + "-");
 }

@@ -432,7 +432,6 @@ var _Canvas = /*#__PURE__*/function () {
       textCanvas.style.top = '0px';
       textCanvas.width = width;
       textCanvas.height = height;
-      _Canvas.resizeMonitorCanvas(width, height);
     }
   }, {
     key: "createMonitorCanvas",
@@ -458,7 +457,6 @@ var _Canvas = /*#__PURE__*/function () {
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var canvas = _step.value;
-          console.log("width=".concat(width, ", height=").concat(height));
           canvas.width = width;
           canvas.height = height;
         }
@@ -5866,6 +5864,7 @@ var Monitor = /*#__PURE__*/function (_Entity) {
     var _this;
     _classCallCheck(this, Monitor);
     _this = _callSuper(this, Monitor, [name, StageLayering.SPRITE_LAYER]);
+    _this._name = name;
     _this.visible = false;
     _this.skin = null;
     //this.costumes = new Costumes();
@@ -5877,8 +5876,8 @@ var Monitor = /*#__PURE__*/function (_Entity) {
   return _createClass(Monitor, [{
     key: "createTextSkin",
     value: function createTextSkin() {
-      var newSkinId = this.render.renderer._allSkins.length + 1;
-      var skin = new S3MonitorSkin(this.drawableID, this.render.renderer);
+      //const newSkinId = this.render.renderer._allSkins.length+1;
+      var skin = new S3MonitorSkin(this.drawableID, this.render.renderer, this._name);
       //skin.setTextMonitor(text);
       this.skin = skin;
     }
@@ -6080,9 +6079,6 @@ module.exports = S3TextWrapper;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -6104,19 +6100,18 @@ var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/m
 var S3TextWrapper = __webpack_require__(/*! ./s3-text-wrapper */ "../lib/monitor/s3-text-wrapper.js");
 var twgl = __webpack_require__(/*! twgl.js */ "../node_modules/twgl.js/dist/4.x/twgl-full.js");
 var MonitorStyle = {
-  MAX_LINE_WIDTH: 170,
-  // Maximum width, in Scratch pixels, of a single line of text
-
-  MIN_WIDTH: 50,
-  // Minimum width, in Scratch pixels, of a text bubble
-  STROKE_WIDTH: 4,
-  // Thickness of the stroke around the monitor. Only half's visible because it's drawn under the fill
+  MAX_LINE_WIDTH: 480,
+  // stage width
+  PADDING_VALUE_VIRTICAL: 5,
+  // Padding around the value text area
   PADDING: 10,
   // Padding around the text area
-  //    CORNER_RADIUS: 16, // Radius of the rounded corners
-  CORNER_RADIUS: 5,
+  MIN_WIDTH: 50,
+  // Minimum value area width, in Scratch pixels
+  STROKE_WIDTH: 4,
+  // Thickness of the stroke around the monitor. Only half's visible because it's drawn under the fill
+  CORNER_RADIUS: 3,
   // Radius of the rounded corners
-
   FONT: 'Helvetica',
   // Font to render the text with
   FONT_SIZE: 10,
@@ -6127,19 +6122,22 @@ var MonitorStyle = {
   // Spacing between each line of text
 
   COLORS: {
-    //        FILL: 'white',
-    FILL: 'rgba(50,50,50,0.5)',
-    STROKE: 'rgba(0, 0, 0, 0.15)',
-    //        STROKE: 'rgba(255, 0, 0, 1)',
+    FILL: 'rgba(250,250,250,0.9)',
+    STROKE: 'rgba(190, 190, 190, 0.9)',
+    TEXT_FILL: '#000000'
+  },
+  VALUE_COLORS: {
+    FILL: 'rgba(255, 165, 0, 0.8)',
+    STROKE: 'rgba(255, 165, 0, 0.8)',
     TEXT_FILL: '#ffffff'
-    //        TEXT_FILL: '#575E75'
   }
 };
 var MonitorStyleResized = {
   MAX_LINE_WIDTH: MonitorStyle.MAX_LINE_WIDTH,
+  PADDING_VALUE_VIRTICAL: MonitorStyle.PADDING_VALUE_VIRTICAL,
+  PADDING: MonitorStyle.PADDING,
   MIN_WIDTH: MonitorStyle.MIN_WIDTH,
   STROKE_WIDTH: MonitorStyle.STROKE_WIDTH,
-  PADDING: MonitorStyle.PADDING,
   CORNER_RADIUS: MonitorStyle.CORNER_RADIUS,
   FONT_SIZE: MonitorStyle.FONT_SIZE,
   LINE_HEIGHT: MonitorStyle.LINE_HEIGHT
@@ -6148,10 +6146,11 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   /**
    * Create a S3Skin, which stores and/or generates textures for use in rendering.
    * @param {int} id - The unique ID for this S3Skin.
-   * @param {!RenderWebGL} renderer - The renderer which will use this skin. 
+   * @param {!RenderWebGL} renderer - The renderer which will use this skin.
+   * @param {string} title - monitor title
    * @constructor
    */
-  function S3MonitorSkin(id, renderer) {
+  function S3MonitorSkin(id, renderer, title) {
     var _this;
     _classCallCheck(this, S3MonitorSkin);
     _this = _callSuper(this, S3MonitorSkin);
@@ -6161,12 +6160,15 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     _this._renderer = renderer;
     /** @type {HTMLCanvasElement} */
     _this._canvas = Canvas.createMonitorCanvas();
+    Render.monitorCanvasResize();
     /** @type {Array<number>} */
     _this._size = [0, 0];
     /** @type {number} */
     _this._renderedScale = 0;
     /** @type {Array<string>} */
     _this._lines = [];
+    /** @type {string} */
+    _this._title = title;
     /** @type {object} */
     _this._textAreaSize = {
       width: 0,
@@ -6198,9 +6200,10 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       var rate = Libs["default"].renderRate;
       var _rate = Math.min(rate.x, rate.y);
       MonitorStyleResized.MAX_LINE_WIDTH = Math.ceil(MonitorStyle.MAX_LINE_WIDTH / _rate);
+      MonitorStyleResized.PADDING_VALUE_VIRTICAL = Math.ceil(MonitorStyle.PADDING_VALUE_VIRTICAL / _rate);
+      MonitorStyleResized.PADDING = Math.ceil(MonitorStyle.PADDING / _rate);
       MonitorStyleResized.MIN_WIDTH = Math.ceil(MonitorStyle.MIN_WIDTH / _rate);
       MonitorStyleResized.STROKE_WIDTH = Math.ceil(MonitorStyle.STROKE_WIDTH / _rate);
-      MonitorStyleResized.PADDING = Math.ceil(MonitorStyle.PADDING / _rate);
       MonitorStyleResized.CORNER_RADIUS = Math.ceil(MonitorStyle.CORNER_RADIUS / _rate);
       MonitorStyleResized.FONT_SIZE = Math.ceil(MonitorStyle.FONT_SIZE / _rate);
       MonitorStyleResized.LINE_HEIGHT = Math.ceil(MonitorStyle.LINE_HEIGHT / _rate);
@@ -6312,24 +6315,23 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     key: "_reflowLines",
     value: function _reflowLines() {
       var _rate = this.renderRate();
-      this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
+
+      // Measure width of title line
+      var _titleLineWidth = this.measurementProvider.measureText(this._title);
+      var titleLineWidth = _titleLineWidth;
+      this.titleLineWidth = titleLineWidth;
+      //this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
+      this._lines = [this._text]; // always one line, not used line breaker
       // Measure width of longest line to avoid extra-wide bubbles
-      var longestLineWidth = 0;
-      var _iterator = _createForOfIteratorHelper(this._lines),
-        _step;
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var line = _step.value;
-          longestLineWidth = Math.max(longestLineWidth, this.measurementProvider.measureText(line));
-        }
-        // Calculate the canvas-space sizes of the padded text area and full text bubble
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-      var paddedWidth = Math.max(longestLineWidth, MonitorStyleResized.MIN_WIDTH) + MonitorStyleResized.PADDING * 2 + MonitorStyleResized.CORNER_RADIUS * 2;
-      var paddedHeight = MonitorStyleResized.LINE_HEIGHT * this._lines.length + MonitorStyleResized.PADDING * 2;
+      var _valueLineWidth = this.measurementProvider.measureText(this._text);
+      var valueLineWidth = Math.max(_valueLineWidth, MonitorStyleResized.MIN_WIDTH);
+      this.valueLineWidth = valueLineWidth;
+      // Calculate the canvas-space sizes of the padded text area and full text bubble
+      //const paddedWidth = Math.max(longestLineWidth, MonitorStyleResized.MIN_WIDTH) + (MonitorStyleResized.PADDING * 2) +MonitorStyleResized.CORNER_RADIUS * 2;
+      //const paddedHeight = (MonitorStyleResized.LINE_HEIGHT * this._lines.length) + (MonitorStyleResized.PADDING * 2);
+
+      var paddedWidth = MonitorStyleResized.PADDING + titleLineWidth + MonitorStyleResized.PADDING + valueLineWidth + MonitorStyleResized.PADDING;
+      var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.LINE_HEIGHT + MonitorStyleResized.PADDING * 2;
       this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
       this._size[0] = paddedWidth + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
@@ -6362,7 +6364,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
       ctx.scale(scale, scale);
-      ctx.translate(MonitorStyleResized.STROKE_WIDTH * 0.5, MonitorStyleResized.STROKE_WIDTH * 0.5);
+      ctx.translate(MonitorStyleResized.PADDING * 0.5, MonitorStyleResized.PADDING * 0.5);
       ctx.save();
       // Draw the monitor's rounded borders
       ctx.beginPath();
@@ -6371,6 +6373,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyleResized.CORNER_RADIUS);
       ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
       ctx.arcTo(paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
+      ctx.lineTo(MonitorStyleResized.CORNER_RADIUS, paddedHeight);
       // Translate the canvas so we don't have to do a bunch of width/height arithmetic
       ctx.save();
       ctx.translate(paddedWidth - MonitorStyleResized.CORNER_RADIUS, paddedHeight);
@@ -6382,19 +6385,46 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       ctx.fill();
       // Un-flip the canvas if it was flipped
       ctx.restore();
-      // Draw each line of text
+
+      // Draw value area
+      ctx.beginPath();
+      var valueAreaHorizonStart = MonitorStyleResized.PADDING * 2 + this.titleLineWidth;
+      var valueHeight = paddedHeight - MonitorStyleResized.PADDING_VALUE_VIRTICAL * 2;
+      console.log("paddedHeight=".concat(paddedHeight));
+      console.log("valueHeight=".concat(valueHeight));
+      ctx.moveTo(valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL);
+      ctx.arcTo(valueAreaHorizonStart, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart, valueHeight - MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(valueAreaHorizonStart, MonitorStyleResized.PADDING_VALUE_VIRTICAL, this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
+      ctx.lineTo(valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL);
+      ctx.fillStyle = MonitorStyle.VALUE_COLORS.FILL;
+      ctx.strokeStyle = MonitorStyle.VALUE_COLORS.STROKE;
+      ctx.lineWidth = 0;
+      ctx.stroke();
+      ctx.fill();
+
+      // Draw title line 
+      var firtLineTop = MonitorStyleResized.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE;
       ctx.fillStyle = MonitorStyle.COLORS.TEXT_FILL;
       ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
-      var lines = this._lines;
-      var firtLineTop = MonitorStyleResized.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE;
-      for (var lineNumber = 0; lineNumber < lines.length; lineNumber++) {
-        var line = lines[lineNumber];
-        ctx.fillText(line, MonitorStyleResized.CORNER_RADIUS, firtLineTop + MonitorStyleResized.LINE_HEIGHT * lineNumber
+      console.log("this._title=".concat(this._title));
+      ctx.fillText(this._title, MonitorStyleResized.CORNER_RADIUS, firtLineTop);
 
-        //MonitorStyleResized.PADDING + (MonitorStyleResized.LINE_HEIGHT * lineNumber) +
-        //     (MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE)
-        );
+      // Draw each line of text
+      ctx.fillStyle = MonitorStyle.VALUE_COLORS.TEXT_FILL;
+      ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+      var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING * 2;
+      var _valueStartPosition = valueStartPosition;
+      if (MonitorStyleResized.MIN_WIDTH > this.titleLineWidth) {
+        _valueStartPosition += (MonitorStyleResized.MIN_WIDTH - this.titleLineWidth) / 2;
       }
+      ctx.fillText(this._text,
+      //MonitorStyleResized.CORNER_RADIUS,
+      _valueStartPosition, firtLineTop
+      //MonitorStyleResized.PADDING + (MonitorStyleResized.LINE_HEIGHT * lineNumber) +
+      //     (MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE)
+      );
       this._renderedScale = scale;
     }
   }]);
@@ -7157,6 +7187,7 @@ var _Render = /*#__PURE__*/function () {
       this.stageWidth = _nativeSize[0];
       this.stageHeight = _nativeSize[1];
       Canvas.resize2DContext(w, h);
+      _Render.monitorCanvasResize(w, h);
     }
   }, {
     key: "createRenderer",
@@ -7199,6 +7230,13 @@ var _Render = /*#__PURE__*/function () {
     key: "H",
     get: function get() {
       return _Render.W * _Render.WHRate;
+    }
+  }, {
+    key: "monitorCanvasResize",
+    value: function monitorCanvasResize() {
+      var w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _Render.W;
+      var h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Render.H;
+      Canvas.resizeMonitorCanvas(w, h);
     }
   }]);
 }();
