@@ -6218,6 +6218,8 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
 
       var paddedWidth = MonitorStyleResized.PADDING + titleLineWidth + MonitorStyleResized.PADDING + valueLineWidth + MonitorStyleResized.PADDING;
       var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.LINE_HEIGHT + MonitorStyleResized.PADDING * 2;
+      console.log("title=\"".concat(this._title, "\", titleLineWidth=").concat(titleLineWidth, ", valueLineWidth=").concat(valueLineWidth));
+      console.log("title=\"".concat(this._title, "\", paddedWidth=").concat(paddedWidth));
       this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
       this._size[0] = paddedWidth + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;

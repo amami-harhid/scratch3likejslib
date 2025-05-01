@@ -38,10 +38,12 @@ Pg.prepare = async function () {
     ball.Looks.setSize(50, 50);
     monitors = new Lib.Monitors();
     monitors.add(SECONDS_COUNTER, "秒数");
-    monitors.add(BORDER_TOUCHING_COUNTER, "回数");
+    monitors.add(BORDER_TOUCHING_COUNTER, "秒数");
+    monitors.add(BORDER_TOUCHING_COUNTER+"2", "回数");
 
     monitors.get(SECONDS_COUNTER).text = secondsCounter;
     monitors.get(BORDER_TOUCHING_COUNTER).text = borderTouchingCounter;
+    monitors.get(BORDER_TOUCHING_COUNTER+"2").text = borderTouchingCounter;
     //monitors.automatic();
 //    monitors.automatic();
 }
