@@ -436,6 +436,10 @@ var _Canvas = /*#__PURE__*/function () {
   }, {
     key: "createMonitorCanvas",
     value: function createMonitorCanvas() {
+      var canvasArr = document.getElementsByClassName(_CanvasMonitor2dClassName);
+      if (canvasArr && canvasArr.length > 0) {
+        return canvasArr[0];
+      }
       var canvasDiv = _Canvas.getLikeScratchCanvas();
       var canvasMonitor2D = document.createElement('canvas');
       canvasMonitor2D.className = _CanvasMonitor2dClassName;
