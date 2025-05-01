@@ -44,9 +44,10 @@ Pg.prepare = async function prepare() {
     monitor = new Lib.Monitor('monitor');
     console.log(monitor);
     //monitor.createTextSkin('Sample');
+    
 
 }
-
+let counter = 0;
 Pg.setting = async function setting() {
 
     /**
@@ -105,6 +106,6 @@ Pg.setting = async function setting() {
 }
 
 Pg.draw = function() {
-    monitor.textRender(`変数
-00133334444555666777888999`, [100,100]);
+    counter += 1;
+    monitor.textRender(counter + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 }

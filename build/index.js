@@ -344,6 +344,9 @@ module.exports = Bubble;
 /***/ ((module) => {
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -353,11 +356,18 @@ var _StageCanvasWrapperID = "stageCanvasWrapper";
 var CanvasText2dId = "canvas-text2D";
 var CanvasText2dClassName = "likeScratch-text-canvas";
 var CanvasText2dZIndex = 90;
+var _CanvasMonitor2dClassName = 'likeScratch-monitor-canvas';
+var CanvasMonitor2dZIndex = 100;
 var _Canvas = /*#__PURE__*/function () {
   function Canvas() {
     _classCallCheck(this, Canvas);
   }
   return _createClass(Canvas, null, [{
+    key: "CanvasMonitor2dClassName",
+    value: function CanvasMonitor2dClassName() {
+      return _CanvasMonitor2dClassName;
+    }
+  }, {
     key: "StageCanvasWrapperID",
     value: function StageCanvasWrapperID() {
       return _StageCanvasWrapperID;
@@ -417,12 +427,46 @@ var _Canvas = /*#__PURE__*/function () {
   }, {
     key: "resize2DContext",
     value: function resize2DContext(width, height) {
-      console.log("width, height= ".concat(width, ",").concat(height));
       var textCanvas = _Canvas.textCanvas;
       textCanvas.style.left = '0px';
       textCanvas.style.top = '0px';
       textCanvas.width = width;
       textCanvas.height = height;
+      _Canvas.resizeMonitorCanvas(width, height);
+    }
+  }, {
+    key: "createMonitorCanvas",
+    value: function createMonitorCanvas() {
+      var canvasDiv = _Canvas.getLikeScratchCanvas();
+      var canvasMonitor2D = document.createElement('canvas');
+      canvasMonitor2D.className = _CanvasMonitor2dClassName;
+      canvasMonitor2D.style.position = 'absolute';
+      canvasMonitor2D.style.border = 'none';
+      canvasMonitor2D.style.zIndex = CanvasMonitor2dZIndex;
+      canvasMonitor2D.style.left = '0px';
+      canvasMonitor2D.style.top = '0px';
+      canvasDiv.appendChild(canvasMonitor2D);
+      return canvasMonitor2D;
+    }
+  }, {
+    key: "resizeMonitorCanvas",
+    value: function resizeMonitorCanvas(width, height) {
+      var canvasArr = document.getElementsByClassName(_CanvasMonitor2dClassName);
+      console.log("canvasArr.length=".concat(canvasArr.length));
+      var _iterator = _createForOfIteratorHelper(canvasArr),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var canvas = _step.value;
+          console.log("width=".concat(width, ", height=").concat(height));
+          canvas.width = width;
+          canvas.height = height;
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
     }
   }, {
     key: "getStageCanvasWrapper",
@@ -5643,7 +5687,7 @@ var Monitor = /*#__PURE__*/function () {
             /* transform　Scale 変わらないので 設定不要だと思う。
             const scale = me._scale; //(parseFloat(target.getAttribute('scratch-scale')) || 1);
             const actualScale = {x: scale /  renderRate.x , y: scale / renderRate.y };
-             const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
+              const scaleX = (parseFloat(target.getAttribute('scale-x')) || null);
             const scaleY = (parseFloat(target.getAttribute('scale-y')) || null);
             */
             me._balloonHTML(target, scratchX, scratchY);
@@ -5811,9 +5855,9 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-var Costumes = __webpack_require__(/*! ../costumes */ "../lib/costumes.js");
+//const Costumes = require('../costumes');
 var Entity = __webpack_require__(/*! ../entity */ "../lib/entity.js");
-var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
+//const PlayGround = require('../playGround');
 var StageLayering = __webpack_require__(/*! ../stageLayering */ "../lib/stageLayering.js");
 //const S3MonitorImage = require('./s3MonitorImage');
 var S3MonitorSkin = __webpack_require__(/*! ./s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
@@ -5899,7 +5943,6 @@ var S3CanvasMeasurementProvider = /*#__PURE__*/function () {
     key: "measureText",
     value: function measureText(text) {
       if (!this._cache[text]) {
-        console.log(this._ctx);
         this._cache[text] = this._ctx.measureText(text).width;
       }
       return this._cache[text];
@@ -6030,18 +6073,6 @@ module.exports = S3TextWrapper;
 
 /***/ }),
 
-/***/ "../lib/monitor/s3MonitorImage.js":
-/*!****************************************!*\
-  !*** ../lib/monitor/s3MonitorImage.js ***!
-  \****************************************/
-/***/ ((module) => {
-
-module.exports = {
-  MONITOR_IMAGE: "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" \nwidth=\"84.0\" height=\"30.0\" viewBox=\"0,0,84.0,30.0\">\n<g transform=\"translate(-198.36893,-165.65315)\">\n<g data-paper-data=\"{&quot;isPaintingLayer&quot;:true}\" fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#979896\" stroke-width=\"0.5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" style=\"mix-blend-mode: normal\">\n<path d=\"M198.61893,194.09685v-28.19369h82.76214v28.19369z\"/>\n</g></g></svg>"
-};
-
-/***/ }),
-
 /***/ "../lib/monitor/s3MonitorSkin.js":
 /*!***************************************!*\
   !*** ../lib/monitor/s3MonitorSkin.js ***!
@@ -6064,14 +6095,16 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var Canvas = __webpack_require__(/*! ../canvas */ "../lib/canvas.js");
 var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
-var twgl = __webpack_require__(/*! twgl.js */ "../node_modules/twgl.js/dist/4.x/twgl-full.js");
+var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
+var Render = __webpack_require__(/*! ../render */ "../lib/render.js");
 var S3CanvasMeasurementProvider = __webpack_require__(/*! ./s3-canvas-measurement-provider */ "../lib/monitor/s3-canvas-measurement-provider.js");
 var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/monitor/s3RenderConstants.js");
 var S3TextWrapper = __webpack_require__(/*! ./s3-text-wrapper */ "../lib/monitor/s3-text-wrapper.js");
-var S3MonitorImage = __webpack_require__(/*! ./s3MonitorImage */ "../lib/monitor/s3MonitorImage.js");
+var twgl = __webpack_require__(/*! twgl.js */ "../node_modules/twgl.js/dist/4.x/twgl-full.js");
 var MonitorStyle = {
-  MAX_LINE_WIDTH: 170 * 3,
+  MAX_LINE_WIDTH: 170,
   // Maximum width, in Scratch pixels, of a single line of text
 
   MIN_WIDTH: 50,
@@ -6080,16 +6113,17 @@ var MonitorStyle = {
   // Thickness of the stroke around the monitor. Only half's visible because it's drawn under the fill
   PADDING: 10,
   // Padding around the text area
-  CORNER_RADIUS: 16,
+  //    CORNER_RADIUS: 16, // Radius of the rounded corners
+  CORNER_RADIUS: 5,
   // Radius of the rounded corners
 
   FONT: 'Helvetica',
   // Font to render the text with
-  FONT_SIZE: 14,
+  FONT_SIZE: 10,
   // Font size, in Scratch pixels
-  FONT_HEIGHT_RATIO: 0.9,
+  FONT_HEIGHT_RATIO: 0.5,
   // Height, in Scratch pixels, of the text, as a proportion of the font's size
-  LINE_HEIGHT: 16,
+  LINE_HEIGHT: 10,
   // Spacing between each line of text
 
   COLORS: {
@@ -6100,6 +6134,15 @@ var MonitorStyle = {
     TEXT_FILL: '#ffffff'
     //        TEXT_FILL: '#575E75'
   }
+};
+var MonitorStyleResized = {
+  MAX_LINE_WIDTH: MonitorStyle.MAX_LINE_WIDTH,
+  MIN_WIDTH: MonitorStyle.MIN_WIDTH,
+  STROKE_WIDTH: MonitorStyle.STROKE_WIDTH,
+  PADDING: MonitorStyle.PADDING,
+  CORNER_RADIUS: MonitorStyle.CORNER_RADIUS,
+  FONT_SIZE: MonitorStyle.FONT_SIZE,
+  LINE_HEIGHT: MonitorStyle.LINE_HEIGHT
 };
 var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   /**
@@ -6117,14 +6160,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     /** @type {RenderWebGL} */
     _this._renderer = renderer;
     /** @type {HTMLCanvasElement} */
-    _this._canvas = document.createElement('canvas');
-    var canvasDiv = document.getElementById('canvasDiv');
-    _this._canvas.style.position = 'absolute';
-    _this._canvas.style.border = 'none';
-    _this._canvas.style.zIndex = '91';
-    _this._canvas.style.left = '0px';
-    _this._canvas.style.top = '0px';
-    canvasDiv.appendChild(_this._canvas);
+    _this._canvas = Canvas.createMonitorCanvas();
     /** @type {Array<number>} */
     _this._size = [0, 0];
     /** @type {number} */
@@ -6157,6 +6193,20 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
    */
   _inherits(S3MonitorSkin, _EventEmitter);
   return _createClass(S3MonitorSkin, [{
+    key: "renderRate",
+    value: function renderRate() {
+      var rate = Libs["default"].renderRate;
+      var _rate = Math.min(rate.x, rate.y);
+      MonitorStyleResized.MAX_LINE_WIDTH = Math.ceil(MonitorStyle.MAX_LINE_WIDTH / _rate);
+      MonitorStyleResized.MIN_WIDTH = Math.ceil(MonitorStyle.MIN_WIDTH / _rate);
+      MonitorStyleResized.STROKE_WIDTH = Math.ceil(MonitorStyle.STROKE_WIDTH / _rate);
+      MonitorStyleResized.PADDING = Math.ceil(MonitorStyle.PADDING / _rate);
+      MonitorStyleResized.CORNER_RADIUS = Math.ceil(MonitorStyle.CORNER_RADIUS / _rate);
+      MonitorStyleResized.FONT_SIZE = Math.ceil(MonitorStyle.FONT_SIZE / _rate);
+      MonitorStyleResized.LINE_HEIGHT = Math.ceil(MonitorStyle.LINE_HEIGHT / _rate);
+      return _rate;
+    }
+  }, {
     key: "dispose",
     value: function dispose() {
       if (this._texture) {
@@ -6206,20 +6256,13 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "getTexture",
     value: function getTexture(scale) {
-      console.log("\u30101\u3011scale = ".concat(scale));
-      console.log("\u30102\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
       // The texture only ever gets uniform scale. Take the larger of the two axes.
       var scaleMax = scale ? Math.max(Math.abs(scale[0]), Math.abs(scale[1])) : 100;
-      console.log("\u30103\u3011scaleMax = ".concat(scaleMax));
       var requestedScale = scaleMax / 100;
       // If we already rendered the text monitor at this scale, we can skip re-rendering it.
       if (this._textureDirty || this._renderedScale !== requestedScale) {
         this._renderTextMonitor(requestedScale);
         this._textureDirty = false;
-
-        //            const context = this._canvas.getContext('2d', { willReadFrequently: true });
-        //            const context = this._canvas.getContext('2d');
-        console.log("\u30104\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
         var textureData = this._ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
         var gl = this._renderer.gl;
         if (this._texture === null) {
@@ -6253,14 +6296,14 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "setTextMonitor",
     value: function setTextMonitor(text) {
-      this._text = text;
+      this._text = '' + text;
       this._textDirty = true;
       this._textureDirty = true;
     }
   }, {
     key: "_restyleCanvas",
     value: function _restyleCanvas() {
-      //this._canvas.getContext('2d').font = `${MonitorStyle.FONT_SIZE}px ${MonitorStyle.FONT}, sans-serif`;
+      this._canvas.getContext('2d').font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
     }
     /**
      * Update the array of wrapped lines and the text dimensions.
@@ -6268,7 +6311,8 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_reflowLines",
     value: function _reflowLines() {
-      this._lines = this.textWrapper.wrapText(MonitorStyle.MAX_LINE_WIDTH, this._text);
+      var _rate = this.renderRate();
+      this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
       // Measure width of longest line to avoid extra-wide bubbles
       var longestLineWidth = 0;
       var _iterator = _createForOfIteratorHelper(this._lines),
@@ -6284,12 +6328,12 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       } finally {
         _iterator.f();
       }
-      var paddedWidth = Math.max(longestLineWidth, MonitorStyle.MIN_WIDTH) + MonitorStyle.PADDING * 2 + MonitorStyle.CORNER_RADIUS * 2;
-      var paddedHeight = MonitorStyle.LINE_HEIGHT * this._lines.length + MonitorStyle.PADDING * 2;
+      var paddedWidth = Math.max(longestLineWidth, MonitorStyleResized.MIN_WIDTH) + MonitorStyleResized.PADDING * 2 + MonitorStyleResized.CORNER_RADIUS * 2;
+      var paddedHeight = MonitorStyleResized.LINE_HEIGHT * this._lines.length + MonitorStyleResized.PADDING * 2;
       this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
-      this._size[0] = paddedWidth + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS * 2;
-      this._size[1] = paddedHeight + MonitorStyle.STROKE_WIDTH;
+      this._size[0] = paddedWidth + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
+      this._size[1] = paddedHeight + MonitorStyleResized.STROKE_WIDTH;
       this._textDirty = false;
     }
     /**
@@ -6299,58 +6343,57 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_renderTextMonitor",
     value: function _renderTextMonitor(scale) {
+      var _rate = this.renderRate();
+      var _scale = scale / _rate;
       var ctx = this._ctx;
-      console.log("_renderTextMonitor\u30101\u3011scale = ".concat(scale));
-      console.log("_renderTextMonitor\u30102\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
       if (this._textDirty) {
         this._reflowLines();
       }
-      console.log("_renderTextMonitor\u30103\u3011this._canvas.width, this._canvas.height = ".concat(this._canvas.width, ",").concat(this._canvas.height));
       // Calculate the canvas-space sizes of the padded text area and full text monitor
       var paddedWidth = this._textAreaSize.width;
       var paddedHeight = this._textAreaSize.height;
+
       // Resize the canvas to the correct screen-space size
-      this._canvas.width = Math.ceil(this._size[0] * scale);
-      this._canvas.height = Math.ceil(this._size[1] * scale);
+      //        this._canvas.width = Math.ceil(this._size[0] * _scale);
+      //        this._canvas.height = Math.ceil(this._size[1] * _scale);
+
       this._restyleCanvas();
       // Reset the transform before clearing to ensure 100% clearage
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
       ctx.scale(scale, scale);
-      ctx.translate(MonitorStyle.STROKE_WIDTH * 0.5, MonitorStyle.STROKE_WIDTH * 0.5);
+      ctx.translate(MonitorStyleResized.STROKE_WIDTH * 0.5, MonitorStyleResized.STROKE_WIDTH * 0.5);
       ctx.save();
       // Draw the monitor's rounded borders
       ctx.beginPath();
-      ctx.moveTo(MonitorStyle.CORNER_RADIUS, paddedHeight);
-      ctx.arcTo(0, paddedHeight, 0, paddedHeight - MonitorStyle.CORNER_RADIUS, MonitorStyle.CORNER_RADIUS);
-      ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyle.CORNER_RADIUS);
-      ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS);
-      ctx.arcTo(paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS, paddedHeight, MonitorStyle.CORNER_RADIUS);
-
-      // ctx.arcTo(0, paddedHeight, 0, paddedHeight - BubbleStyle.CORNER_RADIUS, BubbleStyle.CORNER_RADIUS);
-      // ctx.arcTo(0, 0, paddedWidth, 0, BubbleStyle.CORNER_RADIUS);
-      // ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, BubbleStyle.CORNER_RADIUS);
-      // ctx.arcTo(paddedWidth, paddedHeight, paddedWidth - BubbleStyle.CORNER_RADIUS, paddedHeight,
-      //     BubbleStyle.CORNER_RADIUS);
-
+      ctx.moveTo(MonitorStyleResized.CORNER_RADIUS, paddedHeight);
+      ctx.arcTo(0, paddedHeight, 0, paddedHeight - MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
+      ctx.arcTo(paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
       // Translate the canvas so we don't have to do a bunch of width/height arithmetic
       ctx.save();
-      ctx.translate(paddedWidth - MonitorStyle.CORNER_RADIUS, paddedHeight);
+      ctx.translate(paddedWidth - MonitorStyleResized.CORNER_RADIUS, paddedHeight);
       ctx.restore();
       ctx.fillStyle = MonitorStyle.COLORS.FILL;
       ctx.strokeStyle = MonitorStyle.COLORS.STROKE;
-      ctx.lineWidth = MonitorStyle.STROKE_WIDTH;
+      ctx.lineWidth = MonitorStyleResized.STROKE_WIDTH;
       ctx.stroke();
       ctx.fill();
       // Un-flip the canvas if it was flipped
       ctx.restore();
       // Draw each line of text
       ctx.fillStyle = MonitorStyle.COLORS.TEXT_FILL;
-      ctx.font = "".concat(MonitorStyle.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+      ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
       var lines = this._lines;
+      var firtLineTop = MonitorStyleResized.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE;
       for (var lineNumber = 0; lineNumber < lines.length; lineNumber++) {
         var line = lines[lineNumber];
-        ctx.fillText(line, MonitorStyle.PADDING, MonitorStyle.PADDING + MonitorStyle.LINE_HEIGHT * lineNumber + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyle.FONT_SIZE);
+        ctx.fillText(line, MonitorStyleResized.CORNER_RADIUS, firtLineTop + MonitorStyleResized.LINE_HEIGHT * lineNumber
+
+        //MonitorStyleResized.PADDING + (MonitorStyleResized.LINE_HEIGHT * lineNumber) +
+        //     (MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE)
+        );
       }
       this._renderedScale = scale;
     }
@@ -6667,11 +6710,7 @@ var _PlayGround = /*#__PURE__*/function () {
     key: "flag",
     get: function get() {
       return this._flag;
-    }
-
-    //    get wait () {
-    //    }
-    ,
+    },
     set: function set(flag) {
       this._flag = flag;
     }
@@ -6697,15 +6736,9 @@ var _PlayGround = /*#__PURE__*/function () {
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              //        this.clearPools();
-              //        console.log('befor _prepare');
-              //        await this._prepare();
-              console.log('befor _setting');
-              _context.next = 3;
+              _context.next = 2;
               return this._setting();
-            case 3:
-              console.log('after _setting');
-            case 4:
+            case 2:
             case "end":
               return _context.stop();
           }
@@ -8087,8 +8120,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
   }, {
@@ -12490,7 +12523,6 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
-  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -12693,6 +12725,7 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
+  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -12836,6 +12869,7 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
+    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -12890,7 +12924,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -13070,6 +13104,16 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
+  }
+  parseClassAccessorProperty(node) {
+    const accessorPropertyNode = super.parseClassAccessorProperty(node);
+    {
+      if (!this.getPluginOption("estree", "classFeatures")) {
+        return accessorPropertyNode;
+      }
+    }
+    accessorPropertyNode.type = "AccessorProperty";
+    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -14776,7 +14820,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 1024)) return false;
+        if (!(this.optionFlags & 2048)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -14817,7 +14861,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -14933,7 +14977,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -14956,12 +15000,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 2048 ? [] : null;
+    const comments = this.optionFlags & 4096 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -15008,7 +15052,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -15019,7 +15063,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -15727,7 +15771,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 1024)) throw error;
+    if (!(this.optionFlags & 2048)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -16185,6 +16229,9 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
+    if (this.optionFlags & 32) {
+      paramFlags |= 1;
+    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -16211,7 +16258,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -16299,8 +16346,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
-    if (this.optionFlags & 2048) {
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 4096) {
       this.processComment(node);
     }
     return node;
@@ -16308,12 +16355,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 64) node.range[0] = startLoc.index;
+    if (this.optionFlags & 128) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -22863,7 +22910,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -22899,9 +22946,11 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    if (this.isContextual(108)) {
+    const isYield = this.isContextual(108);
+    if (isYield) {
       if (this.prodParam.hasYield) {
-        let left = this.parseYield();
+        this.next();
+        let left = this.parseYield(startLoc);
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -22952,6 +23001,16 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
+    }
+    if (isYield) {
+      const {
+        type
+      } = this.state;
+      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
+        return this.parseYield(startLoc);
+      }
     }
     return left;
   }
@@ -23129,7 +23188,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousAwait()) {
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -23368,7 +23427,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 256) {
+          if (this.optionFlags & 512) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -23673,7 +23732,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 256)) {
+      if (!(this.optionFlags & 512)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -23793,7 +23852,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 512)) {
+    if (!(this.optionFlags & 1024)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -24349,7 +24408,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousAwait()) {
+      if (this.isAmbiguousPrefixOrIdentifier()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -24360,17 +24419,16 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousAwait() {
+  isAmbiguousPrefixOrIdentifier() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield() {
-    const node = this.startNode();
+  parseYield(startLoc) {
+    const node = this.startNodeAt(startLoc);
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
-    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -24672,7 +24730,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -24682,7 +24740,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -26372,6 +26430,7 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
+        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -26485,31 +26544,34 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 32;
+      optionFlags |= 64;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.ranges) {
-      optionFlags |= 64;
+    if (options.allowYieldOutsideFunction) {
+      optionFlags |= 32;
     }
-    if (options.tokens) {
+    if (options.ranges) {
       optionFlags |= 128;
     }
-    if (options.createImportExpressions) {
+    if (options.tokens) {
       optionFlags |= 256;
     }
-    if (options.createParenthesizedExpressions) {
+    if (options.createImportExpressions) {
       optionFlags |= 512;
     }
-    if (options.errorRecovery) {
+    if (options.createParenthesizedExpressions) {
       optionFlags |= 1024;
     }
-    if (options.attachComment) {
+    if (options.errorRecovery) {
       optionFlags |= 2048;
     }
-    if (options.annexB) {
+    if (options.attachComment) {
       optionFlags |= 4096;
+    }
+    if (options.annexB) {
+      optionFlags |= 8192;
     }
     this.optionFlags = optionFlags;
   }
