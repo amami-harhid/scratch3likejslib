@@ -16,6 +16,7 @@ const Cat02 = "Cat02";
 let stage;
 let cat;
 let monitor;
+let monitors;
 
 const AssetHost = "https://amami-harhid.github.io/scratch3likejslib/web";
 
@@ -40,9 +41,9 @@ Pg.prepare = async function prepare() {
     await cat.Image.add( Cat01 );
     await cat.Image.add( Cat02 );
     //cat.Looks.hide();
-
-    monitor = new Lib.Monitor('M01');
-    console.log(monitor);
+    monitors = Lib.Monitors.getInstance();
+    monitors.add('M01');
+    monitors.add('M02');
     //monitor.createTextSkin('Sample');
     
 
@@ -107,5 +108,7 @@ Pg.setting = async function setting() {
 
 Pg.draw = function() {
     counter += 1;
-    monitor.textRender(counter + "-");
+    monitors.getMonitor('M01').textRender(counter);
+    monitors.getMonitor('M02').textRender(`${Lib.renderRate.x}, ${Lib.renderRate.y}`);
+//    monitor.textRender(counter + "-");
 }

@@ -37,16 +37,12 @@ Pg.prepare = async function () {
     await ball.Image.add( Ball );
     ball.Looks.setSize(50, 50);
     monitors = new Lib.Monitors();
-    monitors.add(SECONDS_COUNTER);
-    monitors.add(BORDER_TOUCHING_COUNTER);
-    monitors.add(BORDER_TOUCHING_COUNTER+"2");
-    monitors.get(SECONDS_COUNTER).label = "秒数";
-    monitors.get(BORDER_TOUCHING_COUNTER).label = "回数";
-    monitors.get(BORDER_TOUCHING_COUNTER+"2").label = "〇〇";
+    monitors.add(SECONDS_COUNTER, "秒数");
+    monitors.add(BORDER_TOUCHING_COUNTER, "回数");
 
-    monitors.get(SECONDS_COUNTER).value = secondsCounter;
-    monitors.get(BORDER_TOUCHING_COUNTER).value = borderTouchingCounter;
-    monitors.automatic();
+    monitors.get(SECONDS_COUNTER).text = secondsCounter;
+    monitors.get(BORDER_TOUCHING_COUNTER).text = borderTouchingCounter;
+    //monitors.automatic();
 //    monitors.automatic();
 }
 
@@ -55,7 +51,7 @@ Pg.setting = async function () {
     stage.Event.whenFlag(async function(){
         await this.Sound.setOption(Lib.SoundOption.VOLUME, 5);
         secondsCounter = 0;
-        monitors.get(SECONDS_COUNTER).value = secondsCounter;
+        monitors.get(SECONDS_COUNTER).text = secondsCounter;
         this.Event.broadcast("START");
     })
     stage.Event.whenBroadcastReceived("START", async function*(){
@@ -68,13 +64,13 @@ Pg.setting = async function () {
         for(;;){
             await this.Control.wait(1);
             secondsCounter+=1;
-            monitors.get(SECONDS_COUNTER).value += 1;
+            monitors.get(SECONDS_COUNTER).text += 1;
             yield;
         }
     });
     ball.Event.whenFlag(async function(){
         this.Motion.setXY(0,0);
-        monitors.get(BORDER_TOUCHING_COUNTER).value = 0;
+        monitors.get(BORDER_TOUCHING_COUNTER).text = 0;
     });
 
     ball.Event.whenBroadcastReceived("START", async function*(){
@@ -83,9 +79,9 @@ Pg.setting = async function () {
         for(;;){
             this.Motion.moveSteps(5);
             this.Motion.ifOnEdgeBounds();
-            // if(this.Sensing.isTouchingEdge()){
-            //     monitors.get(BORDER_TOUCHING_COUNTER).value += 1;
-            // }
+            if(this.Sensing.isTouchingEdge()){
+                monitors.get(BORDER_TOUCHING_COUNTER).text += 1;
+            }
             yield;
         }
     });
