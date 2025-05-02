@@ -6334,7 +6334,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_reflowLines",
     value: function _reflowLines() {
-      var _rate = this.renderRate();
+      //        const _rate = this.renderRate();
       this._restyleCanvas();
       //this.createCanvas();
       // Measure width of title line
@@ -6355,12 +6355,10 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
 
       var paddedWidth = MonitorStyleResized.PADDING + titleLineWidth + MonitorStyleResized.PADDING + valueLineWidth + MonitorStyleResized.PADDING;
       var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.LINE_HEIGHT + MonitorStyleResized.PADDING * 2;
-      console.log("title=\"".concat(this._title, "\", titleLineWidth=").concat(titleLineWidth, ", valueLineWidth=").concat(valueLineWidth));
-      console.log("title=\"".concat(this._title, "\", paddedWidth=").concat(paddedWidth));
       this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
       this._size[0] = paddedWidth + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
-      this._size[1] = paddedHeight + MonitorStyleResized.STROKE_WIDTH;
+      this._size[1] = paddedHeight + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
       this._textDirty = false;
     }
     /**
@@ -6370,8 +6368,9 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_renderTextMonitor",
     value: function _renderTextMonitor(scale) {
-      var _rate = this.renderRate();
-      var _scale = scale / _rate;
+      //        const _rate = this.renderRate();
+      //        const _scale = scale / _rate;
+      var _scale = scale;
       var ctx = this._ctx;
       if (this._textDirty) {
         this._reflowLines();
@@ -6389,9 +6388,11 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         ctx.scale(scale, scale);
-        var translateX = this._x / Libs["default"].renderRate.x;
-        var translateY = this._y / Libs["default"].renderRate.y;
-        ctx.translate(translateX + MonitorStyleResized.PADDING * 0.5, translateY + MonitorStyleResized.PADDING * 0.5);
+        // const translateX = this._x / Libs.default.renderRate.x;
+        // const translateY = this._y / Libs.default.renderRate.y;
+        // ctx.translate(translateX + MonitorStyleResized.PADDING * 0.5, 
+        //     translateY + MonitorStyleResized.PADDING * 0.5);
+        ctx.translate(MonitorStyleResized.PADDING * 0.5, MonitorStyleResized.PADDING * 0.5);
         ctx.save();
         // Draw the monitor's rounded borders
         ctx.beginPath();
@@ -6421,27 +6422,28 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         var y00 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
         ctx.moveTo(x00, y00);
         var x01_01 = valueAreaHorizonStart;
-        var y01_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
-        var x01_02 = valueAreaHorizonStart;
+        var y01_01 = y00;
+        var x01_02 = x01_01;
         var y01_02 = valueHeight - MonitorStyleResized.CORNER_RADIUS;
+        console.log("y01_02=".concat(y01_02));
         ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyleResized.CORNER_RADIUS);
-        var x02_01 = valueAreaHorizonStart;
+        var x02_01 = x01_02;
         var y02_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
         var x02_02 = this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS;
-        var y02_02 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var y02_02 = y02_01;
         ctx.arcTo(x02_01, y02_01, x02_02, y02_02, MonitorStyleResized.CORNER_RADIUS);
         var x03_01 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
-        var y03_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
-        var x03_02 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
-        var y03_02 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var y03_01 = y02_01;
+        var x03_02 = x03_01;
+        var y03_02 = y01_01;
         ctx.arcTo(x03_01, y03_01, x03_02, y03_02, MonitorStyleResized.CORNER_RADIUS);
-        var x04_01 = valueAreaHorizonStart + MonitorStyleResized.PADDING_VALUE_VIRTICAL + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS;
-        var y04_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x04_01 = x03_01;
+        var y04_01 = y01_01;
         var x04_02 = valueAreaHorizonStart + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
-        var y04_02 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var y04_02 = y04_01;
         ctx.arcTo(x04_01, y04_01, x04_02, y04_02, MonitorStyleResized.CORNER_RADIUS);
-        var x05_01 = valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS;
-        var y05_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x05_01 = x00;
+        var y05_01 = y00;
         ctx.lineTo(x05_01, y05_01);
         ctx.fillStyle = MonitorStyle.VALUE_COLORS.FILL;
         ctx.strokeStyle = MonitorStyle.VALUE_COLORS.STROKE;
@@ -6455,7 +6457,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.font = "bold ".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
         ctx.fillText(this._title, MonitorStyleResized.CORNER_RADIUS, firtLineTop);
 
-        // Draw each line of text
+        // Draw each line of text (centering)
         ctx.fillStyle = MonitorStyle.VALUE_COLORS.TEXT_FILL;
         ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
         var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING + MonitorStyleResized.CORNER_RADIUS;
