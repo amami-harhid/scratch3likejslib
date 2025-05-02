@@ -5534,81 +5534,128 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-//const Costumes = require('../costumes');
-//const Entity = require('../entity');
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+var Entity = __webpack_require__(/*! ../entity */ "../lib/entity.js");
+var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
-//const StageLayering = require('../stageLayering');
-//const S3MonitorImage = require('./s3MonitorImage');
-var S3MonitorSkin = __webpack_require__(/*! ./s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
-var Monitor = /*#__PURE__*/function () {
-  function Monitor(id, label) {
+var StageLayering = __webpack_require__(/*! ../stageLayering */ "../lib/stageLayering.js");
+var Utils = __webpack_require__(/*! ../utils */ "../lib/utils.js");
+var Monitor = /*#__PURE__*/function (_Entity) {
+  function Monitor(monitorId, label) {
+    var _this;
     _classCallCheck(this, Monitor);
-    //super(name, StageLayering.SPRITE_LAYER);
-    this._id = id;
-    this._label = label;
-    this._visible = true;
-    this.skin = null;
-    this.render = PlayGround["default"].render;
-    this._x = 0;
-    this._y = 0;
-    //this.costumes = new Costumes();
-    //this.costumes.addImage('image', S3MonitorImage.MONITOR_IMAGE);
-    //this.createTextSkin();
+    _this = _callSuper(this, Monitor, [monitorId, StageLayering.MONITOR_LAYER]);
+    _this._monitorId = monitorId;
+    _this._label = label;
+    _this._visible = true;
+    _this._skin = null;
+    _this.render = PlayGround["default"].render;
+    _this._position = {
+      x: 0,
+      y: 0
+    };
+    _this._scale = {
+      w: 100,
+      h: 100
+    };
+    return _this;
   }
+  _inherits(Monitor, _Entity);
   return _createClass(Monitor, [{
-    key: "id",
+    key: "monitorId",
     get: function get() {
-      return this._id;
+      return this._monitorId;
+    }
+  }, {
+    key: "position",
+    get: function get() {
+      return this._position;
+    },
+    set: function set(_position) {
+      if (_position != undefined && _position.x != undefined && _position.y != undefined) {
+        if (Utils.isNumber(_position.x) && Utils.isNumber(_position.y)) {
+          this._position.x = _position.x;
+          this._position.y = _position.y;
+        }
+      }
+    }
+  }, {
+    key: "scale",
+    get: function get() {
+      return this._scale;
+    },
+    set: function set(_scale) {
+      if (_scale != undefined && _scale.w != undefined && _scale.h != undefined) {
+        if (Utils.isNumber(_scale.w) && Utils.isNumber(_scale.h)) {
+          this._scale.w = _scale.w;
+          this._scale.h = _scale.h;
+        }
+      }
     }
   }, {
     key: "show",
     value: function show() {
       this._visible = true;
-      if (this.skin != null) {
-        this.skin.show();
+      if (this._skin != null) {
+        this._skin.show();
       }
     }
   }, {
     key: "hide",
     value: function hide() {
       this._visible = false;
-      if (this.skin != null) {
-        this.skin.hide();
+      if (this._skin != null) {
+        this._skin.hide();
       }
     }
   }, {
     key: "createTextSkin",
-    value: function createTextSkin(x, y) {
-      //const newSkinId = this.render.renderer._allSkins.length+1;
-      console.log('createTextSkin');
-      var skin = new S3MonitorSkin(this._id, this.render.renderer, this._label);
-      //skin.setTextMonitor(text);
-      this.skin = skin;
-      this.skin.x = x;
-      this.skin.y = y;
+    value: function createTextSkin() {
+      var skinId = this.render.renderer.s3CreateMonitorSkin(this._label);
+      this._skinId = skinId;
+      this._skin = this.render.renderer.getS3Skin(skinId);
     }
   }, {
-    key: "text",
+    key: "value",
     get: function get() {
-      return this.skin.text;
+      return this._skin.value;
     },
-    set: function set(_text) {
-      this.textRender(_text);
+    set: function set(_value) {
+      this._skin.value = _value;
     }
   }, {
-    key: "textRender",
-    value: function textRender(text) {
-      var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [100, 100];
-      this.skin.text = text;
-      this.skin.getTexture(size);
+    key: "skin",
+    get: function get() {
+      return this._skin;
+    },
+    set: function set(_skin) {
+      this._skin = _skin;
     }
   }, {
     key: "getDefaultHeight",
     value: function getDefaultHeight() {
-      return this.skin.getDefaultHeight();
+      return this._skin.getDefaultHeight();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      var properties = {
+        skindId: this._skinId,
+        position: [this._position.x, this._position.y],
+        scale: [this._scale.w, this._scale.h],
+        visible: this._visible
+      };
+      this.render.renderer.updateDrawableProperties(this.drawableID, properties);
+      this.render.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
     }
   }]);
-}();
+}(Entity);
 module.exports = Monitor;
 
 /***/ }),
@@ -5630,6 +5677,8 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var Monitor = __webpack_require__(/*! ./monitor */ "../lib/monitor/monitor.js");
 var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
+var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
+var S3MonitorSkin = __webpack_require__(/*! ./s3MonitorSkin */ "../lib/monitor/s3MonitorSkin.js");
 var PADDING = 0;
 var Monitors = /*#__PURE__*/function () {
   /**
@@ -5638,15 +5687,29 @@ var Monitors = /*#__PURE__*/function () {
   function Monitors() {
     _classCallCheck(this, Monitors);
     this._monitors = [];
+    var render = PlayGround["default"].render;
+    var renderer = render.renderer;
+    function s3CreateMonitorSkin(label) {
+      var skinId = renderer._nextSkinId++;
+      var newSkin = new S3MonitorSkin(skinId, renderer, label);
+      // 
+      renderer._allSkins[skinId] = newSkin;
+      return skinId;
+    }
+    function getS3Skin(skinId) {
+      return renderer._allSkins[skinId];
+    }
+    renderer.s3CreateMonitorSkin = s3CreateMonitorSkin;
+    renderer.getS3Skin = getS3Skin;
   }
   /**
    * add
-   * @param {string} id - Monitor id 
+   * @param {string} monitorId - Monitor id 
    * @param {string} label - Monitor label 
    */
   return _createClass(Monitors, [{
     key: "add",
-    value: function add(id, label) {
+    value: function add(monitorId, label) {
       var x = 0;
       var y = 0;
       var _iterator = _createForOfIteratorHelper(this._monitors),
@@ -5665,19 +5728,20 @@ var Monitors = /*#__PURE__*/function () {
       }
       var rate = Libs["default"].renderRate;
       var _rate = Math.min(rate.x, rate.y);
-      var monitor = new Monitor(id, label);
-      monitor.createTextSkin(x * _rate, y * _rate);
+      var monitor = new Monitor(monitorId, label);
+      //        monitor.createTextSkin(x*_rate, y*_rate);
+      monitor.createTextSkin(0, 0);
       this._monitors.push(monitor);
     }
   }, {
     key: "get",
-    value: function get(id) {
+    value: function get(monitorId) {
       var _iterator2 = _createForOfIteratorHelper(this._monitors),
         _step2;
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var _monitor = _step2.value;
-          if (id === _monitor.id) {
+          if (monitorId === _monitor.monitorId) {
             return _monitor;
           }
         }
@@ -5686,17 +5750,17 @@ var Monitors = /*#__PURE__*/function () {
       } finally {
         _iterator2.f();
       }
-      throw "\u6307\u5B9A\u3057\u305F".concat(id, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
+      throw "\u6307\u5B9A\u3057\u305F".concat(monitorId, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
     }
   }, {
     key: "show",
-    value: function show(id) {
+    value: function show(monitorId) {
       var _iterator3 = _createForOfIteratorHelper(this._monitors),
         _step3;
       try {
         for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
           var _monitor = _step3.value;
-          if (id === _monitor.id) {
+          if (monitorId === _monitor.monitorId) {
             _monitor.show();
             break;
           }
@@ -5706,17 +5770,17 @@ var Monitors = /*#__PURE__*/function () {
       } finally {
         _iterator3.f();
       }
-      throw "\u6307\u5B9A\u3057\u305F".concat(id, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
+      throw "\u6307\u5B9A\u3057\u305F".concat(monitorId, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
     }
   }, {
     key: "hide",
-    value: function hide(id) {
+    value: function hide(monitorId) {
       var _iterator4 = _createForOfIteratorHelper(this._monitors),
         _step4;
       try {
         for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
           var _monitor = _step4.value;
-          if (id === _monitor.id) {
+          if (monitorId === _monitor.monitorId) {
             _monitor.hide();
             break;
           }
@@ -5726,7 +5790,7 @@ var Monitors = /*#__PURE__*/function () {
       } finally {
         _iterator4.f();
       }
-      throw "\u6307\u5B9A\u3057\u305F".concat(id, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
+      throw "\u6307\u5B9A\u3057\u305F".concat(monitorId, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
     }
   }]);
 }();
@@ -5952,13 +6016,13 @@ var MonitorStyle = {
   // Thickness of the stroke around the monitor. Only half's visible because it's drawn under the fill
   CORNER_RADIUS: 3,
   // Radius of the rounded corners
-  FONT: 'Helvetica',
+  FONT: 'Osaka-Mono',
   // Font to render the text with
   FONT_SIZE: 10,
   // Font size, in Scratch pixels
   FONT_HEIGHT_RATIO: 0.5,
   // Height, in Scratch pixels, of the text, as a proportion of the font's size
-  LINE_HEIGHT: 10,
+  LINE_HEIGHT: 11,
   // Spacing between each line of text
 
   COLORS: {
@@ -6000,10 +6064,8 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     _this._id = id;
     /** @type {RenderWebGL} */
     _this._renderer = renderer;
-    /** @type {HTMLCanvasElement} */
-    _this._canvas = Canvas.createMonitorCanvas();
-    console.log('createMonitorCanvas');
-    Render.monitorCanvasResize();
+    //console.log('createMonitorCanvas')
+    //Render.monitorCanvasResize();
     /** @type {Array<number>} */
     _this._size = [0, 0];
     /** @type {number} */
@@ -6025,14 +6087,28 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     _this._rotationCenter = twgl.v3.create(0, 0);
     /** @type {WebGLTexture} */
     _this._texture = null;
-    _this._ctx = _this._canvas.getContext('2d', {
-      willReadFrequently: true
-    });
-    _this.measurementProvider = new S3CanvasMeasurementProvider(_this._ctx);
-    _this.textWrapper = new S3TextWrapper(_this.measurementProvider);
+    /**
+     * The uniforms to be used by the vertex and pixel shaders.
+     * Some of these are used by other parts of the renderer as well.
+     * @type {Object.<string,*>}
+     * @private
+     */
+    _this._uniforms = {
+      /**
+       * The nominal (not necessarily current) size of the current skin.
+       * @type {Array<number>}
+       */
+      u_skinSize: [0, 0],
+      /**
+       * The actual WebGL texture object for the skin.
+       * @type {WebGLTexture}
+       */
+      u_skin: null
+    };
     _this._x = x;
     _this._y = y;
     _this._visible = true;
+    _this.createCanvas();
     _this._restyleCanvas();
     return _this;
   }
@@ -6051,6 +6127,17 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       MonitorStyleResized.FONT_SIZE = Math.ceil(MonitorStyle.FONT_SIZE / _rate);
       MonitorStyleResized.LINE_HEIGHT = Math.ceil(MonitorStyle.LINE_HEIGHT / _rate);
       return _rate;
+    }
+  }, {
+    key: "createCanvas",
+    value: function createCanvas() {
+      /** @type {HTMLCanvasElement} */
+      this._canvas = document.createElement('canvas');
+      this._ctx = this._canvas.getContext('2d', {
+        willReadFrequently: true
+      });
+      this.measurementProvider = new S3CanvasMeasurementProvider(this._ctx);
+      this.textWrapper = new S3TextWrapper(this.measurementProvider);
     }
   }, {
     key: "getDefaultHeight",
@@ -6094,6 +6181,19 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         this._reflowLines();
       }
       return this._size;
+    }
+    /**
+     * Should this skin's texture be filtered with nearest-neighbor or linear interpolation at the given scale?
+     * @param {?Array<Number>} scale The screen-space X and Y scaling factors at which this skin's texture will be
+     * displayed, as percentages (100 means 1 "native size" unit is 1 screen pixel; 200 means 2 screen pixels, etc).
+     * @param {Drawable} drawable The drawable that this skin's texture will be applied to.
+     * @return {boolean} True if this skin's texture, as returned by {@link getTexture}, should be filtered with
+     * nearest-neighbor interpolation.
+     */
+  }, {
+    key: "useNearest",
+    value: function useNearest(scale, drawable) {
+      return true;
     }
   }, {
     key: "x",
@@ -6184,14 +6284,15 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
      * @param {string} text 
      */
   }, {
-    key: "text",
+    key: "value",
     get: function get() {
       return this._text;
     },
-    set: function set(_text) {
-      this._text = _text;
+    set: function set(_value) {
+      this._text = _value;
       this._textDirty = true;
       this._textureDirty = true;
+      this.emit(S3MonitorSkin.Events.WasAltered);
     }
   }, {
     key: "_restyleCanvas",
@@ -6205,9 +6306,11 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     key: "_reflowLines",
     value: function _reflowLines() {
       var _rate = this.renderRate();
-
+      this._restyleCanvas();
+      //this.createCanvas();
       // Measure width of title line
-      var _titleLineWidth = this.measurementProvider.measureText(this._title);
+      var _titleLineWidth = this.measurementProvider.measureText('' + this._title);
+      console.log("this._title=".concat(this._title, ",_titleLineWidth=").concat(_titleLineWidth));
       var titleLineWidth = _titleLineWidth;
       this.titleLineWidth = titleLineWidth;
       //this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
@@ -6216,6 +6319,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       var _valueLineWidth = this.measurementProvider.measureText('' + this._text);
       var valueLineWidth = Math.max(_valueLineWidth, MonitorStyleResized.MIN_WIDTH);
       this.valueLineWidth = valueLineWidth;
+      this.actualValueLineWidth = _valueLineWidth;
       // Calculate the canvas-space sizes of the padded text area and full text bubble
       //const paddedWidth = Math.max(longestLineWidth, MonitorStyleResized.MIN_WIDTH) + (MonitorStyleResized.PADDING * 2) +MonitorStyleResized.CORNER_RADIUS * 2;
       //const paddedHeight = (MonitorStyleResized.LINE_HEIGHT * this._lines.length) + (MonitorStyleResized.PADDING * 2);
@@ -6248,9 +6352,8 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       var paddedHeight = this._textAreaSize.height;
 
       // Resize the canvas to the correct screen-space size
-      //        this._canvas.width = Math.ceil(this._size[0] * _scale);
-      //        this._canvas.height = Math.ceil(this._size[1] * _scale);
-
+      this._canvas.width = Math.ceil(this._size[0] * _scale);
+      this._canvas.height = Math.ceil(this._size[1] * _scale);
       this._restyleCanvas();
       if (this._visible === true) {
         // Reset the transform before clearing to ensure 100% clearage
@@ -6283,14 +6386,34 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
 
         // Draw value area
         ctx.beginPath();
-        var valueAreaHorizonStart = MonitorStyleResized.PADDING * 2 + this.titleLineWidth;
+        var valueAreaHorizonStart = MonitorStyleResized.PADDING + this.titleLineWidth;
         var valueHeight = paddedHeight - MonitorStyleResized.PADDING_VALUE_VIRTICAL * 2;
-        ctx.moveTo(valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL);
-        ctx.arcTo(valueAreaHorizonStart, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart, valueHeight - MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(valueAreaHorizonStart, MonitorStyleResized.PADDING_VALUE_VIRTICAL, this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL, MonitorStyleResized.CORNER_RADIUS);
-        ctx.lineTo(valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS, valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL);
+        var x00 = valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS;
+        var y00 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        ctx.moveTo(x00, y00);
+        var x01_01 = valueAreaHorizonStart;
+        var y01_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x01_02 = valueAreaHorizonStart;
+        var y01_02 = valueHeight - MonitorStyleResized.CORNER_RADIUS;
+        ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyleResized.CORNER_RADIUS);
+        var x02_01 = valueAreaHorizonStart;
+        var y02_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x02_02 = this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS;
+        var y02_02 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        ctx.arcTo(x02_01, y02_01, x02_02, y02_02, MonitorStyleResized.CORNER_RADIUS);
+        var x03_01 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
+        var y03_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x03_02 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
+        var y03_02 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        ctx.arcTo(x03_01, y03_01, x03_02, y03_02, MonitorStyleResized.CORNER_RADIUS);
+        var x04_01 = valueAreaHorizonStart + MonitorStyleResized.PADDING_VALUE_VIRTICAL + this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS;
+        var y04_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var x04_02 = valueAreaHorizonStart + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
+        var y04_02 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        ctx.arcTo(x04_01, y04_01, x04_02, y04_02, MonitorStyleResized.CORNER_RADIUS);
+        var x05_01 = valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS;
+        var y05_01 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        ctx.lineTo(x05_01, y05_01);
         ctx.fillStyle = MonitorStyle.VALUE_COLORS.FILL;
         ctx.strokeStyle = MonitorStyle.VALUE_COLORS.STROKE;
         ctx.lineWidth = 0;
@@ -6300,29 +6423,49 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         // Draw title line 
         var firtLineTop = MonitorStyleResized.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE;
         ctx.fillStyle = MonitorStyle.COLORS.TEXT_FILL;
-        ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
-        //console.log(`this._title=${this._title}`)
+        ctx.font = "bold ".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
         ctx.fillText(this._title, MonitorStyleResized.CORNER_RADIUS, firtLineTop);
 
         // Draw each line of text
         ctx.fillStyle = MonitorStyle.VALUE_COLORS.TEXT_FILL;
         ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
-        var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING * 2;
-        var _valueStartPosition = valueStartPosition;
-        if (MonitorStyleResized.MIN_WIDTH > this.titleLineWidth) {
-          _valueStartPosition += (MonitorStyleResized.MIN_WIDTH - this.titleLineWidth) / 2;
+        var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING + MonitorStyleResized.CORNER_RADIUS;
+        if (this.valueLineWidth > this.actualValueLineWidth) {
+          var _valueStartPosition = valueStartPosition + (this.valueLineWidth - this.actualValueLineWidth) / 2;
+          ctx.fillText('' + this._text, _valueStartPosition, firtLineTop);
+        } else {
+          var _valueStartPosition2 = valueStartPosition;
+          ctx.fillText('' + this._text, _valueStartPosition2, firtLineTop);
         }
-        ctx.fillText('' + this._text,
-        //MonitorStyleResized.CORNER_RADIUS,
-        _valueStartPosition, firtLineTop
-        //MonitorStyleResized.PADDING + (MonitorStyleResized.LINE_HEIGHT * lineNumber) +
-        //     (MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE)
-        );
       }
       this._renderedScale = scale;
     }
+    /*
+     * Update and returns the uniforms for this skin.
+     * @param {Array<number>} scale - The scaling factors to be used.
+     * @returns {object.<string, *>} the shader uniforms to be used when rendering with this Skin.
+     */
+  }, {
+    key: "getUniforms",
+    value: function getUniforms(scale) {
+      this._uniforms.u_skin = this.getTexture(scale);
+      this._uniforms.u_skinSize = this.size;
+      return this._uniforms;
+    }
   }]);
 }(EventEmitter);
+/**
+ * These are the events which can be emitted by instances of this class.
+ * @enum {string}
+ */
+S3MonitorSkin.Events = {
+  /**
+   * This constant value is same as Skin class
+   * Emitted when anything about the Skin has been altered, such as the appearance or rotation center.
+   * @event S3MonitorSkin.event:WasAltered
+   */
+  WasAltered: 'WasAltered'
+};
 module.exports = S3MonitorSkin;
 
 /***/ }),
@@ -6960,7 +7103,7 @@ var _Render = /*#__PURE__*/function () {
       var w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _Render.W;
       var h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _Render.H;
       this.canvas = Element.canvas;
-      this.renderer = new ScratchRenderer(canvas);
+      this.renderer = new ScratchRenderer(this.canvas);
       this.renderer.setLayerGroupOrdering(this.layerGroups);
       this.stageResize(w, h);
     }
@@ -10033,12 +10176,17 @@ var StageLayering = /*#__PURE__*/function () {
     get: function get() {
       return 'text';
     }
+  }, {
+    key: "MONITOR_LAYER",
+    get: function get() {
+      return 'monitor';
+    }
 
     // Order of layer groups relative to each other,
   }, {
     key: "LAYER_GROUPS",
     get: function get() {
-      return [StageLayering.BACKGROUND_LAYER, StageLayering.VIDEO_LAYER, StageLayering.PEN_LAYER, StageLayering.SPRITE_LAYER, StageLayering.TEXT_LAYER];
+      return [StageLayering.BACKGROUND_LAYER, StageLayering.VIDEO_LAYER, StageLayering.PEN_LAYER, StageLayering.SPRITE_LAYER, StageLayering.TEXT_LAYER, StageLayering.MONITOR_LAYER];
     }
   }]);
 }();

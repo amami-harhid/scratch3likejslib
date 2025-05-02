@@ -41,16 +41,26 @@ Pg.prepare = async function prepare() {
     await cat.Image.add( Cat01 );
     await cat.Image.add( Cat02 );
     //cat.Looks.hide();
-    monitors = Lib.Monitors.getInstance();
-    monitors.add('M01');
-    monitors.add('M02');
+    //cat.Looks.hide();
+    monitors = new Lib.Monitors();
+    //monitors.get('M02').scale = {w: 50, h:50};
     //monitor.createTextSkin('Sample');
     
 
 }
 let counter = 0;
 Pg.setting = async function setting() {
-
+    cat.Event.whenFlag(async function(){
+        monitors.add('M01', '秒数');
+        monitors.add('M02', '回数');
+        monitors.get('M01').position = {x:-240, y:180};
+        monitors.get('M01').scale = {w: 80, h:80};
+        console.log(monitors.get('M01').position)
+        //monitors.get('M01').scale = {w: 100, h:100};
+        monitors.get('M02').position = {x:-240, y:150};
+        console.log(monitors.get('M02').position);
+        monitors.get('M02').scale = {w: 80, h:80};
+    })
     /**
      * 旗を押されたときの動き
      * STARTメッセージを送る
@@ -108,7 +118,9 @@ Pg.setting = async function setting() {
 
 Pg.draw = function() {
     counter += 1;
-    monitors.getMonitor('M01').textRender(counter);
-    monitors.getMonitor('M02').textRender(`${Lib.renderRate.x}, ${Lib.renderRate.y}`);
+    monitors.get('M01').value = counter;
+    monitors.get('M01').update();
+    monitors.get('M02').value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
+    monitors.get('M02').update();
 //    monitor.textRender(counter + "-");
 }
