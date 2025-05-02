@@ -5617,7 +5617,7 @@ var Monitor = /*#__PURE__*/function (_Entity) {
   }, {
     key: "createTextSkin",
     value: function createTextSkin() {
-      var skinId = this.render.renderer.s3CreateMonitorSkin(this._label);
+      var skinId = this.render.renderer.s3CreateMonitorSkin(this.drawableID, this._label);
       this._skinId = skinId;
       this._skin = this.render.renderer.getS3Skin(skinId);
     }
@@ -5641,6 +5641,22 @@ var Monitor = /*#__PURE__*/function (_Entity) {
     key: "getDefaultHeight",
     value: function getDefaultHeight() {
       return this._skin.getDefaultHeight();
+    }
+  }, {
+    key: "getDrawingDimension",
+    value: function getDrawingDimension() {
+      var width = 0;
+      var height = 0;
+      var drawable = this.render.renderer._allDrawables[this.drawableID];
+      if (drawable != null) {
+        var bounds = this.render.renderer.getBounds(this.drawableID);
+        height = Math.abs(bounds.top - bounds.bottom);
+        width = Math.abs(bounds.left - bounds.right);
+      }
+      return {
+        w: width,
+        h: height
+      };
     }
   }, {
     key: "update",
@@ -5689,11 +5705,12 @@ var Monitors = /*#__PURE__*/function () {
     this._monitors = [];
     var render = PlayGround["default"].render;
     var renderer = render.renderer;
-    function s3CreateMonitorSkin(label) {
+    function s3CreateMonitorSkin(drawableID, label) {
       var skinId = renderer._nextSkinId++;
       var newSkin = new S3MonitorSkin(skinId, renderer, label);
-      // 
+      var drawable = renderer._allDrawables[drawableID];
       renderer._allSkins[skinId] = newSkin;
+      drawable.skin = newSkin;
       return skinId;
     }
     function getS3Skin(skinId) {
@@ -6001,6 +6018,7 @@ var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 var Render = __webpack_require__(/*! ../render */ "../lib/render.js");
 var S3CanvasMeasurementProvider = __webpack_require__(/*! ./s3-canvas-measurement-provider */ "../lib/monitor/s3-canvas-measurement-provider.js");
 var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/monitor/s3RenderConstants.js");
+var S3Silhouette = __webpack_require__(/*! ./s3Silhouette */ "../lib/monitor/s3Silhouette.js");
 var S3TextWrapper = __webpack_require__(/*! ./s3-text-wrapper */ "../lib/monitor/s3-text-wrapper.js");
 var twgl = __webpack_require__(/*! twgl.js */ "../node_modules/twgl.js/dist/4.x/twgl-full.js");
 var MonitorStyle = {
@@ -6105,6 +6123,11 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
        */
       u_skin: null
     };
+    /**
+     * A silhouette to store touching data, skins are responsible for keeping it up to date.
+     * @private
+     */
+    _this._silhouette = new S3Silhouette();
     _this._x = x;
     _this._y = y;
     _this._visible = true;
@@ -6257,6 +6280,16 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       return this._texture;
     }
     /**
+     * If the skin defers silhouette operations until the last possible minute,
+     * this will be called before isTouching uses the silhouette.
+     */
+  }, {
+    key: "updateSilhouette",
+    value: function updateSilhouette() {
+      var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [100, 100];
+      this.getTexture(scale);
+    }
+    /**
      * Set this skin's texture to the given image.
      * @param {ImageData|HTMLCanvasElement} textureData - The canvas or image data to set the texture to.
      */
@@ -6268,6 +6301,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureData);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      this._silhouette.update(textureData);
     }
   }, {
     key: "show",
@@ -6452,6 +6486,35 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       this._uniforms.u_skinSize = this.size;
       return this._uniforms;
     }
+    /**
+     * Does this point touch an opaque or translucent point on this skin?
+     * Nearest Neighbor version
+     * The caller is responsible for ensuring this skin's silhouette is up-to-date.
+     * @see updateSilhouette
+     * @see Drawable.updateCPURenderAttributes
+     * @param {twgl.v3} vec A texture coordinate.
+     * @return {boolean} Did it touch?
+     */
+  }, {
+    key: "isTouchingNearest",
+    value: function isTouchingNearest(vec) {
+      return this._silhouette.isTouchingNearest(vec);
+    }
+
+    /**
+     * Does this point touch an opaque or translucent point on this skin?
+     * Linear Interpolation version
+     * The caller is responsible for ensuring this skin's silhouette is up-to-date.
+     * @see updateSilhouette
+     * @see Drawable.updateCPURenderAttributes
+     * @param {twgl.v3} vec A texture coordinate.
+     * @return {boolean} Did it touch?
+     */
+  }, {
+    key: "isTouchingLinear",
+    value: function isTouchingLinear(vec) {
+      return this._silhouette.isTouchingLinear(vec);
+    }
   }]);
 }(EventEmitter);
 /**
@@ -6483,6 +6546,279 @@ module.exports = {
    */
   ID_NONE: -1
 };
+
+/***/ }),
+
+/***/ "../lib/monitor/s3Silhouette.js":
+/*!**************************************!*\
+  !*** ../lib/monitor/s3Silhouette.js ***!
+  \**************************************/
+/***/ ((module) => {
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
+ * @fileoverview
+ * A representation of a Skin's silhouette that can test if a point on the skin
+ * renders a pixel where it is drawn.
+ */
+
+/**
+ * <canvas> element used to update Silhouette data from skin bitmap data.
+ * @type {CanvasElement}
+ */
+var __SilhouetteUpdateCanvas;
+
+// Optimized Math.min and Math.max for integers;
+// taken from https://web.archive.org/web/20190716181049/http://guihaire.com/code/?p=549
+var intMin = function intMin(i, j) {
+  return j ^ (i ^ j) & i - j >> 31;
+};
+var intMax = function intMax(i, j) {
+  return i ^ (i ^ j) & i - j >> 31;
+};
+
+/**
+ * Internal helper function (in hopes that compiler can inline).  Get a pixel
+ * from silhouette data, or 0 if outside it's bounds.
+ * @private
+ * @param {Silhouette} silhouette - has data width and height
+ * @param {number} x - x
+ * @param {number} y - y
+ * @return {number} Alpha value for x/y position
+ */
+var getPoint = function getPoint(_ref, x, y) {
+  var width = _ref._width,
+    height = _ref._height,
+    data = _ref._colorData;
+  // 0 if outside bounds, otherwise read from data.
+  if (x >= width || y >= height || x < 0 || y < 0) {
+    return 0;
+  }
+  return data[(y * width + x) * 4 + 3];
+};
+
+/**
+ * Memory buffers for doing 4 corner sampling for linear interpolation
+ */
+var __cornerWork = [new Uint8ClampedArray(4), new Uint8ClampedArray(4), new Uint8ClampedArray(4), new Uint8ClampedArray(4)];
+
+/**
+ * Get the color from a given silhouette at an x/y local texture position.
+ * Multiply color values by alpha for proper blending.
+ * @param {Silhouette} $0 The silhouette to sample.
+ * @param {number} x X position of texture [0, width).
+ * @param {number} y Y position of texture [0, height).
+ * @param {Uint8ClampedArray} dst A color 4b space.
+ * @return {Uint8ClampedArray} The dst vector.
+ */
+var getColor4b = function getColor4b(_ref2, x, y, dst) {
+  var width = _ref2._width,
+    height = _ref2._height,
+    data = _ref2._colorData;
+  // Clamp coords to edge, matching GL_CLAMP_TO_EDGE.
+  // (See github.com/LLK/scratch-render/blob/954cfff02b08069a082cbedd415c1fecd9b1e4fb/src/BitmapSkin.js#L88)
+  x = intMax(0, intMin(x, width - 1));
+  y = intMax(0, intMin(y, height - 1));
+
+  // 0 if outside bounds, otherwise read from data.
+  if (x >= width || y >= height || x < 0 || y < 0) {
+    return dst.fill(0);
+  }
+  var offset = (y * width + x) * 4;
+  // premultiply alpha
+  var alpha = data[offset + 3] / 255;
+  dst[0] = data[offset] * alpha;
+  dst[1] = data[offset + 1] * alpha;
+  dst[2] = data[offset + 2] * alpha;
+  dst[3] = data[offset + 3];
+  return dst;
+};
+
+/**
+ * Get the color from a given silhouette at an x/y local texture position.
+ * Do not multiply color values by alpha, as it has already been done.
+ * @param {Silhouette} $0 The silhouette to sample.
+ * @param {number} x X position of texture [0, width).
+ * @param {number} y Y position of texture [0, height).
+ * @param {Uint8ClampedArray} dst A color 4b space.
+ * @return {Uint8ClampedArray} The dst vector.
+ */
+var getPremultipliedColor4b = function getPremultipliedColor4b(_ref3, x, y, dst) {
+  var width = _ref3._width,
+    height = _ref3._height,
+    data = _ref3._colorData;
+  // Clamp coords to edge, matching GL_CLAMP_TO_EDGE.
+  x = intMax(0, intMin(x, width - 1));
+  y = intMax(0, intMin(y, height - 1));
+  var offset = (y * width + x) * 4;
+  dst[0] = data[offset];
+  dst[1] = data[offset + 1];
+  dst[2] = data[offset + 2];
+  dst[3] = data[offset + 3];
+  return dst;
+};
+var S3Silhouette = /*#__PURE__*/function () {
+  function S3Silhouette() {
+    _classCallCheck(this, S3Silhouette);
+    /**
+     * The width of the data representing the current skin data.
+     * @type {number}
+     */
+    this._width = 0;
+
+    /**
+     * The height of the data representing the current skin date.
+     * @type {number}
+     */
+    this._height = 0;
+
+    /**
+     * The data representing a skin's silhouette shape.
+     * @type {Uint8ClampedArray}
+     */
+    this._colorData = null;
+
+    // By default, silhouettes are assumed not to contain premultiplied image data,
+    // so when we get a color, we want to multiply it by its alpha channel.
+    // Point `_getColor` to the version of the function that multiplies.
+    this._getColor = getColor4b;
+    this.colorAtNearest = this.colorAtLinear = function (_, dst) {
+      return dst.fill(0);
+    };
+  }
+
+  /**
+   * Update this silhouette with the bitmapData for a skin.
+   * @param {ImageData|HTMLCanvasElement|HTMLImageElement} bitmapData An image, canvas or other element that the skin
+   * @param {boolean} isPremultiplied True if the source bitmap data comes premultiplied (e.g. from readPixels).
+   * rendering can be queried from.
+   */
+  return _createClass(S3Silhouette, [{
+    key: "update",
+    value: function update(bitmapData) {
+      var isPremultiplied = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var imageData;
+      if (bitmapData instanceof ImageData) {
+        // If handed ImageData directly, use it directly.
+        imageData = bitmapData;
+        this._width = bitmapData.width;
+        this._height = bitmapData.height;
+      } else {
+        // Draw about anything else to our update canvas and poll image data
+        // from that.
+        var canvas = Silhouette._updateCanvas();
+        var width = this._width = canvas.width = bitmapData.width;
+        var height = this._height = canvas.height = bitmapData.height;
+        var ctx = canvas.getContext('2d');
+        if (!(width && height)) {
+          return;
+        }
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(bitmapData, 0, 0, width, height);
+        imageData = ctx.getImageData(0, 0, width, height);
+      }
+      if (isPremultiplied) {
+        this._getColor = getPremultipliedColor4b;
+      } else {
+        this._getColor = getColor4b;
+      }
+      this._colorData = imageData.data;
+      // delete our custom overriden "uninitalized" color functions
+      // let the prototype work for itself
+      delete this.colorAtNearest;
+      delete this.colorAtLinear;
+    }
+
+    /**
+     * Sample a color from the silhouette at a given local position using
+     * "nearest neighbor"
+     * @param {twgl.v3} vec [x,y] texture space (0-1)
+     * @param {Uint8ClampedArray} dst The memory buffer to store the value in. (4 bytes)
+     * @returns {Uint8ClampedArray} dst
+     */
+  }, {
+    key: "colorAtNearest",
+    value: function colorAtNearest(vec, dst) {
+      return this._getColor(this, Math.floor(vec[0] * (this._width - 1)), Math.floor(vec[1] * (this._height - 1)), dst);
+    }
+
+    /**
+     * Sample a color from the silhouette at a given local position using
+     * "linear interpolation"
+     * @param {twgl.v3} vec [x,y] texture space (0-1)
+     * @param {Uint8ClampedArray} dst The memory buffer to store the value in. (4 bytes)
+     * @returns {Uint8ClampedArray} dst
+     */
+  }, {
+    key: "colorAtLinear",
+    value: function colorAtLinear(vec, dst) {
+      var x = vec[0] * (this._width - 1);
+      var y = vec[1] * (this._height - 1);
+      var x1D = x % 1;
+      var y1D = y % 1;
+      var x0D = 1 - x1D;
+      var y0D = 1 - y1D;
+      var xFloor = Math.floor(x);
+      var yFloor = Math.floor(y);
+      var x0y0 = this._getColor(this, xFloor, yFloor, __cornerWork[0]);
+      var x1y0 = this._getColor(this, xFloor + 1, yFloor, __cornerWork[1]);
+      var x0y1 = this._getColor(this, xFloor, yFloor + 1, __cornerWork[2]);
+      var x1y1 = this._getColor(this, xFloor + 1, yFloor + 1, __cornerWork[3]);
+      dst[0] = x0y0[0] * x0D * y0D + x0y1[0] * x0D * y1D + x1y0[0] * x1D * y0D + x1y1[0] * x1D * y1D;
+      dst[1] = x0y0[1] * x0D * y0D + x0y1[1] * x0D * y1D + x1y0[1] * x1D * y0D + x1y1[1] * x1D * y1D;
+      dst[2] = x0y0[2] * x0D * y0D + x0y1[2] * x0D * y1D + x1y0[2] * x1D * y0D + x1y1[2] * x1D * y1D;
+      dst[3] = x0y0[3] * x0D * y0D + x0y1[3] * x0D * y1D + x1y0[3] * x1D * y0D + x1y1[3] * x1D * y1D;
+      return dst;
+    }
+
+    /**
+     * Test if texture coordinate touches the silhouette using nearest neighbor.
+     * @param {twgl.v3} vec A texture coordinate.
+     * @return {boolean} If the nearest pixel has an alpha value.
+     */
+  }, {
+    key: "isTouchingNearest",
+    value: function isTouchingNearest(vec) {
+      if (!this._colorData) return;
+      return getPoint(this, Math.floor(vec[0] * (this._width - 1)), Math.floor(vec[1] * (this._height - 1))) > 0;
+    }
+
+    /**
+     * Test to see if any of the 4 pixels used in the linear interpolate touch
+     * the silhouette.
+     * @param {twgl.v3} vec A texture coordinate.
+     * @return {boolean} Any of the pixels have some alpha.
+     */
+  }, {
+    key: "isTouchingLinear",
+    value: function isTouchingLinear(vec) {
+      if (!this._colorData) return;
+      var x = Math.floor(vec[0] * (this._width - 1));
+      var y = Math.floor(vec[1] * (this._height - 1));
+      return getPoint(this, x, y) > 0 || getPoint(this, x + 1, y) > 0 || getPoint(this, x, y + 1) > 0 || getPoint(this, x + 1, y + 1) > 0;
+    }
+
+    /**
+     * Get the canvas element reused by Silhouettes to update their data with.
+     * @private
+     * @return {CanvasElement} A canvas to draw bitmap data to.
+     */
+  }], [{
+    key: "_updateCanvas",
+    value: function _updateCanvas() {
+      if (typeof __SilhouetteUpdateCanvas === 'undefined') {
+        __SilhouetteUpdateCanvas = document.createElement('canvas');
+      }
+      return __SilhouetteUpdateCanvas;
+    }
+  }]);
+}();
+module.exports = S3Silhouette;
 
 /***/ }),
 
