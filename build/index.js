@@ -5727,27 +5727,22 @@ var Monitors = /*#__PURE__*/function () {
   return _createClass(Monitors, [{
     key: "add",
     value: function add(monitorId, label) {
-      var x = 0;
-      var y = 0;
       var _iterator = _createForOfIteratorHelper(this._monitors),
         _step;
       try {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var _monitor = _step.value;
-          var _size = _monitor.skin.size;
-          //x += _size[0] + PADDING;
-          y += _size[1] + PADDING;
+          if (monitorId === _monitor.monitorId) {
+            return;
+          }
         }
       } catch (err) {
         _iterator.e(err);
       } finally {
         _iterator.f();
       }
-      var rate = Libs["default"].renderRate;
-      var _rate = Math.min(rate.x, rate.y);
       var monitor = new Monitor(monitorId, label);
-      //        monitor.createTextSkin(x*_rate, y*_rate);
-      monitor.createTextSkin(0, 0);
+      monitor.createTextSkin();
       this._monitors.push(monitor);
     }
   }, {
