@@ -124,8 +124,7 @@ Pg.draw = function() {
     const m01 = monitors.get('M01');
     const m02 = monitors.get('M02');
     m01.value = counter;
-    m01.update();
     m02.value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
-    m02.update();
+    monitors.update();
 //    monitor.textRender(counter + "-");
 }

@@ -5824,6 +5824,22 @@ var Monitors = /*#__PURE__*/function () {
       }
       throw "\u6307\u5B9A\u3057\u305F".concat(monitorId, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
     }
+  }, {
+    key: "update",
+    value: function update() {
+      var _iterator5 = _createForOfIteratorHelper(this._monitors),
+        _step5;
+      try {
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var _monitor = _step5.value;
+          _monitor.update();
+        }
+      } catch (err) {
+        _iterator5.e(err);
+      } finally {
+        _iterator5.f();
+      }
+    }
   }]);
 }();
 module.exports = Monitors;
