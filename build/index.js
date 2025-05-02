@@ -455,7 +455,7 @@ var _Canvas = /*#__PURE__*/function () {
     key: "resizeMonitorCanvas",
     value: function resizeMonitorCanvas(width, height) {
       var canvasArr = document.getElementsByClassName(_CanvasMonitor2dClassName);
-      console.log("canvasArr.length=".concat(canvasArr.length));
+      //console.log(`canvasArr.length=${canvasArr.length}`)
       var _iterator = _createForOfIteratorHelper(canvasArr),
         _step;
       try {
@@ -5661,6 +5661,7 @@ var Monitor = /*#__PURE__*/function (_Entity) {
   }, {
     key: "update",
     value: function update() {
+      this._move();
       var properties = {
         skindId: this._skinId,
         position: [this._position.x, this._position.y],
@@ -5669,6 +5670,25 @@ var Monitor = /*#__PURE__*/function (_Entity) {
       };
       this.render.renderer.updateDrawableProperties(this.drawableID, properties);
       this.render.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
+    }
+  }, {
+    key: "_move",
+    value: function _move() {
+      if (this._moveDistance == undefined || this._moveDistance == null) {
+        if (this.$isMouseTouching() && this.$isMouseDown()) {
+          this._moveDistance = {
+            x: this.$mouseX - this._position.x,
+            y: this.$mouseY - this._position.y
+          };
+        }
+      } else {
+        if (this.$isMouseTouching() && this.$isMouseDown()) {
+          this._position.x = this.$mouseX - this._moveDistance.x;
+          this._position.y = this.$mouseY - this._moveDistance.y;
+        } else {
+          this._moveDistance = null;
+        }
+      }
     }
   }]);
 }(Entity);
@@ -6339,7 +6359,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       //this.createCanvas();
       // Measure width of title line
       var _titleLineWidth = this.measurementProvider.measureText('' + this._title);
-      console.log("this._title=".concat(this._title, ",_titleLineWidth=").concat(_titleLineWidth));
+      //console.log(`this._title=${this._title},_titleLineWidth=${_titleLineWidth}`);
       var titleLineWidth = _titleLineWidth;
       this.titleLineWidth = titleLineWidth;
       //this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
@@ -6425,7 +6445,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         var y01_01 = y00;
         var x01_02 = x01_01;
         var y01_02 = valueHeight - MonitorStyleResized.CORNER_RADIUS;
-        console.log("y01_02=".concat(y01_02));
+        //console.log(`y01_02=${y01_02}`);
         ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyleResized.CORNER_RADIUS);
         var x02_01 = x01_02;
         var y02_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;

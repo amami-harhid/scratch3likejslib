@@ -123,23 +123,6 @@ Pg.draw = function() {
     counter += 1;
     const m01 = monitors.get('M01');
     const m02 = monitors.get('M02');
-    // コレハダメナノデミナオスコト
-    if(m02.$isMouseTouching()){
-        if(m02.$isMouseDown()){
-            const _d = m02.getDrawingDimension();
-            const pos = m02.position;
-            const distanceX = pos.x - m02.$mouseX;
-            const distanceY = pos.y - m02.$mouseY;
-            console.log('=================================');
-            console.log('=================================');
-            console.log('=================================');
-            console.log('=================================');
-            const _pos = {x: m02.$mouseX - (_d.w / 2), y: m02.$mouseY + (_d.h / 2)};
-            console.log(_pos);
-            m02.position = _pos;                        
-        }
-    }
-
     m01.value = counter;
     m01.update();
     m02.value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
