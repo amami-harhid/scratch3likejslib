@@ -62,6 +62,7 @@ Pg.setting = async function setting() {
         m02.position = {x:-240, y:150};
         console.log(m02.position);
         m02.scale = {w: 80, h:80};
+
     })
     /**
      * 旗を押されたときの動き
@@ -122,13 +123,23 @@ Pg.draw = function() {
     counter += 1;
     const m01 = monitors.get('M01');
     const m02 = monitors.get('M02');
-    const dimension01 = m01.getDrawingDimension();
-    console.log(dimension01.w, dimension01.h);
-    const dimension02 = m02.getDrawingDimension();
-    console.log(dimension02.w, dimension02.h);
-    const position = m01.position;
-    console.log(position);
-    m02.position = {x: position.x, y: position.y - dimension01.h}
+    // コレハダメナノデミナオスコト
+    if(m02.$isMouseTouching()){
+        if(m02.$isMouseDown()){
+            const _d = m02.getDrawingDimension();
+            const pos = m02.position;
+            const distanceX = pos.x - m02.$mouseX;
+            const distanceY = pos.y - m02.$mouseY;
+            console.log('=================================');
+            console.log('=================================');
+            console.log('=================================');
+            console.log('=================================');
+            const _pos = {x: m02.$mouseX - (_d.w / 2), y: m02.$mouseY + (_d.h / 2)};
+            console.log(_pos);
+            m02.position = _pos;                        
+        }
+    }
+
     m01.value = counter;
     m01.update();
     m02.value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
