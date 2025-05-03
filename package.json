@@ -1,6 +1,6 @@
 {
   "name": "@tscratch3/scratch3likejslib",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Support using Scratch3 Libraries",
   "main": "./lib",
   "scripts": {

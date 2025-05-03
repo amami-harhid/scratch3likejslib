@@ -5536,7 +5536,6 @@ function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? O
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 var Entity = __webpack_require__(/*! ../entity */ "../lib/entity.js");
-var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
 var StageLayering = __webpack_require__(/*! ../stageLayering */ "../lib/stageLayering.js");
 var Utils = __webpack_require__(/*! ../utils */ "../lib/utils.js");
@@ -5583,6 +5582,7 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
       me._moveDistance = null;
       me._skin.dropping = false;
     });
+    _this._preDraw = true;
     return _this;
   }
   _inherits(Monitor, _Entity);
@@ -5601,6 +5601,9 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
         if (Utils.isNumber(_position.x) && Utils.isNumber(_position.y)) {
           this._position.x = _position.x;
           this._position.y = _position.y;
+          if (this._preDraw === true) {
+            this._render();
+          }
         }
       }
     }
@@ -5614,6 +5617,9 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
         if (Utils.isNumber(_scale.w) && Utils.isNumber(_scale.h)) {
           this._scale.w = _scale.w;
           this._scale.h = _scale.h;
+          if (this._preDraw === true) {
+            this._render();
+          }
         }
       }
     }
@@ -5640,13 +5646,38 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
       this._skinId = skinId;
       this._skin = this.renderer.getS3Skin(skinId);
     }
+    /**
+     * 文字列型
+     */
+  }, {
+    key: "text",
+    get: function get() {
+      return this._skin.value;
+    }
+    /**
+     * 文字列型
+     */,
+    set: function set(_text) {
+      // 文字列化して格納
+      this._skin.value = '' + _text;
+    }
+    /**
+     * 数値型
+     */
   }, {
     key: "value",
     get: function get() {
       return this._skin.value;
-    },
+    }
+    /**
+     * 数値型
+     */,
     set: function set(_value) {
-      this._skin.value = _value;
+      if (Utils.isNumber(_value)) {
+        this._skin.value = _value;
+      } else {
+        throw "\u4E0E\u3048\u305F\u30D1\u30E9\u30E1\u30FC\u30BF(".concat(_value, ")\u304C\u6570\u5024\u3067\u306F\u3042\u308A\u307E\u305B\u3093");
+      }
     }
   }, {
     key: "skin",
@@ -5680,17 +5711,25 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
   }, {
     key: "draw",
     value: function draw() {
+      this._preDraw = false;
       if (this._dropEnabled) {
         this._drop();
       }
-      var properties = {
-        skindId: this._skinId,
-        position: [this._position.x, this._position.y],
-        scale: [this._scale.w, this._scale.h],
-        visible: this._visible
-      };
-      this.renderer.updateDrawableProperties(this.drawableID, properties);
-      this.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
+      this._render();
+    }
+  }, {
+    key: "_render",
+    value: function _render() {
+      if (this.drawableID != null && this.renderer != null && this._skinId != null) {
+        var properties = {
+          skindId: this._skinId,
+          position: [this._position.x, this._position.y],
+          scale: [this._scale.w, this._scale.h],
+          visible: this._visible
+        };
+        this.renderer.updateDrawableProperties(this.drawableID, properties);
+        this.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
+      }
     }
   }, {
     key: "_drop",

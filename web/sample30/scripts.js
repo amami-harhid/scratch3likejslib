@@ -40,28 +40,23 @@ Pg.prepare = async function prepare() {
     // コスチュームを追加
     await cat.Image.add( Cat01 );
     await cat.Image.add( Cat02 );
-    //cat.Looks.hide();
-    //cat.Looks.hide();
+    cat.Motion.setY(100);
     monitors = new Lib.Monitors();
-    //monitors.get('M02').scale = {w: 50, h:50};
-    //monitor.createTextSkin('Sample');
-    
-
+    monitors.add('M01', '秒数');
+    monitors.add('M02', '回数');
+    const m01 = monitors.get('M01');
+    const m02 = monitors.get('M02');
+    m01.position = {x:-240, y:180};
+    m01.scale = {w: 150, h:100};
+    m01.value = 0;
+    //monitors.get('M01').scale = {w: 100, h:100};
+    m02.position = {x:-240, y:150};
+    m02.scale = {w: 100, h:100};
+    m02.text = '';
 }
 let counter = 0;
 Pg.setting = async function setting() {
     cat.Event.whenFlag(async function(){
-        monitors.add('M01', '秒数');
-        monitors.add('M02', '回数');
-        const m01 = monitors.get('M01');
-        const m02 = monitors.get('M02');
-        m01.position = {x:-240, y:180};
-        m01.scale = {w: 80, h:80};
-        console.log(m01.position)
-        //monitors.get('M01').scale = {w: 100, h:100};
-        m02.position = {x:-240, y:150};
-        console.log(m02.position);
-        m02.scale = {w: 80, h:80};
 
     })
     /**
@@ -124,9 +119,10 @@ Pg.setting = async function setting() {
 
 // FPS単位で実行される処理
 Pg.draw = function() {
+    //monitors.showAll();
     counter += 1;
     const m01 = monitors.get('M01');
     const m02 = monitors.get('M02');
     m01.value = counter;
-    m02.value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
+    m02.text = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
 }
