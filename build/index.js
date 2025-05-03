@@ -6070,7 +6070,6 @@ function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new T
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 var Canvas = __webpack_require__(/*! ../canvas */ "../lib/canvas.js");
 var EventEmitter = (__webpack_require__(/*! events */ "../node_modules/events/events.js").EventEmitter);
-var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 var Render = __webpack_require__(/*! ../render */ "../lib/render.js");
 var S3CanvasMeasurementProvider = __webpack_require__(/*! ./s3-canvas-measurement-provider */ "../lib/monitor/s3-canvas-measurement-provider.js");
 var S3RenderConstants = __webpack_require__(/*! ./s3RenderConstants */ "../lib/monitor/s3RenderConstants.js");
@@ -6111,16 +6110,6 @@ var MonitorStyle = {
     STROKE: 'rgba(255, 165, 0, 0.8)',
     TEXT_FILL: '#ffffff'
   }
-};
-var MonitorStyleResized = {
-  MAX_LINE_WIDTH: MonitorStyle.MAX_LINE_WIDTH,
-  PADDING_VALUE_VIRTICAL: MonitorStyle.PADDING_VALUE_VIRTICAL,
-  PADDING: MonitorStyle.PADDING,
-  MIN_WIDTH: MonitorStyle.MIN_WIDTH,
-  STROKE_WIDTH: MonitorStyle.STROKE_WIDTH,
-  CORNER_RADIUS: MonitorStyle.CORNER_RADIUS,
-  FONT_SIZE: MonitorStyle.FONT_SIZE,
-  LINE_HEIGHT: MonitorStyle.LINE_HEIGHT
 };
 var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   /**
@@ -6198,21 +6187,6 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }
   _inherits(S3MonitorSkin, _EventEmitter);
   return _createClass(S3MonitorSkin, [{
-    key: "renderRate",
-    value: function renderRate() {
-      var rate = Libs["default"].renderRate;
-      var _rate = Math.min(rate.x, rate.y);
-      MonitorStyleResized.MAX_LINE_WIDTH = Math.ceil(MonitorStyle.MAX_LINE_WIDTH / _rate);
-      MonitorStyleResized.PADDING_VALUE_VIRTICAL = Math.ceil(MonitorStyle.PADDING_VALUE_VIRTICAL / _rate);
-      MonitorStyleResized.PADDING = Math.ceil(MonitorStyle.PADDING / _rate);
-      MonitorStyleResized.MIN_WIDTH = Math.ceil(MonitorStyle.MIN_WIDTH / _rate);
-      MonitorStyleResized.STROKE_WIDTH = Math.ceil(MonitorStyle.STROKE_WIDTH / _rate);
-      MonitorStyleResized.CORNER_RADIUS = Math.ceil(MonitorStyle.CORNER_RADIUS / _rate);
-      MonitorStyleResized.FONT_SIZE = Math.ceil(MonitorStyle.FONT_SIZE / _rate);
-      MonitorStyleResized.LINE_HEIGHT = Math.ceil(MonitorStyle.LINE_HEIGHT / _rate);
-      return _rate;
-    }
-  }, {
     key: "dropping",
     get: function get() {
       return this._dropping;
@@ -6400,7 +6374,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_restyleCanvas",
     value: function _restyleCanvas() {
-      this._canvas.getContext('2d').font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+      this._canvas.getContext('2d').font = "".concat(MonitorStyle.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
     }
     /**
      * Update the array of wrapped lines and the text dimensions.
@@ -6416,15 +6390,15 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       this._lines = ['' + this._text]; // always one line, not used line breaker
       // Measure width of longest line to avoid extra-wide bubbles
       var _valueLineWidth = this.measurementProvider.measureText('' + this._text);
-      var valueLineWidth = Math.max(_valueLineWidth, MonitorStyleResized.MIN_WIDTH);
+      var valueLineWidth = Math.max(_valueLineWidth, MonitorStyle.MIN_WIDTH);
       this.valueLineWidth = valueLineWidth;
       this.actualValueLineWidth = _valueLineWidth;
-      var paddedWidth = MonitorStyleResized.PADDING + titleLineWidth + MonitorStyleResized.PADDING + valueLineWidth + MonitorStyleResized.PADDING;
-      var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.LINE_HEIGHT + MonitorStyleResized.PADDING * 2;
+      var paddedWidth = MonitorStyle.PADDING + titleLineWidth + MonitorStyle.PADDING + valueLineWidth + MonitorStyle.PADDING;
+      var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyle.LINE_HEIGHT + MonitorStyle.PADDING * 2;
       this._textAreaSize.width = paddedWidth;
       this._textAreaSize.height = paddedHeight;
-      this._size[0] = paddedWidth + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
-      this._size[1] = paddedHeight + MonitorStyleResized.STROKE_WIDTH + MonitorStyleResized.CORNER_RADIUS * 2;
+      this._size[0] = paddedWidth + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS * 2;
+      this._size[1] = paddedHeight + MonitorStyle.STROKE_WIDTH + MonitorStyle.CORNER_RADIUS * 2;
       this._textDirty = false;
     }
     /**
@@ -6452,20 +6426,20 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         ctx.scale(scale, scale);
-        ctx.translate(MonitorStyleResized.PADDING * 0.5, MonitorStyleResized.PADDING * 0.5);
+        ctx.translate(MonitorStyle.PADDING * 0.5, MonitorStyle.PADDING * 0.5);
         ctx.save();
         // Draw the monitor's rounded borders
         ctx.beginPath();
-        ctx.moveTo(MonitorStyleResized.CORNER_RADIUS, paddedHeight);
-        ctx.arcTo(0, paddedHeight, 0, paddedHeight - MonitorStyleResized.CORNER_RADIUS, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
-        ctx.arcTo(paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
-        ctx.lineTo(MonitorStyleResized.CORNER_RADIUS, paddedHeight);
+        ctx.moveTo(MonitorStyle.CORNER_RADIUS, paddedHeight);
+        ctx.arcTo(0, paddedHeight, 0, paddedHeight - MonitorStyle.CORNER_RADIUS, MonitorStyle.CORNER_RADIUS);
+        ctx.arcTo(0, 0, paddedWidth, 0, MonitorStyle.CORNER_RADIUS);
+        ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS);
+        ctx.arcTo(paddedWidth, paddedHeight, MonitorStyle.CORNER_RADIUS, paddedHeight, MonitorStyle.CORNER_RADIUS);
+        ctx.lineTo(MonitorStyle.CORNER_RADIUS, paddedHeight);
 
         // Translate the canvas so we don't have to do a bunch of width/height arithmetic
         ctx.save();
-        ctx.translate(paddedWidth - MonitorStyleResized.CORNER_RADIUS, paddedHeight);
+        ctx.translate(paddedWidth - MonitorStyle.CORNER_RADIUS, paddedHeight);
         ctx.restore();
         if (this._dropping === true) {
           // ドロップ中には色合いを変える
@@ -6475,7 +6449,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
           ctx.fillStyle = MonitorStyle.COLORS.FILL;
           ctx.strokeStyle = MonitorStyle.COLORS.STROKE;
         }
-        ctx.lineWidth = MonitorStyleResized.STROKE_WIDTH;
+        ctx.lineWidth = MonitorStyle.STROKE_WIDTH;
         ctx.stroke();
         ctx.fill();
         // Un-flip the canvas if it was flipped
@@ -6483,31 +6457,31 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
 
         // Draw value area
         ctx.beginPath();
-        var valueAreaHorizonStart = MonitorStyleResized.PADDING + this.titleLineWidth;
-        var valueHeight = paddedHeight - MonitorStyleResized.PADDING_VALUE_VIRTICAL * 2;
-        var x00 = valueAreaHorizonStart + MonitorStyleResized.CORNER_RADIUS;
-        var y00 = valueHeight + MonitorStyleResized.PADDING_VALUE_VIRTICAL;
+        var valueAreaHorizonStart = MonitorStyle.PADDING + this.titleLineWidth;
+        var valueHeight = paddedHeight - MonitorStyle.PADDING_VALUE_VIRTICAL * 2;
+        var x00 = valueAreaHorizonStart + MonitorStyle.CORNER_RADIUS;
+        var y00 = valueHeight + MonitorStyle.PADDING_VALUE_VIRTICAL;
         ctx.moveTo(x00, y00);
         var x01_01 = valueAreaHorizonStart;
         var y01_01 = y00;
         var x01_02 = x01_01;
-        var y01_02 = valueHeight - MonitorStyleResized.CORNER_RADIUS;
-        ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyleResized.CORNER_RADIUS);
+        var y01_02 = valueHeight - MonitorStyle.CORNER_RADIUS;
+        ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyle.CORNER_RADIUS);
         var x02_01 = x01_02;
-        var y02_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
-        var x02_02 = this.valueLineWidth + MonitorStyleResized.CORNER_RADIUS;
+        var y02_01 = MonitorStyle.PADDING_VALUE_VIRTICAL;
+        var x02_02 = this.valueLineWidth + MonitorStyle.CORNER_RADIUS;
         var y02_02 = y02_01;
-        ctx.arcTo(x02_01, y02_01, x02_02, y02_02, MonitorStyleResized.CORNER_RADIUS);
-        var x03_01 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
+        ctx.arcTo(x02_01, y02_01, x02_02, y02_02, MonitorStyle.CORNER_RADIUS);
+        var x03_01 = valueAreaHorizonStart + this.valueLineWidth + MonitorStyle.PADDING_VALUE_VIRTICAL + MonitorStyle.CORNER_RADIUS;
         var y03_01 = y02_01;
         var x03_02 = x03_01;
         var y03_02 = y01_01;
-        ctx.arcTo(x03_01, y03_01, x03_02, y03_02, MonitorStyleResized.CORNER_RADIUS);
+        ctx.arcTo(x03_01, y03_01, x03_02, y03_02, MonitorStyle.CORNER_RADIUS);
         var x04_01 = x03_01;
         var y04_01 = y01_01;
-        var x04_02 = valueAreaHorizonStart + MonitorStyleResized.PADDING_VALUE_VIRTICAL + MonitorStyleResized.CORNER_RADIUS;
+        var x04_02 = valueAreaHorizonStart + MonitorStyle.PADDING_VALUE_VIRTICAL + MonitorStyle.CORNER_RADIUS;
         var y04_02 = y04_01;
-        ctx.arcTo(x04_01, y04_01, x04_02, y04_02, MonitorStyleResized.CORNER_RADIUS);
+        ctx.arcTo(x04_01, y04_01, x04_02, y04_02, MonitorStyle.CORNER_RADIUS);
         var x05_01 = x00;
         var y05_01 = y00;
         ctx.lineTo(x05_01, y05_01);
@@ -6518,15 +6492,15 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.fill();
 
         // Draw title line 
-        var firtLineTop = MonitorStyleResized.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.FONT_SIZE;
+        var firtLineTop = MonitorStyle.PADDING + MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyle.FONT_SIZE;
         ctx.fillStyle = MonitorStyle.COLORS.TEXT_FILL;
-        ctx.font = "bold ".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
-        ctx.fillText(this._title, MonitorStyleResized.CORNER_RADIUS, firtLineTop);
+        ctx.font = "bold ".concat(MonitorStyle.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+        ctx.fillText(this._title, MonitorStyle.CORNER_RADIUS, firtLineTop);
 
         // Draw each line of text (centering)
         ctx.fillStyle = MonitorStyle.VALUE_COLORS.TEXT_FILL;
-        ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
-        var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING + MonitorStyleResized.CORNER_RADIUS;
+        ctx.font = "".concat(MonitorStyle.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
+        var valueStartPosition = this.titleLineWidth + MonitorStyle.PADDING + MonitorStyle.CORNER_RADIUS;
         var _valueStartPosition = valueStartPosition + (this.valueLineWidth - this.actualValueLineWidth) / 2;
         ctx.fillText(this._text, _valueStartPosition, firtLineTop);
       }
