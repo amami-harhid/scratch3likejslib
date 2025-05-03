@@ -6,7 +6,7 @@
 import {PlayGround, Library} from '../../build/index.js'
 const [Pg, Lib] = [PlayGround, Library]; // 短縮名にする
 
-Pg.title = "【Sample29】whenFlagの中から他のwhenFlagを止める"
+Pg.title = "【Sample30】変数モニターを表示する"
 
 const Jurassic01 = "Jurassic01";
 const Chill = "Chill";
@@ -122,12 +122,11 @@ Pg.setting = async function setting() {
 
 }
 
+// FPS単位で実行される処理
 Pg.draw = function() {
     counter += 1;
     const m01 = monitors.get('M01');
     const m02 = monitors.get('M02');
     m01.value = counter;
     m02.value = `${Lib.renderRate.x}, ${Lib.renderRate.y}`;
-    monitors.update();
-//    monitor.textRender(counter + "-");
 }

@@ -5060,7 +5060,6 @@ var _require = __webpack_require__(/*! ./types */ "../lib/types.js"),
   RotationStyle = _require.RotationStyle;
 var Loop = (__webpack_require__(/*! ./controls */ "../lib/controls.js").Loop);
 var MathUtils = __webpack_require__(/*! ./math-utils */ "../lib/math-utils.js");
-var Monitor = __webpack_require__(/*! ./monitor/monitor */ "../lib/monitor/monitor.js");
 var Monitors = __webpack_require__(/*! ./monitor/monitors */ "../lib/monitor/monitors.js");
 //const Mouse = require('./io/mouse');
 var PlayGround = __webpack_require__(/*! ./playGround */ "../lib/playGround.js");
@@ -5151,11 +5150,6 @@ var _Libs = /*#__PURE__*/function () {
     key: "MathUtils",
     get: function get() {
       return MathUtils;
-    }
-  }, {
-    key: "Monitor",
-    get: function get() {
-      return Monitor;
     }
     /**
      * 指定したkeyが押されているとき TRUE
@@ -5684,9 +5678,8 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
       };
     }
   }, {
-    key: "update",
-    value: function update() {
-      //console.log(`【${this._label}】this._dropEnabled=${this._dropEnabled}`)
+    key: "draw",
+    value: function draw() {
       if (this._dropEnabled) {
         this._drop();
       }
@@ -5769,6 +5762,7 @@ var Monitors = /*#__PURE__*/function () {
     }
     renderer.s3CreateMonitorSkin = s3CreateMonitorSkin;
     renderer.getS3Skin = getS3Skin;
+    PlayGround["default"].monitors = this;
   }
   /**
    * add
@@ -5856,14 +5850,14 @@ var Monitors = /*#__PURE__*/function () {
       throw "\u6307\u5B9A\u3057\u305F".concat(monitorId, "\u306EMonitor\u306F\u3042\u308A\u307E\u305B\u3093");
     }
   }, {
-    key: "update",
-    value: function update() {
+    key: "draw",
+    value: function draw() {
       var _iterator5 = _createForOfIteratorHelper(this._monitors),
         _step5;
       try {
         for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
           var _monitor = _step5.value;
-          _monitor.update();
+          _monitor.draw();
         }
       } catch (err) {
         _iterator5.e(err);
@@ -6944,8 +6938,17 @@ var _PlayGround = /*#__PURE__*/function () {
     this._dataPools = {};
     this._preloadDone = false;
     this._prepaeDone = false;
+    this._monitors = null;
   }
   return _createClass(PlayGround, [{
+    key: "monitors",
+    get: function get() {
+      return this._monitors;
+    },
+    set: function set(_monitors) {
+      this._monitors = _monitors;
+    }
+  }, {
     key: "isPrepareDone",
     value: function isPrepareDone() {
       return this._prepaeDone;
@@ -7092,6 +7095,9 @@ var _PlayGround = /*#__PURE__*/function () {
      */
   }, {
     key: "title",
+    get: function get() {
+      return document.title;
+    },
     set: function set(_title) {
       document.title = _title;
     }
@@ -7259,6 +7265,9 @@ var _PlayGround = /*#__PURE__*/function () {
         if (this.draw) {
           this.draw();
         }
+      }
+      if (this._monitors) {
+        this._monitors.draw();
       }
     }
   }, {

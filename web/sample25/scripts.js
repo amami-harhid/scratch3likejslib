@@ -55,7 +55,7 @@ Pg.setting = async function () {
         this.Looks.goToFront();
         for(;;){
             //            this.Motion.pointToMouse();
-            //this.Motion.gotoMousePosition();
+            this.Motion.gotoMousePosition();
             //const {x, y} = this.Motion.getCurrentPosition();
             //this.Looks.say(`x=${x}, y=${y}`);
             if(await this.Sensing.colorIsTouchingToColor(TargetColor, MaskColor)){
