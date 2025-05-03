@@ -5546,7 +5546,7 @@ var Libs = __webpack_require__(/*! ../libs */ "../lib/libs.js");
 var PlayGround = __webpack_require__(/*! ../playGround */ "../lib/playGround.js");
 var StageLayering = __webpack_require__(/*! ../stageLayering */ "../lib/stageLayering.js");
 var Utils = __webpack_require__(/*! ../utils */ "../lib/utils.js");
-var Monitor = /*#__PURE__*/function (_Entity) {
+var _Monitor = /*#__PURE__*/function (_Entity) {
   function Monitor(monitorId, label) {
     var _this;
     _classCallCheck(this, Monitor);
@@ -5555,7 +5555,7 @@ var Monitor = /*#__PURE__*/function (_Entity) {
     _this._label = label;
     _this._visible = true;
     _this._skin = null;
-    _this.render = PlayGround["default"].render;
+    _this.renderer = _this.render.renderer;
     _this._position = {
       x: 0,
       y: 0
@@ -5564,6 +5564,28 @@ var Monitor = /*#__PURE__*/function (_Entity) {
       w: 100,
       h: 100
     };
+    _this._dropEnabled = true;
+    _this._moveDistance = null;
+    var me = _this;
+    var runtime = PlayGround["default"].runtime;
+    runtime.on(_Monitor.Events.DROP_START, function (senderDrawableID) {
+      if (me.drawableID === senderDrawableID) {
+        // DROP開始したモニターは階層最上位にする
+        me.renderer.setDrawableOrder(me.drawableID, Infinity, StageLayering.MONITOR_LAYER, true);
+        // マウスが触った場所と左上隅の距離（位置関係）を記録する。モニターDROP時に利用する
+        me._moveDistance = {
+          x: me.$mouseX - me._position.x,
+          y: me.$mouseY - me._position.y
+        };
+      } else {
+        me._dropEnabled = false;
+        me._moveDistance = null;
+      }
+    });
+    runtime.on(_Monitor.Events.DROP_COMPLETE, function () {
+      me._dropEnabled = true;
+      me._moveDistance = null;
+    });
     return _this;
   }
   _inherits(Monitor, _Entity);
@@ -5617,9 +5639,9 @@ var Monitor = /*#__PURE__*/function (_Entity) {
   }, {
     key: "createTextSkin",
     value: function createTextSkin() {
-      var skinId = this.render.renderer.s3CreateMonitorSkin(this.drawableID, this._label);
+      var skinId = this.renderer.s3CreateMonitorSkin(this.drawableID, this._label);
       this._skinId = skinId;
-      this._skin = this.render.renderer.getS3Skin(skinId);
+      this._skin = this.renderer.getS3Skin(skinId);
     }
   }, {
     key: "value",
@@ -5647,9 +5669,9 @@ var Monitor = /*#__PURE__*/function (_Entity) {
     value: function getDrawingDimension() {
       var width = 0;
       var height = 0;
-      var drawable = this.render.renderer._allDrawables[this.drawableID];
+      var drawable = this.renderer._allDrawables[this.drawableID];
       if (drawable != null) {
-        var bounds = this.render.renderer.getBounds(this.drawableID);
+        var bounds = this.renderer.getBounds(this.drawableID);
         height = Math.abs(bounds.top - bounds.bottom);
         width = Math.abs(bounds.left - bounds.right);
       }
@@ -5661,38 +5683,44 @@ var Monitor = /*#__PURE__*/function (_Entity) {
   }, {
     key: "update",
     value: function update() {
-      this._move();
+      //console.log(`【${this._label}】this._dropEnabled=${this._dropEnabled}`)
+      if (this._dropEnabled) {
+        this._drop();
+      }
       var properties = {
         skindId: this._skinId,
         position: [this._position.x, this._position.y],
         scale: [this._scale.w, this._scale.h],
         visible: this._visible
       };
-      this.render.renderer.updateDrawableProperties(this.drawableID, properties);
-      this.render.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
+      this.renderer.updateDrawableProperties(this.drawableID, properties);
+      this.renderer.updateDrawableSkinId(this.drawableID, this._skinId);
     }
   }, {
-    key: "_move",
-    value: function _move() {
-      if (this._moveDistance == undefined || this._moveDistance == null) {
+    key: "_drop",
+    value: function _drop() {
+      var runtime = PlayGround["default"].runtime;
+      if (this._moveDistance == null) {
         if (this.$isMouseTouching() && this.$isMouseDown()) {
-          this._moveDistance = {
-            x: this.$mouseX - this._position.x,
-            y: this.$mouseY - this._position.y
-          };
+          runtime.emit(_Monitor.Events.DROP_START, this.drawableID);
         }
       } else {
-        if (this.$isMouseTouching() && this.$isMouseDown()) {
+        if (this.$isMouseDown()) {
           this._position.x = this.$mouseX - this._moveDistance.x;
           this._position.y = this.$mouseY - this._moveDistance.y;
         } else {
+          runtime.emit(_Monitor.Events.DROP_COMPLETE);
           this._moveDistance = null;
         }
       }
     }
   }]);
 }(Entity);
-module.exports = Monitor;
+_Monitor.Events = {
+  DROP_START: 'DropStart',
+  DROP_COMPLETE: 'DropComplete'
+};
+module.exports = _Monitor;
 
 /***/ }),
 
@@ -8430,8 +8458,8 @@ var _Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
   }, {
@@ -12838,7 +12866,6 @@ var StandardErrors = {
   AwaitExpressionFormalParameter: "'await' is not allowed in async function parameters.",
   AwaitUsingNotInAsyncContext: "'await using' is only allowed within async functions and at the top levels of modules.",
   AwaitNotInAsyncContext: "'await' is only allowed within async functions and at the top levels of modules.",
-  AwaitNotInAsyncFunction: "'await' is only allowed within async functions.",
   BadGetterArity: "A 'get' accessor must not have any formal parameters.",
   BadSetterArity: "A 'set' accessor must have exactly one formal parameter.",
   BadSetterRestParameter: "A 'set' accessor function argument must not be a rest parameter.",
@@ -13041,6 +13068,7 @@ var StandardErrors = {
   }) => `Identifier '${identifierName}' has already been declared.`,
   YieldBindingIdentifier: "Can not use 'yield' as identifier inside a generator.",
   YieldInParameter: "Yield expression is not allowed in formal parameters.",
+  YieldNotInGeneratorFunction: "'yield' is only allowed within generator functions.",
   ZeroDigitNumericSeparator: "Numeric separator can not be used after leading 0."
 };
 var StrictModeErrors = {
@@ -13184,6 +13212,7 @@ function createDefaultOptions() {
     allowImportExportEverywhere: false,
     allowSuperOutsideMethod: false,
     allowUndeclaredExports: false,
+    allowYieldOutsideFunction: false,
     plugins: [],
     strictMode: null,
     ranges: false,
@@ -13238,7 +13267,7 @@ function toESTreeLocation(node) {
 var estree = superClass => class ESTreeParserMixin extends superClass {
   parse() {
     const file = toESTreeLocation(super.parse());
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = file.tokens.map(toESTreeLocation);
     }
     return file;
@@ -13418,6 +13447,16 @@ var estree = superClass => class ESTreeParserMixin extends superClass {
     }
     propertyNode.computed = false;
     return propertyNode;
+  }
+  parseClassAccessorProperty(node) {
+    const accessorPropertyNode = super.parseClassAccessorProperty(node);
+    {
+      if (!this.getPluginOption("estree", "classFeatures")) {
+        return accessorPropertyNode;
+      }
+    }
+    accessorPropertyNode.type = "AccessorProperty";
+    return accessorPropertyNode;
   }
   parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor) {
     const node = super.parseObjectMethod(prop, isGenerator, isAsync, isPattern, isAccessor);
@@ -15124,7 +15163,7 @@ class Tokenizer extends CommentsParser {
     this.tokens = [];
     this.errorHandlers_readInt = {
       invalidDigit: (pos, lineStart, curLine, radix) => {
-        if (!(this.optionFlags & 1024)) return false;
+        if (!(this.optionFlags & 2048)) return false;
         this.raise(Errors.InvalidDigit, buildPosition(pos, lineStart, curLine), {
           radix
         });
@@ -15165,7 +15204,7 @@ class Tokenizer extends CommentsParser {
   }
   next() {
     this.checkKeywordEscapes();
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       this.pushToken(new Token(this.state));
     }
     this.state.lastTokEndLoc = this.state.endLoc;
@@ -15281,7 +15320,7 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end + commentEnd.length),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipLineComment(startSkip) {
@@ -15304,12 +15343,12 @@ class Tokenizer extends CommentsParser {
       end: this.sourceToOffsetPos(end),
       loc: new SourceLocation(startLoc, this.state.curPosition())
     };
-    if (this.optionFlags & 128) this.pushToken(comment);
+    if (this.optionFlags & 256) this.pushToken(comment);
     return comment;
   }
   skipSpace() {
     const spaceStart = this.state.pos;
-    const comments = this.optionFlags & 2048 ? [] : null;
+    const comments = this.optionFlags & 4096 ? [] : null;
     loop: while (this.state.pos < this.length) {
       const ch = this.input.charCodeAt(this.state.pos);
       switch (ch) {
@@ -15356,7 +15395,7 @@ class Tokenizer extends CommentsParser {
         default:
           if (isWhitespace(ch)) {
             ++this.state.pos;
-          } else if (ch === 45 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 45 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 45 && this.input.charCodeAt(pos + 2) === 62 && (spaceStart === 0 || this.state.lineStart > spaceStart)) {
               const comment = this.skipLineComment(3);
@@ -15367,7 +15406,7 @@ class Tokenizer extends CommentsParser {
             } else {
               break loop;
             }
-          } else if (ch === 60 && !this.inModule && this.optionFlags & 4096) {
+          } else if (ch === 60 && !this.inModule && this.optionFlags & 8192) {
             const pos = this.state.pos;
             if (this.input.charCodeAt(pos + 1) === 33 && this.input.charCodeAt(pos + 2) === 45 && this.input.charCodeAt(pos + 3) === 45) {
               const comment = this.skipLineComment(4);
@@ -16075,7 +16114,7 @@ class Tokenizer extends CommentsParser {
   raise(toParseError, at, details = {}) {
     const loc = at instanceof Position ? at : at.loc.start;
     const error = toParseError(loc, details);
-    if (!(this.optionFlags & 1024)) throw error;
+    if (!(this.optionFlags & 2048)) throw error;
     if (!this.isLookahead) this.state.errors.push(error);
     return error;
   }
@@ -16533,6 +16572,9 @@ class UtilParser extends Tokenizer {
     if (this.inModule) {
       paramFlags |= 2;
     }
+    if (this.optionFlags & 32) {
+      paramFlags |= 1;
+    }
     this.scope.enter(1);
     this.prodParam.enter(paramFlags);
   }
@@ -16559,7 +16601,7 @@ class Node {
     this.start = pos;
     this.end = 0;
     this.loc = new SourceLocation(loc);
-    if ((parser == null ? void 0 : parser.optionFlags) & 64) this.range = [pos, 0];
+    if ((parser == null ? void 0 : parser.optionFlags) & 128) this.range = [pos, 0];
     if (parser != null && parser.filename) this.loc.filename = parser.filename;
   }
 }
@@ -16647,8 +16689,8 @@ class NodeUtils extends UtilParser {
     node.type = type;
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
-    if (this.optionFlags & 2048) {
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
+    if (this.optionFlags & 4096) {
       this.processComment(node);
     }
     return node;
@@ -16656,12 +16698,12 @@ class NodeUtils extends UtilParser {
   resetStartLocation(node, startLoc) {
     node.start = startLoc.index;
     node.loc.start = startLoc;
-    if (this.optionFlags & 64) node.range[0] = startLoc.index;
+    if (this.optionFlags & 128) node.range[0] = startLoc.index;
   }
   resetEndLocation(node, endLoc = this.state.lastTokEndLoc) {
     node.end = endLoc.index;
     node.loc.end = endLoc;
-    if (this.optionFlags & 64) node.range[1] = endLoc.index;
+    if (this.optionFlags & 128) node.range[1] = endLoc.index;
   }
   resetStartLocationFromNode(node, locationNode) {
     this.resetStartLocation(node, locationNode.loc.start);
@@ -23211,7 +23253,7 @@ class ExpressionParser extends LValParser {
     this.finalizeRemainingComments();
     expr.comments = this.comments;
     expr.errors = this.state.errors;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       expr.tokens = this.tokens;
     }
     return expr;
@@ -23247,9 +23289,11 @@ class ExpressionParser extends LValParser {
   }
   parseMaybeAssign(refExpressionErrors, afterLeftParse) {
     const startLoc = this.state.startLoc;
-    if (this.isContextual(108)) {
+    const isYield = this.isContextual(108);
+    if (isYield) {
       if (this.prodParam.hasYield) {
-        let left = this.parseYield();
+        this.next();
+        let left = this.parseYield(startLoc);
         if (afterLeftParse) {
           left = afterLeftParse.call(this, left, startLoc);
         }
@@ -23300,6 +23344,16 @@ class ExpressionParser extends LValParser {
       return node;
     } else if (ownExpressionErrors) {
       this.checkExpressionErrors(refExpressionErrors, true);
+    }
+    if (isYield) {
+      const {
+        type
+      } = this.state;
+      const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
+        this.raiseOverwrite(Errors.YieldNotInGeneratorFunction, startLoc);
+        return this.parseYield(startLoc);
+      }
     }
     return left;
   }
@@ -23477,7 +23531,7 @@ class ExpressionParser extends LValParser {
         type
       } = this.state;
       const startsExpr = this.hasPlugin("v8intrinsic") ? tokenCanStartExpression(type) : tokenCanStartExpression(type) && !this.match(54);
-      if (startsExpr && !this.isAmbiguousAwait()) {
+      if (startsExpr && !this.isAmbiguousPrefixOrIdentifier()) {
         this.raiseOverwrite(Errors.AwaitNotInAsyncContext, startLoc);
         return this.parseAwait(startLoc);
       }
@@ -23716,7 +23770,7 @@ class ExpressionParser extends LValParser {
           return this.parseImportMetaProperty(node);
         }
         if (this.match(10)) {
-          if (this.optionFlags & 256) {
+          if (this.optionFlags & 512) {
             return this.parseImportCall(node);
           } else {
             return this.finishNode(node, "Import");
@@ -24021,7 +24075,7 @@ class ExpressionParser extends LValParser {
     } else if (this.isContextual(105) || this.isContextual(97)) {
       const isSource = this.isContextual(105);
       this.expectPlugin(isSource ? "sourcePhaseImports" : "deferredImportEvaluation");
-      if (!(this.optionFlags & 256)) {
+      if (!(this.optionFlags & 512)) {
         throw this.raise(Errors.DynamicImportPhaseRequiresImportExpressions, this.state.startLoc, {
           phase: this.state.value
         });
@@ -24141,7 +24195,7 @@ class ExpressionParser extends LValParser {
     return this.wrapParenthesis(startLoc, val);
   }
   wrapParenthesis(startLoc, expression) {
-    if (!(this.optionFlags & 512)) {
+    if (!(this.optionFlags & 1024)) {
       this.addExtra(expression, "parenthesized", true);
       this.addExtra(expression, "parenStart", startLoc.index);
       this.takeSurroundingComments(expression, startLoc.index, this.state.lastTokEndLoc.index);
@@ -24697,7 +24751,7 @@ class ExpressionParser extends LValParser {
       this.raise(Errors.ObsoleteAwaitStar, node);
     }
     if (!this.scope.inFunction && !(this.optionFlags & 1)) {
-      if (this.isAmbiguousAwait()) {
+      if (this.isAmbiguousPrefixOrIdentifier()) {
         this.ambiguousScriptDifferentAst = true;
       } else {
         this.sawUnambiguousESM = true;
@@ -24708,17 +24762,16 @@ class ExpressionParser extends LValParser {
     }
     return this.finishNode(node, "AwaitExpression");
   }
-  isAmbiguousAwait() {
+  isAmbiguousPrefixOrIdentifier() {
     if (this.hasPrecedingLineBreak()) return true;
     const {
       type
     } = this.state;
     return type === 53 || type === 10 || type === 0 || tokenIsTemplate(type) || type === 102 && !this.state.containsEsc || type === 138 || type === 56 || this.hasPlugin("v8intrinsic") && type === 54;
   }
-  parseYield() {
-    const node = this.startNode();
+  parseYield(startLoc) {
+    const node = this.startNodeAt(startLoc);
     this.expressionScope.recordParameterInitializerError(Errors.YieldInParameter, node);
-    this.next();
     let delegating = false;
     let argument = null;
     if (!this.hasPrecedingLineBreak()) {
@@ -25020,7 +25073,7 @@ class StatementParser extends ExpressionParser {
   parseTopLevel(file, program) {
     file.program = this.parseProgram(program);
     file.comments = this.comments;
-    if (this.optionFlags & 128) {
+    if (this.optionFlags & 256) {
       file.tokens = babel7CompatTokens(this.tokens, this.input, this.startIndex);
     }
     return this.finishNode(file, "File");
@@ -25030,7 +25083,7 @@ class StatementParser extends ExpressionParser {
     program.interpreter = this.parseInterpreterDirective();
     this.parseBlockBody(program, true, true, end);
     if (this.inModule) {
-      if (!(this.optionFlags & 32) && this.scope.undefinedExports.size > 0) {
+      if (!(this.optionFlags & 64) && this.scope.undefinedExports.size > 0) {
         for (const [localName, at] of Array.from(this.scope.undefinedExports)) {
           this.raise(Errors.ModuleExportUndefined, at, {
             localName
@@ -26720,6 +26773,7 @@ class StatementParser extends ExpressionParser {
       this.next();
       if (this.hasPlugin("moduleAttributes")) {
         attributes = this.parseModuleAttributes();
+        this.addExtra(node, "deprecatedWithLegacySyntax", true);
       } else {
         attributes = this.parseImportAttributes();
       }
@@ -26833,31 +26887,34 @@ class Parser extends StatementParser {
       optionFlags |= 16;
     }
     if (options.allowUndeclaredExports) {
-      optionFlags |= 32;
+      optionFlags |= 64;
     }
     if (options.allowNewTargetOutsideFunction) {
       optionFlags |= 4;
     }
-    if (options.ranges) {
-      optionFlags |= 64;
+    if (options.allowYieldOutsideFunction) {
+      optionFlags |= 32;
     }
-    if (options.tokens) {
+    if (options.ranges) {
       optionFlags |= 128;
     }
-    if (options.createImportExpressions) {
+    if (options.tokens) {
       optionFlags |= 256;
     }
-    if (options.createParenthesizedExpressions) {
+    if (options.createImportExpressions) {
       optionFlags |= 512;
     }
-    if (options.errorRecovery) {
+    if (options.createParenthesizedExpressions) {
       optionFlags |= 1024;
     }
-    if (options.attachComment) {
+    if (options.errorRecovery) {
       optionFlags |= 2048;
     }
-    if (options.annexB) {
+    if (options.attachComment) {
       optionFlags |= 4096;
+    }
+    if (options.annexB) {
+      optionFlags |= 8192;
     }
     this.optionFlags = optionFlags;
   }

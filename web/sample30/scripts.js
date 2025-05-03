@@ -92,10 +92,10 @@ Pg.setting = async function setting() {
         await this.Control.wait(4);
         // 4秒後に StageのstopOtherScripts
         this.Control.stopOtherScripts();
-        await this.Control.wait(4);
+        await this.Control.wait(20);
         // 4秒後にSTART ---> catの中でstopOtherScripts
         this.Event.broadcast('START');
-        await this.Control.wait(3);
+        await this.Control.wait(20);
         // 3秒後にSTOP ALL
         console.log('stopAll')
         this.Control.stopAll();
@@ -115,7 +115,10 @@ Pg.setting = async function setting() {
             //await this.Control.wait(0.1);
             yield;
         }
-    })
+    });
+    cat.Event.whenClicked(async function(){
+        this.Looks.goToFront();
+    });
 
 }
 
