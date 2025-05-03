@@ -5577,14 +5577,17 @@ var _Monitor = /*#__PURE__*/function (_Entity) {
           x: me.$mouseX - me._position.x,
           y: me.$mouseY - me._position.y
         };
+        me._skin.dropping = true;
       } else {
         me._dropEnabled = false;
         me._moveDistance = null;
+        me._skin.dropping = false;
       }
     });
     runtime.on(_Monitor.Events.DROP_COMPLETE, function () {
       me._dropEnabled = true;
       me._moveDistance = null;
+      me._skin.dropping = false;
     });
     return _this;
   }
@@ -6105,7 +6108,9 @@ var MonitorStyle = {
   COLORS: {
     FILL: 'rgba(250,250,250,0.9)',
     STROKE: 'rgba(190, 190, 190, 0.9)',
-    TEXT_FILL: '#000000'
+    TEXT_FILL: '#000000',
+    DROP_FILL: 'rgba(200,200,200,0.9)',
+    DROP_STROKE: 'rgba(190, 190, 190, 0.2)'
   },
   VALUE_COLORS: {
     FILL: 'rgba(255, 165, 0, 0.8)',
@@ -6192,6 +6197,9 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
     _this._visible = true;
     _this.createCanvas();
     _this._restyleCanvas();
+
+    /** drop */
+    _this._dropping = false;
     return _this;
   }
   _inherits(S3MonitorSkin, _EventEmitter);
@@ -6209,6 +6217,14 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
       MonitorStyleResized.FONT_SIZE = Math.ceil(MonitorStyle.FONT_SIZE / _rate);
       MonitorStyleResized.LINE_HEIGHT = Math.ceil(MonitorStyle.LINE_HEIGHT / _rate);
       return _rate;
+    }
+  }, {
+    key: "dropping",
+    get: function get() {
+      return this._dropping;
+    },
+    set: function set(_dropping) {
+      this._dropping = _dropping;
     }
   }, {
     key: "createCanvas",
@@ -6398,25 +6414,17 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_reflowLines",
     value: function _reflowLines() {
-      //        const _rate = this.renderRate();
       this._restyleCanvas();
-      //this.createCanvas();
       // Measure width of title line
       var _titleLineWidth = this.measurementProvider.measureText('' + this._title);
-      //console.log(`this._title=${this._title},_titleLineWidth=${_titleLineWidth}`);
       var titleLineWidth = _titleLineWidth;
       this.titleLineWidth = titleLineWidth;
-      //this._lines = this.textWrapper.wrapText(MonitorStyleResized.MAX_LINE_WIDTH, this._text);
       this._lines = ['' + this._text]; // always one line, not used line breaker
       // Measure width of longest line to avoid extra-wide bubbles
       var _valueLineWidth = this.measurementProvider.measureText('' + this._text);
       var valueLineWidth = Math.max(_valueLineWidth, MonitorStyleResized.MIN_WIDTH);
       this.valueLineWidth = valueLineWidth;
       this.actualValueLineWidth = _valueLineWidth;
-      // Calculate the canvas-space sizes of the padded text area and full text bubble
-      //const paddedWidth = Math.max(longestLineWidth, MonitorStyleResized.MIN_WIDTH) + (MonitorStyleResized.PADDING * 2) +MonitorStyleResized.CORNER_RADIUS * 2;
-      //const paddedHeight = (MonitorStyleResized.LINE_HEIGHT * this._lines.length) + (MonitorStyleResized.PADDING * 2);
-
       var paddedWidth = MonitorStyleResized.PADDING + titleLineWidth + MonitorStyleResized.PADDING + valueLineWidth + MonitorStyleResized.PADDING;
       var paddedHeight = MonitorStyle.FONT_HEIGHT_RATIO * MonitorStyleResized.LINE_HEIGHT + MonitorStyleResized.PADDING * 2;
       this._textAreaSize.width = paddedWidth;
@@ -6432,8 +6440,6 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_renderTextMonitor",
     value: function _renderTextMonitor(scale) {
-      //        const _rate = this.renderRate();
-      //        const _scale = scale / _rate;
       var _scale = scale;
       var ctx = this._ctx;
       if (this._textDirty) {
@@ -6452,10 +6458,6 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         ctx.scale(scale, scale);
-        // const translateX = this._x / Libs.default.renderRate.x;
-        // const translateY = this._y / Libs.default.renderRate.y;
-        // ctx.translate(translateX + MonitorStyleResized.PADDING * 0.5, 
-        //     translateY + MonitorStyleResized.PADDING * 0.5);
         ctx.translate(MonitorStyleResized.PADDING * 0.5, MonitorStyleResized.PADDING * 0.5);
         ctx.save();
         // Draw the monitor's rounded borders
@@ -6466,12 +6468,19 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.arcTo(paddedWidth, 0, paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
         ctx.arcTo(paddedWidth, paddedHeight, MonitorStyleResized.CORNER_RADIUS, paddedHeight, MonitorStyleResized.CORNER_RADIUS);
         ctx.lineTo(MonitorStyleResized.CORNER_RADIUS, paddedHeight);
+
         // Translate the canvas so we don't have to do a bunch of width/height arithmetic
         ctx.save();
         ctx.translate(paddedWidth - MonitorStyleResized.CORNER_RADIUS, paddedHeight);
         ctx.restore();
-        ctx.fillStyle = MonitorStyle.COLORS.FILL;
-        ctx.strokeStyle = MonitorStyle.COLORS.STROKE;
+        if (this._dropping === true) {
+          // ドロップ中には色合いを変える
+          ctx.fillStyle = MonitorStyle.COLORS.DROP_FILL;
+          ctx.strokeStyle = MonitorStyle.COLORS.DROP_STROKE;
+        } else {
+          ctx.fillStyle = MonitorStyle.COLORS.FILL;
+          ctx.strokeStyle = MonitorStyle.COLORS.STROKE;
+        }
         ctx.lineWidth = MonitorStyleResized.STROKE_WIDTH;
         ctx.stroke();
         ctx.fill();
@@ -6489,7 +6498,6 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         var y01_01 = y00;
         var x01_02 = x01_01;
         var y01_02 = valueHeight - MonitorStyleResized.CORNER_RADIUS;
-        //console.log(`y01_02=${y01_02}`);
         ctx.arcTo(x01_01, y01_01, x01_02, y01_02, MonitorStyleResized.CORNER_RADIUS);
         var x02_01 = x01_02;
         var y02_01 = MonitorStyleResized.PADDING_VALUE_VIRTICAL;
@@ -6526,7 +6534,7 @@ var S3MonitorSkin = /*#__PURE__*/function (_EventEmitter) {
         ctx.font = "".concat(MonitorStyleResized.FONT_SIZE, "px ").concat(MonitorStyle.FONT, ", sans-serif");
         var valueStartPosition = this.titleLineWidth + MonitorStyleResized.PADDING + MonitorStyleResized.CORNER_RADIUS;
         var _valueStartPosition = valueStartPosition + (this.valueLineWidth - this.actualValueLineWidth) / 2;
-        ctx.fillText('' + this._text, _valueStartPosition, firtLineTop);
+        ctx.fillText(this._text, _valueStartPosition, firtLineTop);
       }
       this._renderedScale = scale;
     }
