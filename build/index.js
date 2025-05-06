@@ -8444,8 +8444,8 @@ var Sprite = /*#__PURE__*/function (_Entity) {
     cloneThen(options, func){
         
         this.clone(options).then(async v=>{
-             v.hatProc(func);
-         });
+              v.hatProc(func);
+          });
     }
     */
     /**
@@ -98548,8 +98548,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 
 
 window.Buffer = window.Buffer || buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer;
-var Library = (__webpack_require__(/*! ../lib/libs */ "../lib/libs.js")["default"]);
-var PlayGround = (__webpack_require__(/*! ../lib/playGround */ "../lib/playGround.js")["default"]);
+var _PlayGround = __webpack_require__(/*! ../lib/playGround */ "../lib/playGround.js");
+var PlayGround = _PlayGround["default"];
+var Library = PlayGround.Libs;
 var Element = PlayGround.Element;
 Element.insertCss();
 var Initialize = /*#__PURE__*/function () {

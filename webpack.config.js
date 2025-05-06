@@ -1,11 +1,9 @@
 const path = require('path');
-const CopyFilePlugin = require("copy-webpack-plugin");
 
 module.exports = {
     context: `${__dirname}/src`,
     entry: {
         'likeScratchLib': path.join(__dirname, '/src', 'likeScratchLib.js')
-//        'likeScratchLib': path.join(__dirname, '/src', 'index.js')
     },
     output: {
         path: path.join(__dirname, '/build'),
@@ -14,10 +12,6 @@ module.exports = {
         library:{
             type: "module",
         },
-//        library: "likeScratchLib",
-//        libraryTarget: "global", // global
-//        libraryTarget: "umd", // global
-//        iife: true, // --> when "umd", iife is true
     },
     experiments: {
         outputModule: true,
@@ -34,24 +28,9 @@ module.exports = {
                 loader: "exports-loader",
                 options: {
                     exports: 'default',
-//                    exports: 'Process',
                 }
             }
         ]
     },
     devtool: 'source-map',
-    plugins: [
-        new CopyFilePlugin({
-            patterns: [
-                {
-                    context: "buildPackageConf",
-                    from: "**/*.json",
-                    to: path.resolve(__dirname, "build")
-                },        
-
-            ],
-        }),
-        //new WriteFilePlugin()
-    ],
-
 }
