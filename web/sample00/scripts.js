@@ -3,7 +3,7 @@
  */
 
 // ライブラリーをインポートして実行
-import {PlayGround, Library} from '../../build/likeScratchLib.js'
+import {PlayGround, Library} from '../../build/index.js'
 // 短縮名にする
 const [Pg, Lib] = [PlayGround, Library]; // eslint-disable-line no-unused-vars
 
