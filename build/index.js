@@ -2716,8 +2716,8 @@ var Entity = /*#__PURE__*/function (_EventEmitter) {
       return touchingTragets;
     }
   }, {
-    key: "isTouchingTarget",
-    value: function isTouchingTarget(targets) {
+    key: "$isTouchingTarget",
+    value: function $isTouchingTarget(targets) {
       var src = this;
       var touching = this.$isTouchingTargetToTarget(src, targets);
       return touching;
@@ -3329,8 +3329,10 @@ var Entity = /*#__PURE__*/function (_EventEmitter) {
     key: "$whenCloned",
     value: function $whenCloned(func) {
       var runtime = this.playGround.runtime;
+      console.log("runtime=", runtime);
       if (runtime) {
         var eventId = "whenClone_".concat(this.name);
+        console.log(eventId);
         runtime.on(eventId, function (clone) {
           var threadId = clone._generateUUID();
           var proxy = clone.getProxyForHat();
@@ -8502,7 +8504,7 @@ var Sprite = /*#__PURE__*/function (_Entity) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
               options = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
-              if (!(this.isClone == undefined)) {
+              if (!(this.isClone == false)) {
                 _context2.next = 61;
                 break;
               }
@@ -8536,39 +8538,39 @@ var Sprite = /*#__PURE__*/function (_Entity) {
               newSprite = new this.constructor(newName, newOptions); // デフォでは本体の前に表示されるので、1つ背面へ移動する
               newSprite.$goBackwardLayers(1);
               //const _visible = 
-              newSprite.$setVisible(false);
+              //newSprite.$setVisible( false );
               if (this.clones) this.clones.push(newSprite);
               newSprite.isClone = true;
               if (!this.imageDatas) {
-                _context2.next = 29;
+                _context2.next = 28;
                 break;
               }
               _iterator = _createForOfIteratorHelper(this.imageDatas);
-              _context2.prev = 13;
+              _context2.prev = 12;
               _iterator.s();
-            case 15:
+            case 14:
               if ((_step = _iterator.n()).done) {
-                _context2.next = 21;
+                _context2.next = 20;
                 break;
               }
               d = _step.value;
-              _context2.next = 19;
+              _context2.next = 18;
               return newSprite.$addImage(d);
-            case 19:
-              _context2.next = 15;
+            case 18:
+              _context2.next = 14;
               break;
-            case 21:
-              _context2.next = 26;
+            case 20:
+              _context2.next = 25;
               break;
-            case 23:
-              _context2.prev = 23;
-              _context2.t0 = _context2["catch"](13);
+            case 22:
+              _context2.prev = 22;
+              _context2.t0 = _context2["catch"](12);
               _iterator.e(_context2.t0);
-            case 26:
-              _context2.prev = 26;
+            case 25:
+              _context2.prev = 25;
               _iterator.f();
-              return _context2.finish(26);
-            case 29:
+              return _context2.finish(25);
+            case 28:
               if (this.costumes) {
                 _name = this.costumes.currentSkinName();
                 if (_name != null && newSprite.costumes) {
@@ -8576,15 +8578,15 @@ var Sprite = /*#__PURE__*/function (_Entity) {
                 }
               }
               if (!this.soundDatas) {
-                _context2.next = 55;
+                _context2.next = 54;
                 break;
               }
               _iterator2 = _createForOfIteratorHelper(this.soundDatas);
-              _context2.prev = 32;
+              _context2.prev = 31;
               _iterator2.s();
-            case 34:
+            case 33:
               if ((_step2 = _iterator2.n()).done) {
-                _context2.next = 47;
+                _context2.next = 46;
                 break;
               }
               _d2 = _step2.value;
@@ -8593,29 +8595,29 @@ var Sprite = /*#__PURE__*/function (_Entity) {
               _soundData.name = _d2.name;
               _soundData.data = _d2.data;
               //const _options = d.options;
-              _context2.next = 41;
+              _context2.next = 40;
               return newSprite.$addSound(_soundData);
-            case 41:
+            case 40:
               // options引き継ぐ
               _vol = this.$getSoundVolume();
               _pitch = this.$getSoundPitch();
               newSprite.$setSoundVolume(_vol);
               newSprite.$setSoundPitch(_pitch);
-            case 45:
-              _context2.next = 34;
+            case 44:
+              _context2.next = 33;
               break;
-            case 47:
-              _context2.next = 52;
+            case 46:
+              _context2.next = 51;
               break;
-            case 49:
-              _context2.prev = 49;
-              _context2.t1 = _context2["catch"](32);
+            case 48:
+              _context2.prev = 48;
+              _context2.t1 = _context2["catch"](31);
               _iterator2.e(_context2.t1);
-            case 52:
-              _context2.prev = 52;
+            case 51:
+              _context2.prev = 51;
               _iterator2.f();
-              return _context2.finish(52);
-            case 55:
+              return _context2.finish(51);
+            case 54:
               newSprite.update(); // update() は不要かもしれない。
               newSprite.originalSprite = this;
 
@@ -8626,13 +8628,14 @@ var Sprite = /*#__PURE__*/function (_Entity) {
               // rendererを操作する処理は emit で行う。
               runtime = this.playGround.runtime;
               eventId = "whenClone_".concat(this.name);
+              console.log(eventId);
               runtime.emit(eventId, newSprite);
               return _context2.abrupt("return", newSprite);
             case 61:
             case "end":
               return _context2.stop();
           }
-        }, _callee2, this, [[13, 23, 26, 29], [32, 49, 52, 55]]);
+        }, _callee2, this, [[12, 22, 25, 28], [31, 48, 51, 54]]);
       }));
       function $clone() {
         return _$clone.apply(this, arguments);
@@ -10013,7 +10016,7 @@ var Sprite = /*#__PURE__*/function (_Entity) {
         "isTouchingHorizontalEdge": this.$isTouchingHorizontalEdge.bind(this),
         "isNotMouseTouching": this.$isNotMouseTouching.bind(this),
         "isMouseTouching": this.$isMouseTouching.bind(this),
-        "isTouchingToSprite": this.$isTouchingTargetToTarget.bind(this),
+        "isTouchingToSprite": this.$isTouchingTarget.bind(this),
         "getTouchingSprites": this.$getTouchingTarget.bind(this),
         "isTouchingToColor": this.$isTouchingColor.bind(this),
         "colorIsTouchingToColor": this.$colorIsTouchingColor.bind(this)

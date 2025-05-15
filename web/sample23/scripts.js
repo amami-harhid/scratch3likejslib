@@ -42,7 +42,7 @@ Pg.prepare = async function prepare() {
     stage = new Lib.Stage();
     await stage.Image.add( NeonTunnel );
     await stage.Sound.add( Chill );
-    ball = new Lib.Sprite("cat");
+    ball = new Lib.Sprite("ball");
     await ball.Image.add( BallA );
     //ball.Motion.setXY(0,-100);
     ball.Looks.setSize(50, 50);
@@ -139,6 +139,7 @@ Pg.setting = async function setting() {
         blockCount = 0;
         for(let y=0; y<3; y++){
             for(let x=0; x<10; x++){
+                console.log(x,y);
                 const blkPos = { x: pos.x + x*demension.width, y: pos.y + (-y)*demension.height };
                 await this.Control.clone({position: blkPos});
                 yield;
@@ -148,7 +149,9 @@ Pg.setting = async function setting() {
         this.Event.broadcast('Start');
     });
     block.Control.whenCloned(async function*(){
+        console.log('whenClone')
         blockCount+=1;
+        console.log(this)
         this.Looks.show();
         while(true){
             if(this.Sensing.isTouchingToSprite(ball)){
